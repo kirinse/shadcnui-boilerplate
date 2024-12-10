@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useAtom } from "jotai"
 import * as React from "react"
 import { useForm } from "react-hook-form"
 import { useTranslation } from "react-i18next"
@@ -6,6 +7,7 @@ import { Link, useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 import type { z } from "zod"
 
+import { authTokenAtom } from "@/atoms/auth"
 import { Icons } from "@/components/icons"
 import { Logo } from "@/components/icons/logo"
 import { LanguageSwitch } from "@/components/language-switch"
@@ -84,8 +86,9 @@ export function Component() {
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> { }
 
+// eslint-disable-next-line react-refresh/only-export-components
 function UserAuthForm({ className, ...props }: UserAuthFormProps) {
-  const { t } = useTranslation(["auth", "common", "errors"])
+  const { t } = useTranslation(["auth", "common"])
   const redirectUrl =
     new URLSearchParams(window.location.search).get("redirectTo") ||
       "/dashboard"
@@ -95,16 +98,26 @@ function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const form = useForm<ILoginForm>({
     resolver: zodResolver(loginFormSchema),
     defaultValues: {
-      email: "admin@shadcn.com",
-      password: "admin",
+      email: "user1@example.com",
+      password: "12341234",
     },
   })
+  const [authToken, setAuthTokenAtom] = useAtom(authTokenAtom)
+
+  React.useEffect(() => {
+    if (authToken) {
+      navigate(redirectUrl, {
+        replace: true,
+      })
+    }
+  }, [authToken, navigate, redirectUrl])
 
   async function onSubmit(values: z.infer<typeof loginFormSchema>) {
     toast.promise(loginMutation.mutateAsync(values), {
       position: "top-center",
       loading: t("login.loading"),
-      success: () => {
+      success: (data) => {
+        setAuthTokenAtom(data.token)
         navigate(redirectUrl, {
           replace: true,
         })

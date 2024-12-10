@@ -2,7 +2,6 @@ import "./styles/index.css"
 import "./i18n"
 
 import { env } from "@env"
-// @ts-expect-error
 import { ClickToComponent } from "click-to-react-component"
 import * as React from "react"
 import ReactDOM from "react-dom/client"

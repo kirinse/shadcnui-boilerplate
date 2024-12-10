@@ -46,6 +46,7 @@ export function ThemeCustomizer({ className }: ThemeCustomizerProps) {
   const [mounted, setMounted] = React.useState(false)
 
   React.useEffect(() => {
+    // eslint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
     setMounted(true)
   }, [])
 
@@ -58,7 +59,7 @@ export function ThemeCustomizer({ className }: ThemeCustomizerProps) {
           </Button>
         </DrawerTrigger>
         <DrawerContent className="p-6 pt-0">
-          <Customizer className="size-5" />
+          <Customizer />
         </DrawerContent>
       </Drawer>
       <div className="hidden items-center md:flex">
@@ -154,6 +155,7 @@ function Customizer() {
   const [config, setConfig] = useConfig()
 
   React.useEffect(() => {
+    // eslint-disable-next-line @eslint-react/hooks-extra/no-direct-set-state-in-use-effect
     setMounted(true)
   }, [])
 

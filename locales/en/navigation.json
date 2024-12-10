@@ -27,6 +27,7 @@
   "radial_chart": "Radial Chart",
   "tooltip_chart": "Tooltip Chart",
   "about": "About",
+  "message": "Message",
   "user": {
     "logout": "Log out",
     "profile": "Profile",

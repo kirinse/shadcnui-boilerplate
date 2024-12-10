@@ -1,3 +1,4 @@
+import { useMemo } from "react"
 import { useTranslation } from "react-i18next"
 
 import {
@@ -16,10 +17,16 @@ export const LanguageSwitch = () => {
     i18n.changeLanguage(lng)
   }
 
+  const current_language = useMemo(() => {
+    return languages.find((l) => l.value === i18n.resolvedLanguage)
+  }, [i18n.resolvedLanguage])
+
   return (
     <Select value={i18n.language} onValueChange={changeLanguage}>
       <SelectTrigger className="w-[120px]">
-        <SelectValue placeholder={t("select_language")} />
+        <SelectValue placeholder={t("select_language")}>
+          {current_language?.icon} {current_language?.label}
+        </SelectValue>
       </SelectTrigger>
       <SelectContent>
         {languages.map((language) => (

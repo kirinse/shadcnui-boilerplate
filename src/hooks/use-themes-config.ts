@@ -9,7 +9,7 @@ type ThemesConfig = {
 }
 
 const configAtom = atomWithStorage<ThemesConfig>("themes:config", {
-  activeTheme: THEMES[0],
+  activeTheme: THEMES[0] as Theme,
 })
 
 export function useThemesConfig() {

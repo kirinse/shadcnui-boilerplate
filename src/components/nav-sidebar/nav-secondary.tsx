@@ -10,6 +10,8 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 
+import { DevMonitorPanel } from "../devtools/dev-monitor-panel"
+
 export function NavSecondary({
   items,
   ...props
@@ -24,6 +26,7 @@ export function NavSecondary({
   return (
     <SidebarGroup {...props}>
       <SidebarGroupContent>
+        <DevMonitorPanel />
         <SidebarMenu>
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>

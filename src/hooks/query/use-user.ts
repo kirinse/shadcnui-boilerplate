@@ -13,13 +13,13 @@ import type { ILoginForm, IUserProfile, IUsers } from "@/schema/user"
 
 export const queryUser = () => queryOptions({
   queryKey: ["userInfo"],
-  queryFn: async () => apiFetch<IUserProfile>("/api/user"),
+  queryFn: async () => apiFetch<IUserProfile>("/api/auth/current"),
 })
 
 export const queryUserInfo = () =>
   queryOptions({
     queryKey: ["user-info"],
-    queryFn: async () => apiFetch<IUserProfile>(`/api/user/info`),
+    queryFn: async () => apiFetch<IUserProfile>(`/api/auth/current`),
   })
 
 export function useUser() {
@@ -40,7 +40,7 @@ export function useUserLoginMutation() {
 export function useUserLogoutMutation() {
   const navigate = useNavigate()
   return useMutation({
-    mutationFn: async () => await apiFetch("/api/logout"),
+    mutationFn: async () => await apiFetch("/api/auth/logout"),
     mutationKey: ["user-logout"],
     onSuccess: () => {
       localStorage.clear()

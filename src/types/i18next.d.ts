@@ -9,6 +9,8 @@ declare module "i18next" {
       forms: typeof resources.en.forms
       settings: typeof resources.en.settings
       navigation: typeof resources.en.navigation
+      pagination: typeof resources.en.pagination
+      message: typeof resources.en.message
     }
   }
 }

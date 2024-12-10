@@ -27,6 +27,7 @@
   "radial_chart": "径向图",
   "tooltip_chart": "提示图",
   "about": "关于",
+  "message": "消息",
   "user": {
     "logout": "登出",
     "profile": "个人资料",

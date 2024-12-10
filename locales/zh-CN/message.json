@@ -1,0 +1,9 @@
+{
+  "lotto": "彩种",
+  "method": "玩法",
+  "times": "倍",
+  "price": "小计",
+  "day": "日期",
+  "numbers": "号码",
+  "created_at": "记录时间"
+}

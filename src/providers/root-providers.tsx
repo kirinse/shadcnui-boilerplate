@@ -1,5 +1,6 @@
 import { QueryClientProvider } from "@tanstack/react-query"
 import { LazyMotion, MotionConfig } from "framer-motion"
+import { Provider } from "jotai"
 import type { FC, PropsWithChildren } from "react"
 import { HotkeysProvider } from "react-hotkeys-hook"
 import { I18nextProvider } from "react-i18next"
@@ -27,18 +28,20 @@ export const RootProviders: FC<PropsWithChildren> = ({ children }) => (
         }}
       >
         <QueryClientProvider client={queryClient}>
-          <ThemeWrapper>
-            <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+          <Provider>
+            <ThemeWrapper>
+              <ThemeProvider defaultTheme="system">
 
-              <TooltipProvider>
-                <HotkeysProvider initiallyActiveScopes={["home"]}>
-                  {children}
-                </HotkeysProvider>
-              </TooltipProvider>
-              <ThemesStyle />
-              <Toaster richColors />
-            </ThemeProvider>
-          </ThemeWrapper>
+                <TooltipProvider>
+                  <HotkeysProvider initiallyActiveScopes={["home"]}>
+                    {children}
+                  </HotkeysProvider>
+                </TooltipProvider>
+                <ThemesStyle />
+                <Toaster richColors />
+              </ThemeProvider>
+            </ThemeWrapper>
+          </Provider>
         </QueryClientProvider>
       </MotionConfig>
       <PrimitiveToaster />

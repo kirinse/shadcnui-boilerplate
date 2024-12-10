@@ -1,7 +1,6 @@
 import { env } from "@env"
 import {
   Command,
-  Send,
 } from "lucide-react"
 import * as React from "react"
 import { Link } from "react-router-dom"
@@ -20,14 +19,14 @@ import {
 } from "@/components/ui/sidebar"
 import { useNavMenu } from "@/hooks/query/user-memu"
 
-const navSecondary = [
-  {
-    title: "Feedback",
-    url: "https://github.com/TinsFox/shadcnui-boilerplate/issues",
-    icon: Send,
-    external: true,
-  },
-]
+// const navSecondary = [
+//   {
+//     title: "Feedback",
+//     url: "https://github.com/TinsFox/shadcnui-boilerplate/issues",
+//     icon: Send,
+//     external: true,
+//   },
+// ]
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { data: menus } = useNavMenu()
@@ -53,7 +52,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={menus} />
-        <NavSecondary items={navSecondary} className="mt-auto" />
+        <NavSecondary items={[]} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
         <NavUser />

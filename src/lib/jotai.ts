@@ -26,12 +26,14 @@ export const createAtomHooks = <T>(atom: PrimitiveAtom<T>) =>
     createAtomSelector(atom),
   ] as const
 
-const noop = []
+const noop: any[] = []
 const createAtomSelector = <T>(atom: Atom<T>) => {
   const useHook = <R>(selector: (a: T) => R, deps: any[] = noop) =>
     useAtomValue(
       selectAtom(
         atom,
+        // eslint-disable-next-line react-compiler/react-compiler
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         useCallback((a) => selector(a as T), deps),
       ),
     )

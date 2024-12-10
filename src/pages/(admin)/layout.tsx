@@ -1,7 +1,6 @@
 import { CircleHelp } from "lucide-react"
 import { Link, Outlet } from "react-router-dom"
 
-import { Icons } from "@/components/icons"
 import { AppSidebar } from "@/components/nav-sidebar/app-sidebar"
 import { NavBreadcrumb } from "@/components/nav-sidebar/nav-breadcrumb"
 import { Search } from "@/components/search"
@@ -18,7 +17,7 @@ import {
 import { SIDEBAR_COOKIE_NAME } from "@/constants"
 
 export function Component() {
-  const sidebarState = localStorage.getItem(SIDEBAR_COOKIE_NAME) === "true"
+  const sidebarState = localStorage.getItem(SIDEBAR_COOKIE_NAME) === "true" || true
 
   return (
     <SidebarProvider defaultOpen={sidebarState}>
@@ -33,11 +32,11 @@ export function Component() {
             </div>
             <div className="ml-auto flex flex-1 items-center space-x-2 px-2 sm:px-4 md:max-w-96 lg:max-w-lg">
               <Search />
-              <Link to="https://github.com/TinsFox/shadcnui-boilerplate" target="_blank">
+              {/* <Link to="https://github.com/TinsFox/shadcnui-boilerplate" target="_blank">
                 <Button variant="ghost" size="icon">
                   <Icons.gitHub className="size-5" />
                 </Button>
-              </Link>
+              </Link> */}
               <Link to="https://shadcnui-boilerplate.pages.dev" target="_blank">
                 <Button variant="ghost" size="icon">
                   <CircleHelp className="size-5" />

@@ -12,6 +12,7 @@ import {
   Info,
   List,
   ListTree,
+  MessageSquare,
   MessagesSquare,
   Orbit,
   Radar,
@@ -162,6 +163,11 @@ export const menus: IMenu[] = [
     title: "settings",
     icon: Settings,
     to: "/settings",
+  },
+  {
+    title: "message",
+    icon: MessageSquare,
+    to: "/message",
   },
   {
     title: "system",

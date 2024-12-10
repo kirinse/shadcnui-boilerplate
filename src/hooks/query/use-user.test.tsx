@@ -131,7 +131,7 @@ describe("User Hooks", () => {
     })
 
     it("should return default values when data is undefined", async () => {
-      vi.mocked(apiFetch).mockResolvedValueOnce()
+      vi.mocked(apiFetch).mockResolvedValueOnce("")
 
       const pagination = { pageIndex: 0, pageSize: 10 }
       const { result } = renderHook(() => useUsers(pagination), {

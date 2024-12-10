@@ -6,7 +6,7 @@ export const userProfileSchema = z.object({
   password: z.string(),
   birthdate: z.date(),
   registeredAt: z.date(),
-  username: z
+  name: z
     .string()
     .min(2, {
       message: "Username must be at least 2 characters.",

@@ -47,7 +47,6 @@ type PaginationLinkProps = {
 const PaginationLink = ({
   className,
   isActive,
-  disabled,
   size = "icon",
   ...props
 }: PaginationLinkProps) => (
@@ -78,7 +77,7 @@ const PaginationPrevious = ({
     {...props}
   >
     <ChevronLeftIcon className="size-4" />
-    <span>Previous</span>
+    <span className="sr-only">Previous</span>
   </PaginationLink>
 )
 PaginationPrevious.displayName = "PaginationPrevious"
@@ -93,7 +92,7 @@ const PaginationNext = ({
     className={cn("gap-1 pr-2.5", className)}
     {...props}
   >
-    <span>Next</span>
+    <span className="sr-only">Next</span>
     <ChevronRightIcon className="size-4" />
   </PaginationLink>
 )

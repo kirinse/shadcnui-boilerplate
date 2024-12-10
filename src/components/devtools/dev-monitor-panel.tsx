@@ -39,6 +39,7 @@ export function DevMonitorPanel({ className }: DevMonitorPanelProps) {
   const dragStartPos = useRef<{ x: number, y: number }>({ x: 0, y: 0 })
   const panelRef = useRef<HTMLDivElement>(null)
 
+  // eslint-disable-next-line unused-imports/no-unused-vars
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     e.preventDefault()
     setIsDragging(true)

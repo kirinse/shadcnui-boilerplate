@@ -61,7 +61,7 @@ export function NavMain({
     if (hasChanges) {
       setOpenItems(newOpenItems)
     }
-  }, [location.pathname, items, isPathActive, isParentActive])
+  }, [location.pathname, items, isPathActive, isParentActive, openItems, setOpenItems])
 
   const handleToggle = (title: string) => {
     setOpenItems((prev) => ({
@@ -84,7 +84,7 @@ export function NavMain({
   return (
     <SidebarGroup>
       <div className="flex items-center justify-between px-2">
-        <SidebarGroupLabel>Platform</SidebarGroupLabel>
+        <SidebarGroupLabel />
         <Button
           type="button"
           size="icon"
