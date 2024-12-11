@@ -28,6 +28,7 @@
   "tooltip_chart": "Tooltip Chart",
   "about": "About",
   "message": "Message",
+  "number": "Number",
   "user": {
     "logout": "Log out",
     "profile": "Profile",

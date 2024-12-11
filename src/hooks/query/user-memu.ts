@@ -8,6 +8,7 @@ import {
   ChartNoAxesCombined,
   ChartPie,
   CircleDot,
+  Coins,
   Gauge,
   Info,
   List,
@@ -168,6 +169,11 @@ export const menus: IMenu[] = [
     title: "message",
     icon: MessageSquare,
     to: "/message",
+  },
+  {
+    title: "number",
+    icon: Coins,
+    to: "/number",
   },
   {
     title: "system",
