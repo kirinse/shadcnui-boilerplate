@@ -6,10 +6,14 @@ import {
   useReactTable,
 } from "@tanstack/react-table"
 import { format } from "date-fns"
+import { HistoryIcon } from "lucide-react"
 import * as React from "react"
 
+import { DatePicker } from "@/components/date-picker"
 import { Icons } from "@/components/icons"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Refresher } from "@/components/refresher"
+import { Button } from "@/components/ui/button"
+import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { useMessages } from "@/hooks/query/use-message"
 import { i18n } from "@/i18n"
 import type { Order } from "@/schema/message"
@@ -17,7 +21,6 @@ import type { Order } from "@/schema/message"
 import { columns } from "./components/columns"
 import { DataTableColumnHeader } from "./components/data-table-column-header"
 import { DataTablePagination } from "./components/data-table-pagination"
-import { DataTableToolbar } from "./components/data-table-toolbar"
 import { OrderTable } from "./components/order-table"
 
 export function Component() {
@@ -33,7 +36,11 @@ export function Component() {
       value: new Date(),
     }],
   )
-  const { data: messages, isPending, isLoading } = useMessages(pagination, format(columnFilters.find((f) => f.id === "day")?.value as Date, "yyyy-MM-dd"))
+  const [refetchInterval, setRefetchInterval] = React.useState<number | boolean>(false)
+
+  const filter = columnFilters.find((filters) => filters.id === "day")
+
+  const { data: messages, isFetching, isRefetching, refetch } = useMessages(pagination, format(columnFilters.find((f) => f.id === "day")?.value as Date, "yyyy-MM-dd"), refetchInterval)
 
   const table = useReactTable({
     data: messages.list ?? [],
@@ -46,21 +53,47 @@ export function Component() {
     },
     onExpandedChange: setExpanded,
     getRowCanExpand: (row) => !!row.original.orders?.length,
-    // getSubRows: (row) => row.orders,
     getExpandedRowModel: getExpandedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
     manualPagination: true,
     manualFiltering: true,
-    // debugTable: true,
+
     debugAll: true,
   })
 
   return (
     <div>
       <div className="relative">
-        <DataTableToolbar table={table} />
+        <div className="my-4 flex items-center justify-between">
+          <DatePicker
+            mode="single"
+            required
+            selected={filter?.value as Date}
+            onSelect={(date: any) => table.setColumnFilters((old) => {
+              const index = old.findIndex((o) => o.id === "day")
+              if (index !== -1) old![index]!["value"] = date
+              else old.push({ id: "day", value: date })
+              table.setPageIndex(0)
+              table.resetExpanded(true)
+              return old
+            })}
+          />
+          <Button variant="ghost" title="刷新" disabled={isFetching || isRefetching} onClick={() => refetch()}>
+            <HistoryIcon className={isFetching || isRefetching ? "animate-spin" : ""} size={16} />
+            <span className="sr-only">刷新</span>
+          </Button>
+
+          <Refresher onValueChange={(v: string) => {
+            let vv: boolean | number = false
+            if (v !== "off") {
+              vv = Number.parseInt(v)
+            }
+            setRefetchInterval(vv)
+          }}
+          />
+        </div>
         <div className="rounded-md border">
           <Table>
             <TableHeader>
@@ -108,16 +141,29 @@ export function Component() {
                     colSpan={columns.length}
                     className="h-24 text-center"
                   >
-                    No results.
+                    暂无数据
                   </TableCell>
                 </TableRow>
               )}
             </TableBody>
+            <TableFooter>
+              <TableRow>
+                <TableCell colSpan={table.getVisibleFlatColumns().length}>
+                  页面小计:
+                  {" ¥"}
+                  {messages.summary?.page_total ?? 0}
+                  /
+                  总计:
+                  {" ¥"}
+                  {messages.summary?.total ?? 0}
+                </TableCell>
+              </TableRow>
+            </TableFooter>
           </Table>
         </div>
         <DataTablePagination table={table} />
-        {(isPending || isLoading) && (
-          <div className="absolute left-0 top-0 flex size-full items-center justify-center text-sm  text-primary-foreground backdrop-blur-sm backdrop-brightness-50">
+        {(isFetching || isRefetching) && (
+          <div className="absolute left-0 top-0 flex size-full items-center justify-center text-sm text-accent-foreground backdrop-blur-sm">
             <div className="flex items-center justify-center">
               <Icons.spinner className="mr-2 size-4 animate-spin" />
               <span>Loading...</span>
@@ -145,6 +191,7 @@ const order_columns: ColumnDef<Order>[] = [
       <DataTableColumnHeader column={column} title={i18n.t("message:lotto")} />
     ),
     cell: ({ row }) => row.getValue("lotto"),
+    enableHiding: false,
   },
   {
     accessorKey: "day",
@@ -153,6 +200,8 @@ const order_columns: ColumnDef<Order>[] = [
     ),
     cell: ({ row }) => row.getValue("day"),
     enableSorting: false,
+    enableHiding: false,
+
   },
   {
     accessorKey: "method",
@@ -160,6 +209,8 @@ const order_columns: ColumnDef<Order>[] = [
       <DataTableColumnHeader column={column} title={i18n.t("message:method")} />
     ),
     cell: ({ row }) => row.getValue("method"),
+    enableHiding: false,
+
   },
   {
     accessorKey: "content",
@@ -167,6 +218,8 @@ const order_columns: ColumnDef<Order>[] = [
       <DataTableColumnHeader column={column} title={i18n.t("message:numbers")} />
     ),
     cell: ({ row }) => row.getValue("content"),
+    enableHiding: false,
+
   },
   {
     accessorKey: "times",
@@ -174,13 +227,16 @@ const order_columns: ColumnDef<Order>[] = [
       <DataTableColumnHeader column={column} title={i18n.t("message:times")} />
     ),
     cell: ({ row }) => ` x ${row.getValue("times")}`,
+    enableHiding: false,
+
   },
   {
     accessorKey: "price",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title={i18n.t("message:price")} />
     ),
-    cell: ({ row }) => ` = ${row.getValue("price")}`,
+    cell: ({ row }) => ` = ¥ ${row.getValue("price")}`,
+    enableHiding: false,
   },
   {
     accessorKey: "created_at",
@@ -188,5 +244,7 @@ const order_columns: ColumnDef<Order>[] = [
       <DataTableColumnHeader column={column} title={i18n.t("message:created_at")} />
     ),
     cell: ({ row }) => new Date(row.getValue("created_at")).toLocaleString("zh-CN", { year: "numeric", month: "2-digit", day: "2-digit", weekday: undefined, hour: "2-digit", hour12: false, minute: "2-digit", second: "2-digit" }),
+    enableHiding: false,
+
   },
 ]

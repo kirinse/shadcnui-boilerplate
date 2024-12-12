@@ -1,5 +1,5 @@
 import { useAtom } from "jotai"
-import { ChevronRight, Maximize2, Minimize2 } from "lucide-react"
+import { ChevronRight } from "lucide-react"
 import { useEffect, useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { Link, useLocation } from "react-router-dom"
@@ -22,8 +22,6 @@ import {
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
 import type { IMenu } from "@/schema/menu"
-
-import { Button } from "../ui/button"
 
 export function NavMain({
   items,
@@ -70,7 +68,7 @@ export function NavMain({
     }))
   }
 
-  const handleToggleAll = () => {
+  const _handleToggleAll = () => {
     const allExpanded = items.every((item) => openItems[item.title])
     const newOpenItems: Record<string, boolean> = {}
 
@@ -85,7 +83,7 @@ export function NavMain({
     <SidebarGroup>
       <div className="flex items-center justify-between px-2">
         <SidebarGroupLabel />
-        <Button
+        {/* <Button
           type="button"
           size="icon"
           variant="ghost"
@@ -98,7 +96,7 @@ export function NavMain({
           ) : (
             <Maximize2 className="size-4" />
           )}
-        </Button>
+        </Button> */}
       </div>
       <SidebarMenu>
         {items.map((item) => (

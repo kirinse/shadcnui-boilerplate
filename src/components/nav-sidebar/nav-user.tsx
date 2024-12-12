@@ -1,14 +1,13 @@
+import { useAtom } from "jotai"
 import {
   BadgeCheck,
-  Bell,
   ChevronsUpDown,
-  CreditCard,
   LogOut,
-  Sparkles,
 } from "lucide-react"
 import { useTranslation } from "react-i18next"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
+import { authTokenAtom } from "@/atoms/auth"
 import {
   Avatar,
   AvatarFallback,
@@ -29,13 +28,16 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
-import { useUser, useUserLogoutMutation } from "@/hooks/query/use-user"
+import { useUser } from "@/hooks/query/use-user"
 
 export function NavUser() {
   const { isMobile } = useSidebar()
   const { t } = useTranslation("navigation")
   const { data: user } = useUser()
-  const logout = useUserLogoutMutation()
+  // const logout = useUserLogoutMutation()
+  const [_, setAuthTokenAtom] = useAtom(authTokenAtom)
+  const navigate = useNavigate()
+
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -77,13 +79,13 @@ export function NavUser() {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator className="my-1" />
-            <DropdownMenuGroup>
+            {/* <DropdownMenuGroup>
               <DropdownMenuItem className="flex items-center gap-2 px-2 py-1.5">
                 <Sparkles className="size-4" />
                 <span>{t("user.upgrade_pro")}</span>
               </DropdownMenuItem>
             </DropdownMenuGroup>
-            <DropdownMenuSeparator className="my-1" />
+            <DropdownMenuSeparator className="my-1" /> */}
             <DropdownMenuGroup>
               <DropdownMenuItem className="flex items-center gap-2 px-2 py-1.5" asChild>
                 <Link to="/settings/profile">
@@ -91,7 +93,7 @@ export function NavUser() {
                   <span>{t("user.account")}</span>
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem className="flex items-center gap-2 px-2 py-1.5" asChild>
+              {/* <DropdownMenuItem className="flex items-center gap-2 px-2 py-1.5" asChild>
                 <Link to="/system/account/billing">
                   <CreditCard className="size-4" />
                   <span>{t("user.billing")}</span>
@@ -102,12 +104,12 @@ export function NavUser() {
                   <Bell className="size-4" />
                   <span>{t("user.notifications")}</span>
                 </Link>
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
             </DropdownMenuGroup>
             <DropdownMenuSeparator className="my-1" />
             <DropdownMenuItem
               className="flex items-center gap-2 px-2 py-1.5"
-              onSelect={() => logout.mutate()}
+              onSelect={() => { setAuthTokenAtom(""); navigate("/login") }}
             >
               <LogOut className="size-4" />
               <span>{t("user.logout")}</span>

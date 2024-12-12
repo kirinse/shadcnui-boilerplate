@@ -42,7 +42,7 @@ export const columns: ColumnDef<Message>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="群" />
     ),
-    cell: ({ row }) => row.getValue("room_id"),
+    cell: ({ row }) => <Badge>{row.getValue("room_id")}</Badge>,
     enableHiding: false,
   },
   {
@@ -68,7 +68,7 @@ export const columns: ColumnDef<Message>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="时间" />
     ),
-    cell: ({ row }) => new Date((row.getValue("ts") as number) * 1000).toLocaleString("zh-CN", { year: "numeric", month: "2-digit", day: "2-digit", weekday: undefined, hour: "2-digit", hour12: false, minute: "2-digit", second: "2-digit" }),
+    cell: ({ row }) => <span className="text-nowrap">{new Date((row.getValue("ts") as number) * 1000).toLocaleString("zh-CN", { year: "numeric", month: "2-digit", day: "2-digit", weekday: undefined, hour: "2-digit", hour12: false, minute: "2-digit", second: "2-digit" })}</span>,
     enableHiding: false,
   },
   // {

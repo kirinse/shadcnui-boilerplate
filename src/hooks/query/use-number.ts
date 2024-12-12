@@ -4,7 +4,7 @@ import { format } from "date-fns"
 import { apiFetch } from "@/lib/api-fetch"
 import type { INumber } from "@/schema/number"
 
-export function useNumbers(lotto = "体", day = new Date()) {
+export function useNumbers(lotto = "体", day = new Date(), refetchInterval?: any) {
   return useQuery({
     queryKey: ["numbers", lotto, day],
     queryFn: async () => apiFetch<INumber[]>("/api/numbers", {
@@ -13,5 +13,6 @@ export function useNumbers(lotto = "体", day = new Date()) {
         day: format(day, "yyyy-MM-dd"),
       },
     }),
+    refetchInterval,
   })
 }
