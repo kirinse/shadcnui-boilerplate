@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"
+import { Link, redirect } from "react-router-dom"
 
 import { Logo } from "@/components/icons/logo"
 import { logos } from "@/components/icons/logos"
@@ -26,6 +26,9 @@ const rowClasses: Record<(typeof logos)[number]["row"], string> = {
   5: "xl:row-start-5",
   6: "xl:row-start-6",
 }
+
+export const loader = () => redirect(`/number`)
+
 export function Component() {
   return (
     <main className="grid h-full place-items-center">

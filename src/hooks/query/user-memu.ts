@@ -1,6 +1,5 @@
 import { queryOptions, useSuspenseQuery } from "@tanstack/react-query"
 import {
-  Coins,
   Gauge,
   MessageSquare,
 } from "lucide-react"
@@ -146,11 +145,11 @@ export const menus: IMenu[] = [
     icon: MessageSquare,
     to: "/message",
   },
-  {
-    title: "number",
-    icon: Coins,
-    to: "/number",
-  },
+  // {
+  //   title: "number",
+  //   icon: Coins,
+  //   to: "/number",
+  // },
   // {
   //   title: "settings",
   //   icon: Settings,
