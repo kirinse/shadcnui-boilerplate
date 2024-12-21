@@ -219,7 +219,6 @@ const order_columns: ColumnDef<Order>[] = [
     ),
     cell: ({ row }) => row.getValue("content"),
     enableHiding: false,
-
   },
   {
     accessorKey: "times",
@@ -228,7 +227,6 @@ const order_columns: ColumnDef<Order>[] = [
     ),
     cell: ({ row }) => ` x ${row.getValue("times")}`,
     enableHiding: false,
-
   },
   {
     accessorKey: "price",
@@ -236,6 +234,14 @@ const order_columns: ColumnDef<Order>[] = [
       <DataTableColumnHeader column={column} title={i18n.t("message:price")} />
     ),
     cell: ({ row }) => ` = ¥ ${row.getValue("price")}`,
+    enableHiding: false,
+  },
+  {
+    accessorKey: "prize",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title={i18n.t("message:prize")} />
+    ),
+    cell: ({ row }) => `¥ ${row.getValue("prize")}`,
     enableHiding: false,
   },
   {

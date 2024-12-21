@@ -8,6 +8,8 @@ export const orderSchema = z.object({
   times: z.number(),
   price: z.number(),
   content: z.string(),
+  numbers: z.array(z.number()),
+  prize: z.number(),
   created_at: z.date(),
 })
 export type Order = z.infer<typeof orderSchema>
