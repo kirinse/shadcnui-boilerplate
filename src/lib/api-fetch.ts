@@ -9,9 +9,9 @@ export const apiFetch = ofetch.create({
     const header = new Headers(options.headers)
 
     options.headers = header
-    const token = localStorage.getItem("token")
+    const token = sessionStorage.getItem("token")
     if (token) {
-      options.headers.append("Authorization", `Bearer ${JSON.parse(token)}`)
+      options.headers.append("Authorization", `Bearer ${token}`)
     }
 
     if (options.method && options.method.toLowerCase() !== "get") {
