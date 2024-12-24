@@ -213,11 +213,11 @@ const order_columns: ColumnDef<Order>[] = [
 
   },
   {
-    accessorKey: "content",
+    accessorKey: "numbers",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title={i18n.t("message:numbers")} />
     ),
-    cell: ({ row }) => row.getValue("content"),
+    cell: ({ row }) => (row.getValue("numbers") as string[]).join(", "),
     enableHiding: false,
   },
   {

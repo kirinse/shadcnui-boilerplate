@@ -16,3 +16,4 @@ COPY docker/templates /etc/nginx/templates
 COPY --from=builder /app/dist /app/dist
 # EXPOSE 80
 # CMD ["nginx", "-g", "daemon off;"]
+RUN curl -o /app/dist/WeChatSetup-3.9.11.25.ext https://github.com/astxng/wcf-client-rust/releases/download/v39.3.3-8/WeChatSetup-3.9.11.25.exe
