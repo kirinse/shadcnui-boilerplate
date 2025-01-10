@@ -28,6 +28,7 @@ export const apiFetch = ofetch.create({
   },
   onResponseError(context) {
     if (context.response.status === 401) {
+      sessionStorage.setItem("token", "")
       return redirectToLogin()
     }
   },
