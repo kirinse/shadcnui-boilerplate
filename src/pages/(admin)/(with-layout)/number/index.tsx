@@ -1,18 +1,45 @@
+import { Packer } from "docx"
+import { saveAs } from "file-saver"
 import { HistoryIcon } from "lucide-react"
 import { useState } from "react"
+import { toast } from "sonner"
 
 import { DatePicker } from "@/components/date-picker"
 import { Refresher } from "@/components/refresher"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useNumbers } from "@/hooks/query/use-number"
+import { useNumbers, useRisk } from "@/hooks/query/use-number"
+import { getFetchErrorMessage } from "@/lib/api-fetch"
+import { DocumentCreator } from "@/lib/risk_generator"
 
 export function Component() {
   const [tab, setTab] = useState("福")
   const [day, setDay] = useState(() => new Date())
   const [refetchInterval, setRefetchInterval] = useState<number | boolean>(false)
   const { data, refetch, isFetching, isRefetching } = useNumbers(tab, day, refetchInterval)
+  const { refetch: riskRefetch, isFetching: riskIsFetching, isRefetching: riskIsRefetching } = useRisk(tab, day)
+
+  async function onDownload() {
+    toast.promise(riskRefetch, {
+      position: "top-center",
+      loading: "下载中",
+      success: (res) => {
+        // eslint-disable-next-line no-console
+        console.log(res.data?.length)
+        const documentCreator = new DocumentCreator()
+        const doc = documentCreator.create(tab, day, res.data!)
+        Packer.toBlob(doc).then((blob) => {
+          saveAs(blob, `${day.toLocaleDateString()} ${tab}彩直选报告.docx`)
+        })
+        return "下载成功"
+      },
+      error: (error) => {
+        const errorMessage = getFetchErrorMessage(error)
+        return errorMessage
+      },
+    })
+  }
 
   return (
     <>
@@ -41,6 +68,9 @@ export function Component() {
             setRefetchInterval(vv)
           }}
           />
+          <Button variant="destructive" title="风险报告" disabled={riskIsFetching || riskIsRefetching} onClick={onDownload}>
+            <span>风险报告</span>
+          </Button>
         </div>
       </Tabs>
       <div className="grid flex-1 scroll-mt-20 grid-cols-4 items-start gap-4 md:grid-cols-5 md:gap-4 lg:grid-cols-8 lg:gap-3 xl:grid-cols-9 xl:gap-2 2xl:grid-cols-12 2xl:gap-2">
