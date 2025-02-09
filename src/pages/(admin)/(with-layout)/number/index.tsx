@@ -25,8 +25,10 @@ export function Component() {
       position: "top-center",
       loading: "下载中",
       success: (res) => {
-        // eslint-disable-next-line no-console
-        console.log(res.data?.length)
+        if (!res.data) {
+          toast.info("没有风险号码")
+          return
+        }
         const documentCreator = new DocumentCreator()
         const doc = documentCreator.create(tab, day, res.data!)
         Packer.toBlob(doc).then((blob) => {
@@ -68,9 +70,12 @@ export function Component() {
             setRefetchInterval(vv)
           }}
           />
-          <Button variant="destructive" title="风险报告" disabled={riskIsFetching || riskIsRefetching} onClick={onDownload}>
-            <span>风险报告</span>
-          </Button>
+          {/* TODO: if user.name.hasPrefix('bk_') && now() between 20:30 and 21:00 */}
+          {data?.length ? (
+            <Button variant="destructive" title="风险报告" disabled={riskIsFetching || riskIsRefetching} onClick={onDownload}>
+              <span>风险报告</span>
+            </Button>
+          ) : null}
         </div>
       </Tabs>
       <div className="grid flex-1 scroll-mt-20 grid-cols-4 items-start gap-4 md:grid-cols-5 md:gap-4 lg:grid-cols-8 lg:gap-3 xl:grid-cols-9 xl:gap-2 2xl:grid-cols-12 2xl:gap-2">

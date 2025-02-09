@@ -17,7 +17,7 @@ const initialState: AuthProviderState = {
 
 const AuthProviderContext = createContext<AuthProviderState>(initialState)
 
-export function ThemeProvider({
+export function AuthProvider({
   children,
   storageKey = "token",
   ...props

@@ -1,7 +1,11 @@
 import { CalendarIcon } from "@radix-ui/react-icons"
 import format from "date-fns/format"
+import { enUS, zhCN } from "date-fns/locale"
+import { useMemo } from "react"
 import type { DayPickerSingleProps } from "react-day-picker"
+import { useTranslation } from "react-i18next"
 
+import { languages } from "@/i18n"
 import { cn } from "@/lib/utils"
 
 import { Button } from "./ui/button"
@@ -15,6 +19,12 @@ export function DatePicker({
   onSelect,
   required,
 }: DayPickerSingleProps) {
+  const { i18n } = useTranslation()
+
+  const current_language = useMemo(() => {
+    return languages.find((l) => l.value === i18n.resolvedLanguage)
+  }, [i18n.resolvedLanguage])
+
   return (
     <div className="flex flex-1 items-center space-x-2">
       <Popover>
@@ -44,6 +54,8 @@ export function DatePicker({
             disabled={(date) =>
               date > new Date() || date < new Date("2024-12-01")}
             initialFocus
+            locale={current_language?.value === "zh" ? zhCN : enUS}
+            defaultMonth={selected}
           />
         </PopoverContent>
       </Popover>
