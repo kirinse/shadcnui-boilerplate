@@ -1,3 +1,7 @@
-import { atomWithStorage } from "jotai/utils"
+import { atomWithStorage, createJSONStorage } from "jotai/utils"
 
-export const authTokenAtom = atomWithStorage<string>("token", "", sessionStorage)
+export const authStorage = createJSONStorage(
+  () => sessionStorage,
+)
+
+export const authTokenAtom = atomWithStorage<Record<string, any>>("auth", {}, authStorage, { getOnInit: true })

@@ -1,6 +1,10 @@
 import { FetchError, ofetch } from "ofetch"
 
+import { authStorage } from "@/atoms/auth"
+
 import { getRedirectToLoginUrl } from "./utils"
+
+const store = authStorage
 
 export const apiFetch = ofetch.create({
   credentials: "include",
@@ -9,7 +13,9 @@ export const apiFetch = ofetch.create({
     const header = new Headers(options.headers)
 
     options.headers = header
-    const token = sessionStorage.getItem("token")
+
+    const { token } = store.getItem("auth", {}) as { token: string }
+
     if (token) {
       options.headers.append("Authorization", `Bearer ${token}`)
     }
@@ -28,7 +34,7 @@ export const apiFetch = ofetch.create({
   },
   onResponseError(context) {
     if (context.response.status === 401) {
-      sessionStorage.setItem("token", "")
+      store.setItem("auth", {})
       return redirectToLogin()
     }
   },

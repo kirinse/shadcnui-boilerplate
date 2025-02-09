@@ -1,9 +1,11 @@
 import { Packer } from "docx"
 import { saveAs } from "file-saver"
+import { useAtom } from "jotai"
 import { HistoryIcon } from "lucide-react"
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { toast } from "sonner"
 
+import { authTokenAtom } from "@/atoms/auth"
 import { DatePicker } from "@/components/date-picker"
 import { Refresher } from "@/components/refresher"
 import { Badge } from "@/components/ui/badge"
@@ -42,6 +44,8 @@ export function Component() {
       },
     })
   }
+  const [authToken, _] = useAtom(authTokenAtom)
+  const canDownRisk = useMemo(() => authToken.is_verified || authToken.is_admin, [authToken])
 
   return (
     <>
@@ -70,8 +74,7 @@ export function Component() {
             setRefetchInterval(vv)
           }}
           />
-          {/* TODO: if user.name.hasPrefix('bk_') && now() between 20:30 and 21:00 */}
-          {data?.length ? (
+          {canDownRisk && data?.length ? (
             <Button variant="destructive" title="风险报告" disabled={riskIsFetching || riskIsRefetching} onClick={onDownload}>
               <span>风险报告</span>
             </Button>

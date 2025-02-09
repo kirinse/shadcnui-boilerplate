@@ -105,7 +105,7 @@ function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const [authToken, setAuthTokenAtom] = useAtom(authTokenAtom)
 
   React.useEffect(() => {
-    if (authToken) {
+    if (authToken.token) {
       navigate(redirectUrl, {
         replace: true,
       })
@@ -117,7 +117,7 @@ function UserAuthForm({ className, ...props }: UserAuthFormProps) {
       position: "top-center",
       loading: t("login.loading"),
       success: (data) => {
-        setAuthTokenAtom(data.token)
+        setAuthTokenAtom(data)
         navigate(redirectUrl, {
           replace: true,
         })

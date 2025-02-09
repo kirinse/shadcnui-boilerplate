@@ -109,7 +109,7 @@ export function NavUser() {
             <DropdownMenuSeparator className="my-1" />
             <DropdownMenuItem
               className="flex items-center gap-2 px-2 py-1.5"
-              onSelect={() => { setAuthTokenAtom(""); navigate("/login") }}
+              onSelect={() => { setAuthTokenAtom({}); navigate("/login") }}
             >
               <LogOut className="size-4" />
               <span>{t("user.logout")}</span>

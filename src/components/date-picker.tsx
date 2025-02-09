@@ -5,12 +5,10 @@ import { useMemo } from "react"
 import type { DayPickerSingleProps } from "react-day-picker"
 import { useTranslation } from "react-i18next"
 
-import { languages } from "@/i18n"
 import { cn } from "@/lib/utils"
-
-import { Button } from "./ui/button"
-import { Calendar } from "./ui/calendar"
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover"
+import { Button } from "@/ui/button"
+import { Calendar } from "@/ui/calendar"
+import { Popover, PopoverContent, PopoverTrigger } from "@/ui/popover"
 
 export function DatePicker({
   mode,
@@ -22,7 +20,7 @@ export function DatePicker({
   const { i18n } = useTranslation()
 
   const current_language = useMemo(() => {
-    return languages.find((l) => l.value === i18n.resolvedLanguage)
+    return i18n.resolvedLanguage
   }, [i18n.resolvedLanguage])
 
   return (
@@ -54,7 +52,7 @@ export function DatePicker({
             disabled={(date) =>
               date > new Date() || date < new Date("2024-12-01")}
             initialFocus
-            locale={current_language?.value === "zh" ? zhCN : enUS}
+            locale={current_language === "zh" ? zhCN : enUS}
             defaultMonth={selected}
           />
         </PopoverContent>
