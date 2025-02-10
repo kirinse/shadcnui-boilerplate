@@ -28,5 +28,8 @@ export function useRisk(lotto = "福", day = new Date()) {
     }),
     refetchOnWindowFocus: false,
     enabled: false,
+    refetchOnReconnect: false,
+    retryOnMount: false,
+    staleTime: 500,
   })
 }
