@@ -31,7 +31,7 @@ export class DocumentCreator {
               width: { size: 9638, type: WidthType.DXA },
               margins: { top: 20, bottom: 20, left: 20, right: 20 },
               layout: TableLayoutType.FIXED,
-              columnWidths: [1410, 5408, 2820],
+              columnWidths: [1410, 8228],
               rows: [
                 new TableRow({
                   tableHeader: true,
@@ -42,12 +42,11 @@ export class DocumentCreator {
                       margins: { top: 20, bottom: 20, left: 20, right: 20 },
 
                     }),
-                    new TableCell({
-                      children: [new Paragraph({ text: "奖金", autoSpaceEastAsianText: true })],
-                      verticalAlign: VerticalAlign.CENTER,
-                      margins: { top: 20, bottom: 20, left: 20, right: 20 },
-
-                    }),
+                    // new TableCell({
+                    //   children: [new Paragraph({ text: "奖金", autoSpaceEastAsianText: true })],
+                    //   verticalAlign: VerticalAlign.CENTER,
+                    //   margins: { top: 20, bottom: 20, left: 20, right: 20 },
+                    // }),
                     new TableCell({
                       children: [new Paragraph({ text: `直选注数`, autoSpaceEastAsianText: true })],
                       verticalAlign: VerticalAlign.CENTER,
@@ -65,11 +64,11 @@ export class DocumentCreator {
                       margins: { top: 20, bottom: 20, left: 20, right: 20 },
 
                     }),
-                    new TableCell({
-                      children: [new Paragraph({ text: `${new Intl.NumberFormat("zh-CN", { style: "currency", currency: "CNY" }).format(risk.prize)}` })],
-                      verticalAlign: VerticalAlign.CENTER,
-                      margins: { top: 20, bottom: 20, left: 20, right: 20 },
-                    }),
+                    // new TableCell({
+                    //   children: [new Paragraph({ text: `${new Intl.NumberFormat("zh-CN", { style: "currency", currency: "CNY" }).format(risk.prize)}` })],
+                    //   verticalAlign: VerticalAlign.CENTER,
+                    //   margins: { top: 20, bottom: 20, left: 20, right: 20 },
+                    // }),
                     new TableCell({
                       children: [new Paragraph({ text: `${Math.ceil(risk.prize / 1800)}` })],
                       verticalAlign: VerticalAlign.CENTER,
