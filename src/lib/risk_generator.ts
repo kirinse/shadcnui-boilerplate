@@ -10,8 +10,10 @@ import {
   WidthType,
 } from "docx"
 
+import type { IRisk } from "@/schema/number"
+
 export class DocumentCreator {
-  public create(lotto: string, day: Date, data: any[]): Document {
+  public create(lotto: string, day: Date, data: IRisk[]): Document {
     const title = `${day.toLocaleDateString()} ${lotto}彩直选报告`
 
     const document = new Document({
@@ -29,7 +31,7 @@ export class DocumentCreator {
               width: { size: 9638, type: WidthType.DXA },
               margins: { top: 20, bottom: 20, left: 20, right: 20 },
               layout: TableLayoutType.FIXED,
-              columnWidths: [1410, 1410, 1410, 5408],
+              columnWidths: [1410, 5408, 2820],
               rows: [
                 new TableRow({
                   tableHeader: true,
@@ -41,19 +43,13 @@ export class DocumentCreator {
 
                     }),
                     new TableCell({
-                      children: [new Paragraph({ text: `次数`, autoSpaceEastAsianText: true })],
-                      verticalAlign: VerticalAlign.CENTER,
-                      margins: { top: 20, bottom: 20, left: 20, right: 20 },
-
-                    }),
-                    new TableCell({
-                      children: [new Paragraph({ text: `倍数`, autoSpaceEastAsianText: true })],
-                      verticalAlign: VerticalAlign.CENTER,
-                      margins: { top: 20, bottom: 20, left: 20, right: 20 },
-
-                    }),
-                    new TableCell({
                       children: [new Paragraph({ text: "奖金", autoSpaceEastAsianText: true })],
+                      verticalAlign: VerticalAlign.CENTER,
+                      margins: { top: 20, bottom: 20, left: 20, right: 20 },
+
+                    }),
+                    new TableCell({
+                      children: [new Paragraph({ text: `直选注数`, autoSpaceEastAsianText: true })],
                       verticalAlign: VerticalAlign.CENTER,
                       margins: { top: 20, bottom: 20, left: 20, right: 20 },
 
@@ -70,21 +66,15 @@ export class DocumentCreator {
 
                     }),
                     new TableCell({
-                      children: [new Paragraph({ text: `${risk.count}` })],
-                      verticalAlign: VerticalAlign.CENTER,
-                      margins: { top: 20, bottom: 20, left: 20, right: 20 },
-
-                    }),
-                    new TableCell({
-                      children: [new Paragraph({ text: `${risk.times}` })],
-                      verticalAlign: VerticalAlign.CENTER,
-                      margins: { top: 20, bottom: 20, left: 20, right: 20 },
-
-                    }),
-                    new TableCell({
                       children: [new Paragraph({ text: `${new Intl.NumberFormat("zh-CN", { style: "currency", currency: "CNY" }).format(risk.prize)}` })],
                       verticalAlign: VerticalAlign.CENTER,
                       margins: { top: 20, bottom: 20, left: 20, right: 20 },
+                    }),
+                    new TableCell({
+                      children: [new Paragraph({ text: `${Math.ceil(risk.prize / 1800)}` })],
+                      verticalAlign: VerticalAlign.CENTER,
+                      margins: { top: 20, bottom: 20, left: 20, right: 20 },
+
                     }),
                   ],
                 })),

@@ -13,8 +13,6 @@ export type INumber = z.infer<typeof numberSchema>
 
 export const riskSchema = z.object({
   number: z.string(),
-  count: z.number(),
-  times: z.number(),
   prize: z.number(),
 })
 
