@@ -1,5 +1,6 @@
 import {
   keepPreviousData,
+  useMutation,
   useQuery,
 } from "@tanstack/react-query"
 import type { PaginationState } from "@tanstack/react-table"
@@ -33,4 +34,14 @@ export function useMessages(pagination: PaginationState, day?: string, refetchIn
       summary: data?.summary,
     },
   }
+}
+
+export function useMessageDeletionMutation() {
+  return useMutation({
+    mutationFn: async (id: number) =>
+      await apiFetch(`/api/messages/${id}`, {
+        method: "DELETE",
+      }),
+    mutationKey: ["message-delete"],
+  })
 }

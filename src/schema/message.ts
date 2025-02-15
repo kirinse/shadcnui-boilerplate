@@ -20,6 +20,7 @@ export const messageSchema = z.object({
   content: z.string(),
   sender: z.string(),
   ts: z.number(),
+  status: z.enum(["Pending", "Finished", "Failed", "Deleted"]),
   orders: z.array(orderSchema),
 })
 export type Message = z.infer<typeof messageSchema>

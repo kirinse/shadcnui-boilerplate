@@ -1,5 +1,5 @@
 import type { ColumnDef } from "@tanstack/react-table"
-import { ChevronRight } from "lucide-react"
+import { ChevronRight, CircleCheck, CircleX, Hourglass, Trash } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -71,8 +71,34 @@ export const columns: ColumnDef<Message>[] = [
     cell: ({ row }) => <span className="text-nowrap">{new Date((row.getValue("ts") as number) * 1000).toLocaleString("zh-CN", { year: "numeric", month: "2-digit", day: "2-digit", weekday: undefined, hour: "2-digit", hour12: false, minute: "2-digit", second: "2-digit" })}</span>,
     enableHiding: false,
   },
-  // {
-  //     id: "actions",
-  //     cell: ({ row }) => <DataTableRowActions row={row} />,
-  // },
+  {
+    accessorKey: "status",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="状态" />
+    ),
+    cell: ({ row }) => {
+      switch (row.getValue("status")) {
+        case "Deleted": {
+          return (<Trash size={16} className="text-slate-400" />)
+        }
+        case "Finished": {
+          return (<CircleCheck size={16} className="text-green-500" />)
+        }
+        case "Failed": {
+          return (<CircleX size={16} className="text-red-500" />)
+        }
+        default: {
+          return (<Hourglass size={16} xlinkTitle="等待" className="text-orange-500" />)
+        }
+      }
+    },
+    enableHiding: false,
+  },
+  {
+    id: "actions",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="操作" />
+    ),
+    enableHiding: false,
+  },
 ]

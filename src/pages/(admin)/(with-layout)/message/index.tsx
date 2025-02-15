@@ -6,16 +6,19 @@ import {
   useReactTable,
 } from "@tanstack/react-table"
 import { format } from "date-fns"
-import { HistoryIcon } from "lucide-react"
+import { t } from "i18next"
+import { HistoryIcon, Trash } from "lucide-react"
 import * as React from "react"
+import { toast } from "sonner"
 
 import { DatePicker } from "@/components/date-picker"
 import { Icons } from "@/components/icons"
 import { Refresher } from "@/components/refresher"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { useMessages } from "@/hooks/query/use-message"
+import { useMessageDeletionMutation, useMessages } from "@/hooks/query/use-message"
 import { i18n } from "@/i18n"
+import { getFetchErrorMessage } from "@/lib/api-fetch"
 import type { Order } from "@/schema/message"
 
 import { columns } from "./components/columns"
@@ -42,6 +45,8 @@ export function Component() {
 
   const { data: messages, isFetching, isRefetching, refetch } = useMessages(pagination, format(columnFilters.find((f) => f.id === "day")?.value as Date, "yyyy-MM-dd"), refetchInterval)
 
+  const deletionMutation = useMessageDeletionMutation()
+
   const table = useReactTable({
     data: messages.list ?? [],
     columns,
@@ -62,6 +67,21 @@ export function Component() {
 
     debugAll: true,
   })
+
+  async function onDelete(id: number) {
+    toast.promise(deletionMutation.mutateAsync(id), {
+      position: "top-center",
+      loading: "删除中...",
+      success: () => {
+        refetch()
+        return "删除成功"
+      },
+      error: (error) => {
+        const errorMessage = getFetchErrorMessage(error)
+        return t(errorMessage)
+      },
+    })
+  }
 
   return (
     <div>
@@ -116,10 +136,15 @@ export function Component() {
               {table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map((row) => (
                   <React.Fragment key={row.id}>
-                    <TableRow>
+                    <TableRow className={row.getValue("status") === "Deleted" ? "text-slate-400" : ""}>
                       {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id}>
-                          {flexRender(
+                          {cell.id.endsWith("actions") && row.getValue("status") !== "Deleted" ? (
+                            <Button variant="destructive" title="删除" disabled={deletionMutation.isPending} onClick={() => onDelete(row.getValue("id"))}>
+                              <Trash size={16} />
+                              <span className="sr-only">删除</span>
+                            </Button>
+                          ) : flexRender(
                             cell.column.columnDef.cell,
                             cell.getContext(),
                           )}
