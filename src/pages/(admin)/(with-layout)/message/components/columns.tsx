@@ -42,7 +42,7 @@ export const columns: ColumnDef<Message>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="群" />
     ),
-    cell: ({ row }) => <Badge>{row.getValue("room_id")}</Badge>,
+    cell: ({ row }) => <Badge className={`${row.getValue("status") === "Deleted" ? "text-slate-400 line-through" : ""}`} variant={row.getValue("status") === "Deleted" ? "outline" : "default"}>{row.getValue("room_id")}</Badge>,
     enableHiding: false,
   },
   {
@@ -51,7 +51,7 @@ export const columns: ColumnDef<Message>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="发送" />
     ),
-    cell: ({ row }) => <Badge variant="outline">{row.getValue("sender")}</Badge>,
+    cell: ({ row }) => <Badge className={`${row.getValue("status") === "Deleted" ? "text-slate-400 line-through" : ""}`} variant={row.getValue("status") === "Deleted" ? "outline" : "secondary"}>{row.getValue("sender")}</Badge>,
     enableHiding: false,
   },
   {

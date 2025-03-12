@@ -136,10 +136,10 @@ export function Component() {
               {table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map((row) => (
                   <React.Fragment key={row.id}>
-                    <TableRow className={row.getValue("status") === "Deleted" ? "text-slate-400" : ""}>
+                    <TableRow className={`${row.getIsExpanded() ? "bg-muted/20" : ""} ${row.getValue("status") === "Deleted" ? "text-slate-400 line-through" : ""}`}>
                       {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id}>
-                          {cell.id.endsWith("actions") && row.getValue("status") !== "Deleted" ? (
+                          {cell.id.endsWith("actions") && row.getValue("status") !== "Deleted" && row.getValue("status") !== "Failed" ? (
                             <Button variant="destructive" title="删除" disabled={deletionMutation.isPending} onClick={() => onDelete(row.getValue("id"))}>
                               <Trash size={16} />
                               <span className="sr-only">删除</span>
@@ -153,7 +153,7 @@ export function Component() {
                     </TableRow>
                     {row.getIsExpanded() && row.getCanExpand() && (
                       <tr>
-                        <td colSpan={row.getVisibleCells().length}>
+                        <td colSpan={row.getVisibleCells().length} className="bg-muted/20">
                           <OrderTable columns={order_columns} data={row.original.orders} />
                         </td>
                       </tr>
