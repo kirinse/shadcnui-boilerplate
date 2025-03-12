@@ -4,26 +4,30 @@ import { format } from "date-fns"
 import { apiFetch } from "@/lib/api-fetch"
 import type { INumber, IRisk } from "@/schema/number"
 
-export function useNumbers(lotto = "体", day = new Date(), refetchInterval?: any) {
+export function useNumbers(lotto = "福", day = new Date(), refetchInterval?: any, number?: any) {
   return useQuery({
-    queryKey: ["numbers", lotto, day],
+    queryKey: ["numbers", lotto, day, number],
     queryFn: async () => apiFetch<INumber[]>("/api/numbers", {
       params: {
         lotto,
         day: format(day, "yyyy-MM-dd"),
+        number,
       },
     }),
     refetchInterval,
+    refetchIntervalInBackground: true,
+    staleTime: 1000,
   })
 }
 
-export function useRisk(lotto = "福", day = new Date()) {
+export function useRisk(lotto = "福", day = new Date(), number?: any) {
   return useQuery({
-    queryKey: ["risk", lotto, day],
+    queryKey: ["risk", lotto, day, number],
     queryFn: async () => apiFetch<IRisk[]>("/api/risk", {
       params: {
         lotto,
         day: format(day, "yyyy-MM-dd"),
+        number,
       },
     }),
     refetchOnWindowFocus: false,

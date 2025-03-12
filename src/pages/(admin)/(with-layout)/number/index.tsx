@@ -1,7 +1,7 @@
 import { Packer } from "docx"
 import { saveAs } from "file-saver"
 import { useAtom } from "jotai"
-import { HistoryIcon } from "lucide-react"
+import { RefreshCwIcon } from "lucide-react"
 import { useMemo, useState } from "react"
 import { toast } from "sonner"
 
@@ -10,6 +10,7 @@ import { DatePicker } from "@/components/date-picker"
 import { Refresher } from "@/components/refresher"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useNumbers, useRisk } from "@/hooks/query/use-number"
 import { getFetchErrorMessage } from "@/lib/api-fetch"
@@ -18,9 +19,11 @@ import { DocumentCreator } from "@/lib/risk_generator"
 export function Component() {
   const [tab, setTab] = useState("福")
   const [day, setDay] = useState(() => new Date())
+  const [number, setNumber] = useState<number | undefined>()
+
   const [refetchInterval, setRefetchInterval] = useState<number | boolean>(false)
-  const { data, refetch, isFetching, isRefetching } = useNumbers(tab, day, refetchInterval)
-  const { refetch: riskRefetch, isFetching: riskIsFetching, isRefetching: riskIsRefetching } = useRisk(tab, day)
+  const { data, refetch, isFetching, isRefetching } = useNumbers(tab, day, refetchInterval, number)
+  const { refetch: riskRefetch, isFetching: riskIsFetching, isRefetching: riskIsRefetching } = useRisk(tab, day, number)
 
   async function onDownload() {
     toast.promise(riskRefetch, {
@@ -32,9 +35,9 @@ export function Component() {
           return
         }
         const documentCreator = new DocumentCreator()
-        const doc = documentCreator.create(tab, day, res.data!)
+        const doc = documentCreator.create(tab, day, res.data!, number)
         Packer.toBlob(doc).then((blob) => {
-          saveAs(blob, `${day.toLocaleDateString()} ${tab}彩直选报告.docx`)
+          saveAs(blob, `${day.toLocaleDateString()} ${tab}彩直选${number ?? ""}报告.docx`)
         })
         return "下载成功"
       },
@@ -55,14 +58,29 @@ export function Component() {
             <TabsTrigger value="福">福</TabsTrigger>
             <TabsTrigger value="体">体</TabsTrigger>
           </TabsList>
-          <DatePicker
-            mode="single"
-            required
-            selected={day}
-            onSelect={(date) => setDay(date!)}
-          />
+          <div className="flex flex-1 space-x-4">
+            <div>
+              <DatePicker
+                mode="single"
+                required
+                selected={day}
+                onSelect={(date) => setDay(date!)}
+              />
+            </div>
+            <div>
+              <Input
+                type="number"
+                min={1}
+                max={999}
+                className="w-[60px] [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                placeholder="号码"
+                value={number || undefined}
+                onChange={(e) => setNumber(e.target.value ? Number.parseInt(e.target.value) : undefined)}
+              />
+            </div>
+          </div>
           <Button variant="ghost" title="刷新" disabled={isFetching || isRefetching} onClick={() => refetch()}>
-            <HistoryIcon className={isFetching || isRefetching ? "animate-spin" : ""} size={16} />
+            <RefreshCwIcon className={isFetching || isRefetching ? "animate-spin" : ""} size={16} />
             <span className="sr-only">刷新</span>
           </Button>
 

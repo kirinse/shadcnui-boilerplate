@@ -7,7 +7,7 @@ import {
 } from "@tanstack/react-table"
 import { format } from "date-fns"
 import { t } from "i18next"
-import { HistoryIcon, Trash } from "lucide-react"
+import { RefreshCwIcon, Trash } from "lucide-react"
 import * as React from "react"
 import { toast } from "sonner"
 
@@ -101,7 +101,7 @@ export function Component() {
             })}
           />
           <Button variant="ghost" title="刷新" disabled={isFetching || isRefetching} onClick={() => refetch()}>
-            <HistoryIcon className={isFetching || isRefetching ? "animate-spin" : ""} size={16} />
+            <RefreshCwIcon className={isFetching || isRefetching ? "animate-spin" : ""} size={16} />
             <span className="sr-only">刷新</span>
           </Button>
 

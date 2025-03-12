@@ -13,8 +13,8 @@ import {
 import type { IRisk } from "@/schema/number"
 
 export class DocumentCreator {
-  public create(lotto: string, day: Date, data: IRisk[]): Document {
-    const title = `${day.toLocaleDateString()} ${lotto}彩直选报告`
+  public create(lotto: string, day: Date, data: IRisk[], number?: number): Document {
+    const title = `${day.toLocaleDateString()} ${lotto}彩直选${number ?? ""}报告`
 
     const document = new Document({
       title,
