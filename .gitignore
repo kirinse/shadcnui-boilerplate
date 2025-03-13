@@ -25,7 +25,7 @@ dist-ssr
 *.sw?
 .history
 
-.env
+# .env
 
 *storybook.log
 
