@@ -136,7 +136,7 @@ export function Component() {
               {table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map((row) => (
                   <React.Fragment key={row.id}>
-                    <TableRow className={`${row.getIsExpanded() ? "bg-muted/20" : ""} ${row.getValue("status") === "Deleted" ? "text-slate-400 line-through" : ""}`}>
+                    <TableRow className={`${row.getIsExpanded() ? "bg-muted" : ""} ${row.getValue("status") === "Deleted" ? "text-slate-400 line-through" : ""} ${row.getIsExpanded() ? "border-transparent" : ""}`}>
                       {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id}>
                           {cell.id.endsWith("actions") && row.getValue("status") !== "Deleted" && row.getValue("status") !== "Failed" ? (
@@ -152,8 +152,8 @@ export function Component() {
                       ))}
                     </TableRow>
                     {row.getIsExpanded() && row.getCanExpand() && (
-                      <tr>
-                        <td colSpan={row.getVisibleCells().length} className="bg-muted/20">
+                      <tr className="border-b transition-colors hover:bg-muted/50">
+                        <td colSpan={row.getVisibleCells().length}>
                           <OrderTable columns={order_columns} data={row.original.orders} />
                         </td>
                       </tr>
