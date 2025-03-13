@@ -152,7 +152,7 @@ export function Component() {
                       ))}
                     </TableRow>
                     {row.getIsExpanded() && row.getCanExpand() && (
-                      <tr className="border-b transition-colors hover:bg-muted/50">
+                      <tr className="border-b bg-muted transition-colors hover:bg-muted/50">
                         <td colSpan={row.getVisibleCells().length}>
                           <OrderTable columns={order_columns} data={row.original.orders} />
                         </td>
