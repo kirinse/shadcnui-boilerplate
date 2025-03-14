@@ -60,7 +60,7 @@ export const columns: ColumnDef<Message>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="内容" />
     ),
-    cell: ({ row }) => <div className="flex items-center" style={{ whiteSpace: "pre-wrap" }}>{row.getValue("content")}</div>,
+    cell: ({ row }) => <div className="flex items-center whitespace-pre-wrap break-all">{row.getValue("content")}</div>,
     enableHiding: false,
   },
   {

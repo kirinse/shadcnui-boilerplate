@@ -1,4 +1,3 @@
-import pkg from "@pkg"
 import { useEffect, useRef } from "react"
 import { isRouteErrorResponse, useRouteError } from "react-router-dom"
 import { toast } from "sonner"
@@ -94,7 +93,7 @@ export function ErrorElement() {
         <Logo className="size-5" />
         {" "}
         <a
-          href={pkg.homepage}
+          href="#"
           className="cursor-pointer font-bold"
           target="_blank"
           rel="noreferrer"
