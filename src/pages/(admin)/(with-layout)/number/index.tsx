@@ -19,7 +19,7 @@ import { DocumentCreator } from "@/lib/risk_generator"
 export function Component() {
   const [tab, setTab] = useState("福")
   const [day, setDay] = useState(() => new Date())
-  const [number, setNumber] = useState<number | undefined>()
+  const [number, setNumber] = useState<string | undefined>()
 
   const [refetchInterval, setRefetchInterval] = useState<number | boolean>(false)
   const { data, refetch, isFetching, isRefetching } = useNumbers(tab, day, refetchInterval, number)
@@ -72,10 +72,15 @@ export function Component() {
                 type="number"
                 min={1}
                 max={999}
+                maxLength={3}
                 className="w-[60px] [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                 placeholder="号码"
                 value={number || undefined}
-                onChange={(e) => setNumber(e.target.value ? Number.parseInt(e.target.value) : undefined)}
+                onChange={(e) => {
+                  const v = e.target.value || undefined
+                  if (v !== undefined && v.length > 3) { e.preventDefault(); return }
+                  setNumber(v)
+                }}
               />
             </div>
           </div>

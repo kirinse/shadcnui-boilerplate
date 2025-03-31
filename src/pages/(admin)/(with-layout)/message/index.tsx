@@ -114,8 +114,28 @@ export function Component() {
           }}
           />
         </div>
+        <DataTablePagination table={table} />
         <div className="rounded-md border">
           <Table>
+            <TableHeader className="bg-muted/50 font-medium">
+              <TableRow>
+                <TableCell colSpan={table.getVisibleFlatColumns().length}>
+                  页面小计:
+                  {" ¥"}
+                  {messages.summary?.page_total ?? 0}
+                  /总计
+                  {` `}
+                  {messages.summary?.total ?
+                    Object.entries(messages.summary?.total).map(([k, v]) => (
+                      <React.Fragment key={k}>
+                        <span className="text-red-500">{k}:</span>
+                        {`¥${v}`}
+                      </React.Fragment>
+                    )) :
+                    ""}
+                </TableCell>
+              </TableRow>
+            </TableHeader>
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
@@ -177,10 +197,16 @@ export function Component() {
                   页面小计:
                   {" ¥"}
                   {messages.summary?.page_total ?? 0}
-                  /
-                  总计:
-                  {" ¥"}
-                  {messages.summary?.total ?? 0}
+                  /总计
+                  {` `}
+                  {messages.summary?.total ?
+                    Object.entries(messages.summary?.total).map(([k, v]) => (
+                      <React.Fragment key={k}>
+                        <span className="text-red-500">{k}:</span>
+                        {`¥${v}`}
+                      </React.Fragment>
+                    )) :
+                    ""}
                 </TableCell>
               </TableRow>
             </TableFooter>
