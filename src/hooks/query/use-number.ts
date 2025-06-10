@@ -2,12 +2,12 @@ import { useQuery } from "@tanstack/react-query"
 import { format } from "date-fns"
 
 import { apiFetch } from "@/lib/api-fetch"
-import type { INumber, IRisk } from "@/schema/number"
+import type { INumber, INumberDetails, IRisk } from "@/schema/number"
 
 export function useNumbers(lotto = "福", day = new Date(), refetchInterval?: any, number?: string) {
   return useQuery({
     queryKey: ["numbers", lotto, day, number],
-    queryFn: async () => apiFetch<INumber[]>("/api/numbers", {
+    queryFn: async () => apiFetch<{ total: number, numbers: INumber[] }>("/api/numbers", {
       params: {
         lotto,
         day: format(day, "yyyy-MM-dd"),
@@ -32,6 +32,18 @@ export function useRisk(lotto = "福", day = new Date(), number?: any) {
     }),
     refetchOnWindowFocus: false,
     enabled: false,
+    refetchOnReconnect: false,
+    retryOnMount: false,
+    staleTime: 500,
+  })
+}
+
+export function useNumberDetails(lotto = "福", day = new Date(), number: string) {
+  return useQuery({
+    queryKey: ["numberDetails", lotto, day, number],
+    queryFn: async () => apiFetch<INumberDetails[]>(`/api/numbers/${lotto}/${format(day, "yyyy-MM-dd")}/${number}`),
+    refetchOnWindowFocus: false,
+    enabled: number !== "",
     refetchOnReconnect: false,
     retryOnMount: false,
     staleTime: 500,
