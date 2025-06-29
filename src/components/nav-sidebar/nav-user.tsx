@@ -1,3 +1,4 @@
+import clsx from "clsx"
 import { useAtom } from "jotai"
 import {
   BadgeCheck,
@@ -49,7 +50,7 @@ export function NavUser() {
             >
               <Avatar className="size-8 rounded-lg">
                 {/* <AvatarImage src={user.avatar} alt={user.name} /> */}
-                <AvatarFallback className="rounded-lg">{user.name.slice(0, 2)}</AvatarFallback>
+                <AvatarFallback className={clsx("rounded-lg", { "text-red-500 font-bold": user.is_admin })}>{user.name.slice(0, 2)}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">{user.name}</span>

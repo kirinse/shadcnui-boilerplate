@@ -46,6 +46,7 @@ export const userSchema = z.object({
   createdAt: z.string(),
   role: z.enum(userRoles),
   bio: z.string(),
+  is_admin: z.boolean(),
 })
 
 export type IUsers = z.infer<typeof userSchema>

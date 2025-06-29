@@ -19,7 +19,7 @@ export const queryUser = () => queryOptions({
 export const queryUserInfo = () =>
   queryOptions({
     queryKey: ["user-info"],
-    queryFn: async () => apiFetch<IUserProfile>(`/api/auth/current`),
+    queryFn: async () => apiFetch<IUsers>(`/api/auth/current`),
   })
 
 export function useUser() {
@@ -57,7 +57,7 @@ export function useUsers(pagination: PaginationState) {
       total: number
       page: number
       pageSize: number
-    }>("/api/team-users", {
+    }>("/api/users", {
       params: {
         page: pagination.pageIndex,
         pageSize: pagination.pageSize,
