@@ -120,7 +120,7 @@ export function Component() {
       <div className="grid flex-1 scroll-mt-20 grid-cols-4 items-start gap-4 md:grid-cols-5 md:gap-4 lg:grid-cols-8 lg:gap-3 xl:grid-cols-9 xl:gap-2 2xl:grid-cols-12 2xl:gap-2">
         {data?.numbers.map((number) => (
           <Dialog
-            key={number.id}
+            key={`${tab}-${number.number}`}
             onOpenChange={(open) => {
               if (open) {
                 setDetailNumber(number.number)
