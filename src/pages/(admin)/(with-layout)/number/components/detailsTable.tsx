@@ -11,6 +11,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -74,6 +75,18 @@ export function DataTable<TData, TValue>({
             </TableRow>
           )}
         </TableBody>
+        <TableFooter>
+          <TableRow>
+            <TableCell colSpan={columns.length - 1}>总计</TableCell>
+            <TableCell className="text-right">
+              {new Intl.NumberFormat("zh-CN", {
+                style: "currency",
+                currency: "CNY",
+                maximumFractionDigits: 0,
+              }).format(table.getRowModel().rows.reduce((a, row) => a + Number.parseInt(row.getValue("prize")), 0))}
+            </TableCell>
+          </TableRow>
+        </TableFooter>
       </Table>
     </div>
   )
