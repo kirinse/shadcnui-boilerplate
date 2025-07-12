@@ -21,14 +21,15 @@ export function useNumbers(lotto = "福", day = new Date(), refetchInterval?: an
   })
 }
 
-export function useRisk(lotto = "福", day = new Date(), number?: any) {
+export function useRisk(lotto = "福", day = new Date(), number?: any, userId?: number) {
   return useQuery({
-    queryKey: ["risk", lotto, day, number],
+    queryKey: ["risk", lotto, day, number, userId],
     queryFn: async () => apiFetch<IRisk[]>("/api/risk", {
       params: {
         lotto,
         day: format(day, "yyyy-MM-dd"),
         number,
+        user_id: userId,
       },
     }),
     refetchOnWindowFocus: false,
@@ -41,7 +42,7 @@ export function useRisk(lotto = "福", day = new Date(), number?: any) {
 
 export function useNumberDetails(lotto = "福", day = new Date(), number: string, userId?: number) {
   return useQuery({
-    queryKey: ["numberDetails", lotto, day, number],
+    queryKey: ["numberDetails", lotto, day, number, userId],
     queryFn: async () => apiFetch<INumberDetails[]>(`/api/numbers/${lotto}/${format(day, "yyyy-MM-dd")}/${number}`, {
       params: {
         user_id: userId,

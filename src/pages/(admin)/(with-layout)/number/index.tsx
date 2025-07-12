@@ -40,7 +40,12 @@ export function Component() {
     number,
     userId ? Number.parseInt(userId) : undefined,
   )
-  const { refetch: riskRefetch, isFetching: riskIsFetching, isRefetching: riskIsRefetching } = useRisk(tab, day, number)
+  const { refetch: riskRefetch, isFetching: riskIsFetching, isRefetching: riskIsRefetching } = useRisk(
+    tab,
+    day,
+    number,
+    userId ? Number.parseInt(userId) : undefined,
+  )
   const { data: details } = useNumberDetails(tab, day, detailNumber, userId ? Number.parseInt(userId) : undefined)
   const { data: users } = useUsers({ pageIndex: 1, pageSize: 1000 })
 
