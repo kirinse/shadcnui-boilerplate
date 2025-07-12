@@ -58,7 +58,7 @@ export const columns: ColumnDef<Message>[] = [
     accessorKey: "content",
     enableSorting: false,
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="内容" />
+      <DataTableColumnHeader column={column} title="内容" className="text-nowrap" />
     ),
     cell: ({ row }) => <div className="flex items-center whitespace-pre-wrap break-all">{row.getValue("content")}</div>,
     enableHiding: false,
@@ -97,7 +97,7 @@ export const columns: ColumnDef<Message>[] = [
   {
     id: "actions",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="操作" />
+      <DataTableColumnHeader column={column} title="操作" className="text-center" />
     ),
     enableHiding: false,
   },

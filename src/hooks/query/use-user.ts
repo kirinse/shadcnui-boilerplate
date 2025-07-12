@@ -52,27 +52,16 @@ export function useUserLogoutMutation() {
 export function useUsers(pagination: PaginationState) {
   const { data, isPending } = useQuery({
     queryKey: ["users", pagination.pageIndex, pagination.pageSize],
-    queryFn: async () => apiFetch<{
-      list: IUsers[]
-      total: number
-      page: number
-      pageSize: number
-    }>("/api/users", {
+    queryFn: async () => apiFetch<IUsers[]>("/api/users", {
       params: {
         page: pagination.pageIndex,
-        pageSize: pagination.pageSize,
+        page_size: pagination.pageSize,
       },
     }),
     placeholderData: keepPreviousData,
   })
-
   return {
     isPending,
-    data: {
-      list: data?.list || [],
-      total: data?.total || 0,
-      page: data?.page || 0,
-      pageSize: data?.pageSize || 0,
-    },
+    data,
   }
 }

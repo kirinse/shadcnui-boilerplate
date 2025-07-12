@@ -77,7 +77,7 @@ i18n
     fallbackLng: "en",
     defaultNS: "common",
     ns,
-    debug: true,
+    debug: false,
     interpolation: {
       escapeValue: false,
     },

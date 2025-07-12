@@ -4,14 +4,15 @@ import { format } from "date-fns"
 import { apiFetch } from "@/lib/api-fetch"
 import type { INumber, INumberDetails, IRisk } from "@/schema/number"
 
-export function useNumbers(lotto = "福", day = new Date(), refetchInterval?: any, number?: string) {
+export function useNumbers(lotto = "福", day = new Date(), refetchInterval?: any, number?: string, userId?: number) {
   return useQuery({
-    queryKey: ["numbers", lotto, day, number],
+    queryKey: ["numbers", lotto, day, number, userId],
     queryFn: async () => apiFetch<{ total: number, numbers: INumber[] }>("/api/numbers", {
       params: {
         lotto,
         day: format(day, "yyyy-MM-dd"),
         number,
+        user_id: userId,
       },
     }),
     refetchInterval,
@@ -38,10 +39,14 @@ export function useRisk(lotto = "福", day = new Date(), number?: any) {
   })
 }
 
-export function useNumberDetails(lotto = "福", day = new Date(), number: string) {
+export function useNumberDetails(lotto = "福", day = new Date(), number: string, userId?: number) {
   return useQuery({
     queryKey: ["numberDetails", lotto, day, number],
-    queryFn: async () => apiFetch<INumberDetails[]>(`/api/numbers/${lotto}/${format(day, "yyyy-MM-dd")}/${number}`),
+    queryFn: async () => apiFetch<INumberDetails[]>(`/api/numbers/${lotto}/${format(day, "yyyy-MM-dd")}/${number}`, {
+      params: {
+        user_id: userId,
+      },
+    }),
     refetchOnWindowFocus: false,
     enabled: number !== "",
     refetchOnReconnect: false,

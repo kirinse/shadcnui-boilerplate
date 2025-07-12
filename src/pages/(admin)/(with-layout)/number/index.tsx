@@ -2,7 +2,7 @@ import clsx from "clsx"
 import { Packer } from "docx"
 import { saveAs } from "file-saver"
 import { useAtom } from "jotai"
-import { RefreshCwIcon } from "lucide-react"
+import { RefreshCwIcon, X } from "lucide-react"
 import { useMemo, useState } from "react"
 import { toast } from "sonner"
 
@@ -13,8 +13,11 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useNumberDetails, useNumbers, useRisk } from "@/hooks/query/use-number"
+import { useUsers } from "@/hooks/query/use-user"
 import { getFetchErrorMessage } from "@/lib/api-fetch"
 import { DocumentCreator } from "@/lib/risk_generator"
 
@@ -27,11 +30,19 @@ export function Component() {
   const [day, setDay] = useState(() => new Date())
   const [number, setNumber] = useState<string | undefined>()
   const [detailNumber, setDetailNumber] = useState<string>("")
+  const [userId, setUserId] = useState<string>("")
 
   const [refetchInterval, setRefetchInterval] = useState<number | boolean>(false)
-  const { data, refetch, isFetching, isRefetching } = useNumbers(tab, day, refetchInterval, number)
+  const { data, refetch, isFetching, isRefetching } = useNumbers(
+    tab,
+    day,
+    refetchInterval,
+    number,
+    userId ? Number.parseInt(userId) : undefined,
+  )
   const { refetch: riskRefetch, isFetching: riskIsFetching, isRefetching: riskIsRefetching } = useRisk(tab, day, number)
-  const { data: details } = useNumberDetails(tab, day, detailNumber)
+  const { data: details } = useNumberDetails(tab, day, detailNumber, userId ? Number.parseInt(userId) : undefined)
+  const { data: users } = useUsers({ pageIndex: 1, pageSize: 1000 })
 
   async function onDownload() {
     toast.promise(riskRefetch, {
@@ -57,6 +68,7 @@ export function Component() {
   }
   const [authToken, _] = useAtom(authTokenAtom)
   const canDownRisk = useMemo(() => authToken.is_verified || authToken.is_admin, [authToken])
+  const isAdmin = useMemo(() => authToken.is_admin, [authToken])
 
   return (
     <>
@@ -69,7 +81,11 @@ export function Component() {
           <div className="flex flex-1 space-x-4">
             {data?.total !== undefined && data.total > 0 && (
               <div className="inline-flex h-9 items-center justify-center rounded-lg bg-muted p-2 font-semibold text-blue-500">
-                ¥ {data?.total.toLocaleString()}
+                {new Intl.NumberFormat("zh-CN", {
+                  style: "currency",
+                  currency: "CNY",
+                  maximumFractionDigits: 0,
+                }).format(data?.total)}
               </div>
             )}
             <div>
@@ -96,6 +112,34 @@ export function Component() {
                 }}
               />
             </div>
+            {isAdmin && (
+              <>
+                <Separator orientation="vertical" decorative className="h-9" />
+                <div className="relative">
+                  <Select value={userId} onValueChange={(v) => setUserId(v)}>
+                    <SelectTrigger className="w-[90px]">
+                      <SelectValue placeholder="用户" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {users?.map((u) => (
+                        <SelectItem key={u.id} value={u.id}>{u.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {userId && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setUserId("")
+                      }}
+                      className="absolute right-6 top-1/2 -translate-y-1/2 rounded-full bg-accent/40 p-1 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                    >
+                      <X className="size-2" />
+                    </button>
+                  )}
+                </div>
+              </>
+            )}
           </div>
           <Button variant="ghost" title="刷新" disabled={isFetching || isRefetching} onClick={() => refetch()}>
             <RefreshCwIcon className={isFetching || isRefetching ? "animate-spin" : ""} size={16} />
@@ -130,7 +174,7 @@ export function Component() {
             <DialogTrigger>
               <div className="flex aspect-square flex-col items-center justify-around rounded-md border-2 border-muted bg-popover p-4 text-sm font-medium leading-none hover:bg-accent hover:text-accent-foreground">
                 <NumberComp number={number.number} />
-                <Badge variant="outline" className={clsx("text-nowrap text-sidebar-primary-foreground", { "border-red-500 bg-red-500": (number.prize - data.total) / data.total >= 0.1, "border-yellow-400 bg-yellow-400": number.prize > data.total && (number.prize - data.total) / data.total < 0.1, "border-green-400 bg-green-400": number.prize < data.total })}>¥ {number.prize.toLocaleString()}</Badge>
+                <Badge variant="outline" className={clsx("text-nowrap text-sidebar-primary-foreground", { "border-red-500 bg-red-500": (number.prize - data.total) / data.total >= 0.1, "border-yellow-400 bg-yellow-400": number.prize > data.total && (number.prize - data.total) / data.total < 0.1, "border-green-400 bg-green-400": number.prize <= data.total })}>¥ {number.prize.toLocaleString()}</Badge>
               </div>
             </DialogTrigger>
             <DialogContent>
