@@ -41,6 +41,7 @@ export function Component() {
   const [expanded, setExpanded] = useState<ExpandedState>({})
   const [number, setNumber] = useState<string>("")
   const [lotto, setLotto] = useState<string>()
+  const [method, setMethod] = useState<string>()
   const [userId, setUserId] = useState<string>("")
 
   const [authToken, _] = useAtom(authTokenAtom)
@@ -53,6 +54,9 @@ export function Component() {
     }, {
       id: "lotto",
       value: lotto,
+    }, {
+      id: "method",
+      value: method,
     }, {
       id: "number",
       value: number,
@@ -69,6 +73,7 @@ export function Component() {
     pagination,
     format(filter?.value as Date, "yyyy-MM-dd"),
     lotto || undefined,
+    method || undefined,
     number && number.length === 3 ? number : undefined,
     userId ? Number.parseInt(userId) : undefined,
     refetchInterval,
@@ -148,6 +153,48 @@ export function Component() {
                 type="button"
                 onClick={() => {
                   setLotto("")
+                }}
+                className="absolute right-6 top-1/2 -translate-y-1/2 rounded-full bg-accent/40 p-1 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+              >
+                <X className="size-2" />
+              </button>
+            )}
+          </div>
+          <div className="relative">
+            <Select value={method} onValueChange={(v) => setMethod(v)}>
+              <SelectTrigger className="w-[90px]">
+                <SelectValue placeholder="玩法" />
+              </SelectTrigger>
+              <SelectContent className="w-[90px]">
+                <SelectItem value="单">单</SelectItem>
+                <SelectItem value="复">复</SelectItem>
+                <SelectItem value="豹">豹</SelectItem>
+                <SelectItem value="组三">组三</SelectItem>
+                <SelectItem value="组六">组六</SelectItem>
+                <SelectItem value="三码组三">三码组三</SelectItem>
+                <SelectItem value="四码组三">四码组三</SelectItem>
+                <SelectItem value="五码组三">五码组三</SelectItem>
+                <SelectItem value="六码组三">六码组三</SelectItem>
+                <SelectItem value="七码组三">七码组三</SelectItem>
+                <SelectItem value="四码组六">四码组六</SelectItem>
+                <SelectItem value="五码组六">五码组六</SelectItem>
+                <SelectItem value="六码组六">六码组六</SelectItem>
+                <SelectItem value="七码组六">七码组六</SelectItem>
+                <SelectItem value="独胆">独胆</SelectItem>
+                <SelectItem value="双飞">双飞</SelectItem>
+                <SelectItem value="单码定位">单码定位</SelectItem>
+                <SelectItem value="双飞定位">双飞定位</SelectItem>
+                <SelectItem value="包对子">包对子</SelectItem>
+                <SelectItem value="包豹子">包豹子</SelectItem>
+                <SelectItem value="胆直271">胆直271</SelectItem>
+                <SelectItem value="胆直270">胆直270</SelectItem>
+              </SelectContent>
+            </Select>
+            {method && (
+              <button
+                type="button"
+                onClick={() => {
+                  setMethod("")
                 }}
                 className="absolute right-6 top-1/2 -translate-y-1/2 rounded-full bg-accent/40 p-1 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
               >
