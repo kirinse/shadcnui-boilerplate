@@ -50,7 +50,7 @@ export function DatePicker({
             selected={selected}
             onSelect={onSelect}
             disabled={(date) =>
-              date > new Date() || date < new Date("2024-12-01")}
+              date > new Date() || date < new Date(new Date().setDate(new Date().getDate() - 7))}
             initialFocus
             locale={current_language === "zh" ? zhCN : enUS}
             defaultMonth={selected}
