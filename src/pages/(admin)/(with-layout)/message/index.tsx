@@ -36,9 +36,9 @@ import { OrderTable } from "./components/order-table"
 export function Component() {
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: 10,
+    pageSize: 20,
   })
-  const [expanded, setExpanded] = useState<ExpandedState>(true)
+  const [expanded, setExpanded] = useState<ExpandedState>({})
   const [number, setNumber] = useState<string>("")
   const [lotto, setLotto] = useState<string>()
   const [userId, setUserId] = useState<string>("")
