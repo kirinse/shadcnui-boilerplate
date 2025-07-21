@@ -12,7 +12,10 @@ export const orderSchema = z.object({
   prize: z.number(),
   created_at: z.date(),
 })
+export const messageStatusSchema = z.enum(["Pending", "Finished", "Failed", "Deleted"])
+
 export type Order = z.infer<typeof orderSchema>
+export type MessageStatus = z.infer<typeof messageStatusSchema>
 
 export const messageSchema = z.object({
   id: z.bigint(),
@@ -20,7 +23,7 @@ export const messageSchema = z.object({
   content: z.string(),
   sender: z.string(),
   ts: z.number(),
-  status: z.enum(["Pending", "Finished", "Failed", "Deleted"]),
+  status: messageStatusSchema,
   orders: z.array(orderSchema),
 })
 export type Message = z.infer<typeof messageSchema>

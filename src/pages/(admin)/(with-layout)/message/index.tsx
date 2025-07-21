@@ -8,7 +8,7 @@ import {
 import { format } from "date-fns"
 import { t } from "i18next"
 import { useAtom } from "jotai"
-import { RefreshCwIcon, Trash, X } from "lucide-react"
+import { CircleCheck, CircleX, Hourglass, RefreshCwIcon, Trash, X } from "lucide-react"
 import * as React from "react"
 import { useMemo, useState } from "react"
 import { toast } from "sonner"
@@ -26,7 +26,8 @@ import { useMessageDeletionMutation, useMessages } from "@/hooks/query/use-messa
 import { useUsers } from "@/hooks/query/use-user"
 import { i18n } from "@/i18n"
 import { getFetchErrorMessage } from "@/lib/api-fetch"
-import type { Order } from "@/schema/message"
+import type { MessageStatus, Order } from "@/schema/message"
+import { messageStatusSchema } from "@/schema/message"
 
 import { columns } from "./components/columns"
 import { DataTableColumnHeader } from "./components/data-table-column-header"
@@ -43,6 +44,7 @@ export function Component() {
   const [lotto, setLotto] = useState<string>()
   const [method, setMethod] = useState<string>()
   const [userId, setUserId] = useState<string>("")
+  const [status, setStatus] = useState<MessageStatus>()
 
   const [authToken, _] = useAtom(authTokenAtom)
   const isAdmin = useMemo(() => authToken.is_admin, [authToken])
@@ -63,6 +65,9 @@ export function Component() {
     }, {
       id: "user_id",
       value: userId,
+    }, {
+      id: "status",
+      value: status,
     }],
   )
   const [refetchInterval, setRefetchInterval] = useState<number | boolean>(false)
@@ -76,6 +81,7 @@ export function Component() {
     method || undefined,
     number && number.length === 3 ? number : undefined,
     userId ? Number.parseInt(userId) : undefined,
+    status,
     refetchInterval,
   )
   const { data: users } = useUsers({ pageIndex: 1, pageSize: 1000 })
@@ -195,6 +201,50 @@ export function Component() {
                 type="button"
                 onClick={() => {
                   setMethod("")
+                }}
+                className="absolute right-6 top-1/2 -translate-y-1/2 rounded-full bg-accent/40 p-1 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+              >
+                <X className="size-2" />
+              </button>
+            )}
+          </div>
+          <div className="relative">
+            <Select value={status || ""} onValueChange={(v) => setStatus(messageStatusSchema.parse(v))}>
+              <SelectTrigger className="w-[120px]">
+                <SelectValue placeholder="状态" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Pending">
+                  <div className="flex items-center">
+                    <Hourglass size={16} xlinkTitle="等待" className="text-orange-500" />
+                    待处理
+                  </div>
+                </SelectItem>
+                <SelectItem value="Finished">
+                  <div className="flex items-center gap-1">
+                    <CircleCheck size={16} className="text-green-500" />
+                    成功
+                  </div>
+                </SelectItem>
+                <SelectItem value="Failed">
+                  <div className="flex items-center gap-1">
+                    <CircleX size={16} className="text-red-500" />
+                    失败
+                  </div>
+                </SelectItem>
+                <SelectItem value="Deleted">
+                  <div className="flex items-center gap-1">
+                    <Trash size={16} className="text-slate-400" />
+                    已删除
+                  </div>
+                </SelectItem>
+              </SelectContent>
+            </Select>
+            {status && (
+              <button
+                type="button"
+                onClick={() => {
+                  setStatus(undefined)
                 }}
                 className="absolute right-6 top-1/2 -translate-y-1/2 rounded-full bg-accent/40 p-1 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
               >

@@ -6,11 +6,11 @@ import {
 import type { PaginationState } from "@tanstack/react-table"
 
 import { apiFetch } from "@/lib/api-fetch"
-import type { MessageList } from "@/schema/message"
+import type { MessageList, MessageStatus } from "@/schema/message"
 
-export function useMessages(pagination: PaginationState, day?: string, lotto?: string, method?: string, number?: string, user_id?: number, refetchInterval?: any) {
+export function useMessages(pagination: PaginationState, day?: string, lotto?: string, method?: string, number?: string, user_id?: number, status?: MessageStatus, refetchInterval?: any) {
   const { data, isFetching, isRefetching, refetch } = useQuery({
-    queryKey: ["messages", pagination.pageIndex, pagination.pageSize, day, lotto, method, number, user_id],
+    queryKey: ["messages", pagination.pageIndex, pagination.pageSize, day, lotto, method, number, user_id, status],
     queryFn: async () => apiFetch<MessageList>("/api/messages", {
       params: {
         page: pagination.pageIndex + 1,
@@ -20,6 +20,7 @@ export function useMessages(pagination: PaginationState, day?: string, lotto?: s
         method,
         search: number,
         user_id,
+        status,
       },
     }),
     placeholderData: keepPreviousData,
