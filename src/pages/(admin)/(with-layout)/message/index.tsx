@@ -145,7 +145,17 @@ export function Component() {
             />
           </div>
           <div className="relative">
-            <Select value={lotto} onValueChange={(v) => setLotto(v)}>
+            <Select
+              value={lotto}
+              onValueChange={(v) => {
+                setLotto(v)
+                table.setColumnFilters((old) => {
+                  table.setPageIndex(0)
+                  table.resetExpanded(true)
+                  return old
+                })
+              }}
+            >
               <SelectTrigger className="w-[90px]">
                 <SelectValue placeholder="彩种" />
               </SelectTrigger>
@@ -159,6 +169,11 @@ export function Component() {
                 type="button"
                 onClick={() => {
                   setLotto("")
+                  table.setColumnFilters((old) => {
+                    table.setPageIndex(0)
+                    table.resetExpanded(true)
+                    return old
+                  })
                 }}
                 className="absolute right-6 top-1/2 -translate-y-1/2 rounded-full bg-accent/40 p-1 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
               >
@@ -167,7 +182,17 @@ export function Component() {
             )}
           </div>
           <div className="relative">
-            <Select value={method} onValueChange={(v) => setMethod(v)}>
+            <Select
+              value={method}
+              onValueChange={(v) => {
+                setMethod(v)
+                table.setColumnFilters((old) => {
+                  table.setPageIndex(0)
+                  table.resetExpanded(true)
+                  return old
+                })
+              }}
+            >
               <SelectTrigger className="w-[90px]">
                 <SelectValue placeholder="玩法" />
               </SelectTrigger>
@@ -201,6 +226,11 @@ export function Component() {
                 type="button"
                 onClick={() => {
                   setMethod("")
+                  table.setColumnFilters((old) => {
+                    table.setPageIndex(0)
+                    table.resetExpanded(true)
+                    return old
+                  })
                 }}
                 className="absolute right-6 top-1/2 -translate-y-1/2 rounded-full bg-accent/40 p-1 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
               >
@@ -209,7 +239,17 @@ export function Component() {
             )}
           </div>
           <div className="relative">
-            <Select value={status || ""} onValueChange={(v) => setStatus(messageStatusSchema.parse(v))}>
+            <Select
+              value={status || ""}
+              onValueChange={(v) => {
+                setStatus(messageStatusSchema.parse(v))
+                table.setColumnFilters((old) => {
+                  table.setPageIndex(0)
+                  table.resetExpanded(true)
+                  return old
+                })
+              }}
+            >
               <SelectTrigger className="w-[120px]">
                 <SelectValue placeholder="状态" />
               </SelectTrigger>
@@ -245,6 +285,11 @@ export function Component() {
                 type="button"
                 onClick={() => {
                   setStatus(undefined)
+                  table.setColumnFilters((old) => {
+                    table.setPageIndex(0)
+                    table.resetExpanded(true)
+                    return old
+                  })
                 }}
                 className="absolute right-6 top-1/2 -translate-y-1/2 rounded-full bg-accent/40 p-1 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
               >
@@ -283,7 +328,17 @@ export function Component() {
             <>
               <Separator orientation="vertical" decorative className="h-9" />
               <div className="relative">
-                <Select value={userId} onValueChange={(v) => setUserId(v)}>
+                <Select
+                  value={userId}
+                  onValueChange={(v) => {
+                    setUserId(v)
+                    table.setColumnFilters((old) => {
+                      table.setPageIndex(0)
+                      table.resetExpanded(true)
+                      return old
+                    })
+                  }}
+                >
                   <SelectTrigger className="w-[90px]">
                     <SelectValue placeholder="用户" />
                   </SelectTrigger>
@@ -298,6 +353,11 @@ export function Component() {
                     type="button"
                     onClick={() => {
                       setUserId("")
+                      table.setColumnFilters((old) => {
+                        table.setPageIndex(0)
+                        table.resetExpanded(true)
+                        return old
+                      })
                     }}
                     className="absolute right-6 top-1/2 -translate-y-1/2 rounded-full bg-accent/40 p-1 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                   >
@@ -319,6 +379,11 @@ export function Component() {
             vv = Number.parseInt(v)
           }
           setRefetchInterval(vv)
+          table.setColumnFilters((old) => {
+            table.setPageIndex(0)
+            table.resetExpanded(true)
+            return old
+          })
         }}
         />
       </div>
