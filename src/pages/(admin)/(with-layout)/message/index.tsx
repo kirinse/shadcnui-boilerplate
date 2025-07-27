@@ -149,11 +149,8 @@ export function Component() {
               value={lotto}
               onValueChange={(v) => {
                 setLotto(v)
-                table.setColumnFilters((old) => {
-                  table.setPageIndex(0)
-                  table.resetExpanded(true)
-                  return old
-                })
+                table.setPageIndex(0)
+                table.resetExpanded(true)
               }}
             >
               <SelectTrigger className="w-[90px]">
@@ -169,11 +166,8 @@ export function Component() {
                 type="button"
                 onClick={() => {
                   setLotto("")
-                  table.setColumnFilters((old) => {
-                    table.setPageIndex(0)
-                    table.resetExpanded(true)
-                    return old
-                  })
+                  table.setPageIndex(0)
+                  table.resetExpanded(true)
                 }}
                 className="absolute right-6 top-1/2 -translate-y-1/2 rounded-full bg-accent/40 p-1 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
               >
@@ -186,11 +180,8 @@ export function Component() {
               value={method}
               onValueChange={(v) => {
                 setMethod(v)
-                table.setColumnFilters((old) => {
-                  table.setPageIndex(0)
-                  table.resetExpanded(true)
-                  return old
-                })
+                table.setPageIndex(0)
+                table.resetExpanded(true)
               }}
             >
               <SelectTrigger className="w-[90px]">
@@ -226,11 +217,8 @@ export function Component() {
                 type="button"
                 onClick={() => {
                   setMethod("")
-                  table.setColumnFilters((old) => {
-                    table.setPageIndex(0)
-                    table.resetExpanded(true)
-                    return old
-                  })
+                  table.setPageIndex(0)
+                  table.resetExpanded(true)
                 }}
                 className="absolute right-6 top-1/2 -translate-y-1/2 rounded-full bg-accent/40 p-1 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
               >
@@ -243,11 +231,8 @@ export function Component() {
               value={status || ""}
               onValueChange={(v) => {
                 setStatus(messageStatusSchema.parse(v))
-                table.setColumnFilters((old) => {
-                  table.setPageIndex(0)
-                  table.resetExpanded(true)
-                  return old
-                })
+                table.setPageIndex(0)
+                table.resetExpanded(true)
               }}
             >
               <SelectTrigger className="w-[120px]">
@@ -285,11 +270,8 @@ export function Component() {
                 type="button"
                 onClick={() => {
                   setStatus(undefined)
-                  table.setColumnFilters((old) => {
-                    table.setPageIndex(0)
-                    table.resetExpanded(true)
-                    return old
-                  })
+                  table.setPageIndex(0)
+                  table.resetExpanded(true)
                 }}
                 className="absolute right-6 top-1/2 -translate-y-1/2 rounded-full bg-accent/40 p-1 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
               >
@@ -310,6 +292,10 @@ export function Component() {
                 // const v = e.target.value || undefined
                 // if (v !== undefined && v.length < 3) { return }
                 setNumber(e.target.value)
+                if (e.target.value.length === 3) {
+                  table.setPageIndex(0)
+                  table.resetExpanded(true)
+                }
               }}
             />
             {number && (
@@ -317,6 +303,8 @@ export function Component() {
                 type="button"
                 onClick={() => {
                   setNumber("")
+                  table.setPageIndex(0)
+                  table.resetExpanded(true)
                 }}
                 className="absolute right-6 top-1/2 -translate-y-1/2 rounded-full bg-accent/40 p-1 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
               >
@@ -332,11 +320,8 @@ export function Component() {
                   value={userId}
                   onValueChange={(v) => {
                     setUserId(v)
-                    table.setColumnFilters((old) => {
-                      table.setPageIndex(0)
-                      table.resetExpanded(true)
-                      return old
-                    })
+                    table.setPageIndex(0)
+                    table.resetExpanded(true)
                   }}
                 >
                   <SelectTrigger className="w-[90px]">
@@ -353,11 +338,8 @@ export function Component() {
                     type="button"
                     onClick={() => {
                       setUserId("")
-                      table.setColumnFilters((old) => {
-                        table.setPageIndex(0)
-                        table.resetExpanded(true)
-                        return old
-                      })
+                      table.setPageIndex(0)
+                      table.resetExpanded(true)
                     }}
                     className="absolute right-6 top-1/2 -translate-y-1/2 rounded-full bg-accent/40 p-1 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                   >
@@ -379,11 +361,8 @@ export function Component() {
             vv = Number.parseInt(v)
           }
           setRefetchInterval(vv)
-          table.setColumnFilters((old) => {
-            table.setPageIndex(0)
-            table.resetExpanded(true)
-            return old
-          })
+          table.setPageIndex(0)
+          table.resetExpanded(true)
         }}
         />
       </div>
