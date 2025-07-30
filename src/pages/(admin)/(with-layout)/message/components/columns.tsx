@@ -18,7 +18,7 @@ export const columns: ColumnDef<Message>[] = [
 
     ),
     cell: ({ row }) => row.getCanExpand() && (
-      <Button data-state={row.getIsExpanded() ? "open" : "closed"} className="flex aspect-square items-center justify-center rounded-md p-0 text-sidebar-foreground outline-none ring-sidebar-ring transition-transform after:absolute after:-inset-2 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 peer-hover/menu-button:text-sidebar-accent-foreground data-[state=open]:rotate-90 after:md:hidden [&>svg]:size-4 [&>svg]:shrink-0" variant="link" size="icon" onClick={row.getToggleExpandedHandler()}>
+      <Button data-state={row.getIsExpanded() ? "open" : "closed"} className="flex aspect-square items-center justify-center rounded-md p-0 text-sidebar-foreground outline-none ring-sidebar-ring transition-transform after:absolute after:-inset-2 hover:text-sidebar-accent-foreground focus-visible:ring-2 peer-hover/menu-button:text-sidebar-accent-foreground data-[state=open]:rotate-90 after:md:hidden [&>svg]:size-4 [&>svg]:shrink-0" variant="link" size="icon" onClick={row.getToggleExpandedHandler()}>
         <ChevronRight />
         <span className="sr-only">Toggle</span>
       </Button>

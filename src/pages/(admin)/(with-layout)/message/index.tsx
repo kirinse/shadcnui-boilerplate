@@ -5,6 +5,7 @@ import {
   getExpandedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
+import clsx from "clsx"
 import { format } from "date-fns"
 import { t } from "i18next"
 import { useAtom } from "jotai"
@@ -413,11 +414,22 @@ export function Component() {
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
+              table.getRowModel().rows.map((row, idx) => (
                 <React.Fragment key={row.id}>
-                  <TableRow className={`${row.getIsExpanded() ? "bg-muted" : ""} ${row.getValue("status") === "Deleted" ? "text-slate-400 line-through" : ""} ${row.getIsExpanded() ? "border-transparent" : ""}`}>
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
+                  <TableRow className={clsx({
+                    "bg-gray hover:bg-gray": idx % 2 === 0,
+                    "bg-muted hover:bg-muted": idx % 2 === 1,
+                    "text-slate-400 line-through": row.getValue("status") === "Deleted",
+                    "border-transparent": row.getIsExpanded(),
+                  })}
+                  >
+                    {row.getVisibleCells().map((cell, idx) => (
+                      <TableCell
+                        key={cell.id}
+                        className={clsx("align-top", {
+                          "py-0": idx === 0 || cell.id.endsWith("actions"),
+                        })}
+                      >
                         {cell.id.endsWith("actions") && row.getValue("status") !== "Deleted" && row.getValue("status") !== "Failed" ? (
                           <Button size="sm" variant="ghost" title="删除" disabled={deletionMutation.isPending} onClick={() => onDelete(row.getValue("id"))}>
                             <Trash size={16} className="text-destructive" />
@@ -431,11 +443,15 @@ export function Component() {
                     ))}
                   </TableRow>
                   {row.getIsExpanded() && row.getCanExpand() && (
-                    <tr className="border-b bg-muted transition-colors hover:bg-muted/50">
-                      <td colSpan={row.getVisibleCells().length}>
+                    <TableRow className={clsx("border-b transition-colors", {
+                      "bg-gray hover:bg-gray": idx % 2 === 0,
+                      "bg-muted hover:bg-muted": idx % 2 === 1,
+                    })}
+                    >
+                      <TableCell colSpan={row.getVisibleCells().length}>
                         <OrderTable columns={order_columns} data={row.original.orders} />
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   )}
                 </React.Fragment>
               ))

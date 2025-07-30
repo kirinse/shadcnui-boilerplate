@@ -11,8 +11,8 @@ import { DatePicker } from "@/components/date-picker"
 import { Refresher } from "@/components/refresher"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -168,37 +168,68 @@ export function Component() {
       </Tabs>
       <div className="grid flex-1 scroll-mt-20 grid-cols-4 items-start gap-4 md:grid-cols-5 md:gap-4 lg:grid-cols-8 lg:gap-3 xl:grid-cols-9 xl:gap-2 2xl:grid-cols-12 2xl:gap-2">
         {data?.numbers.map((number) => (
-          <Dialog
+          <Popover
             key={`${tab}-${number.number}`}
             onOpenChange={(open) => {
               if (open) {
                 setDetailNumber(number.number)
+              } else {
+                setDetailNumber("")
               }
             }}
           >
-            <DialogTrigger>
-              <div className="flex aspect-square flex-col items-center justify-around rounded-md border-2 border-muted bg-popover p-4 text-sm font-medium leading-none hover:bg-accent hover:text-accent-foreground">
+            <PopoverTrigger>
+              <div className={clsx("flex aspect-square flex-col items-center justify-around rounded-md border-2 border-muted p-4 text-sm font-medium leading-none hover:bg-accent hover:text-accent-foreground", { "bg-accent text-accent-foreground": detailNumber === number.number, "bg-popover": detailNumber !== number.number })}>
                 <NumberComp number={number.number} />
                 <Badge variant="outline" className={clsx("text-nowrap text-sidebar-primary-foreground", { "border-red-500 bg-red-500": (number.prize - data.total) / data.total >= 0.1, "border-yellow-400 bg-yellow-400": number.prize > data.total && (number.prize - data.total) / data.total < 0.1, "border-green-400 bg-green-400": number.prize <= data.total })}>¥ {number.prize.toLocaleString()}</Badge>
               </div>
-            </DialogTrigger>
-            <DialogContent>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto bg-accent">
+              <div className="leading-9">
+                {`${tab}彩 ${day.toLocaleDateString("zh-CN")}`}
+                {` `}
+                <NumberComp number={number.number} />
+                {` `}
+                玩法分布
+                {/* </DialogTitle> */}
+                {/* </DialogHeader> */}
+              </div>
               {details && (
-                <>
-                  <DialogHeader>
-                    <DialogTitle>
-                      {`${tab}彩 ${day.toLocaleDateString("zh-CN")} 号码`}
-                      {` `}
-                      <NumberComp number={number.number} />
-                      {` `}
-                      玩法分布
-                    </DialogTitle>
-                  </DialogHeader>
-                  <DataTable columns={detailsColumns} data={details} />
-                </>
+                <DataTable columns={detailsColumns} data={details} />
               )}
-            </DialogContent>
-          </Dialog>
+            </PopoverContent>
+          </Popover>
+          // <Dialog
+          //   key={`${tab}-${number.number}`}
+          //   onOpenChange={(open) => {
+          //     if (open) {
+          //       setDetailNumber(number.number)
+          //     }
+          //   }}
+          // >
+          //   <DialogTrigger>
+          //     <div className="flex aspect-square flex-col items-center justify-around rounded-md border-2 border-muted bg-popover p-4 text-sm font-medium leading-none hover:bg-accent hover:text-accent-foreground">
+          //       <NumberComp number={number.number} />
+          //       <Badge variant="outline" className={clsx("text-nowrap text-sidebar-primary-foreground", { "border-red-500 bg-red-500": (number.prize - data.total) / data.total >= 0.1, "border-yellow-400 bg-yellow-400": number.prize > data.total && (number.prize - data.total) / data.total < 0.1, "border-green-400 bg-green-400": number.prize <= data.total })}>¥ {number.prize.toLocaleString()}</Badge>
+          //     </div>
+          //   </DialogTrigger>
+          //   <DialogContent>
+          //     {details && (
+          //       <>
+          //         <DialogHeader>
+          //           <DialogTitle>
+          //             {`${tab}彩 ${day.toLocaleDateString("zh-CN")} 号码`}
+          //             {` `}
+          //             <NumberComp number={number.number} />
+          //             {` `}
+          //             玩法分布
+          //           </DialogTitle>
+          //         </DialogHeader>
+          //         <DataTable columns={detailsColumns} data={details} />
+          //       </>
+          //     )}
+          //   </DialogContent>
+          // </Dialog>
         ))}
       </div>
     </>
