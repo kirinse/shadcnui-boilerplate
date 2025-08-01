@@ -600,7 +600,11 @@ const order_columns: ColumnDef<Order>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title={i18n.t("message:price")} />
     ),
-    cell: ({ row }) => ` = ¥ ${row.getValue("price")}`,
+    cell: ({ row }) => new Intl.NumberFormat("zh-CN", {
+      style: "currency",
+      currency: "CNY",
+      maximumFractionDigits: 0,
+    }).format(row.getValue("price")),
     enableHiding: false,
   },
   {
@@ -608,15 +612,20 @@ const order_columns: ColumnDef<Order>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title={i18n.t("message:prize")} />
     ),
-    cell: ({ row }) => `¥ ${row.getValue("prize")}`,
+    cell: ({ row }) => new Intl.NumberFormat("zh-CN", {
+      style: "currency",
+      currency: "CNY",
+      maximumFractionDigits: 0,
+    }).format(row.getValue("prize")),
     enableHiding: false,
   },
   {
+    id: "created_at",
     accessorKey: "created_at",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title={i18n.t("message:created_at")} />
     ),
-    cell: ({ row }) => new Date(row.getValue("created_at")).toLocaleString("zh-CN", { year: "numeric", month: "2-digit", day: "2-digit", weekday: undefined, hour: "2-digit", hour12: false, minute: "2-digit", second: "2-digit" }),
+    cell: ({ row }) => new Date(row.getValue("created_at")).toLocaleString("zh-CN", { year: "numeric", month: "numeric", day: "numeric", weekday: undefined, hour: "2-digit", hour12: false, minute: "2-digit", second: "2-digit" }).replace(new Date().toLocaleDateString("zh-CN"), "").trim(),
     enableHiding: false,
 
   },
