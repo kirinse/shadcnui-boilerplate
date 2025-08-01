@@ -6,6 +6,8 @@ import type { Message } from "@/schema/message"
 
 import { DataTableColumnHeader } from "./data-table-column-header"
 
+const today = new Date().toLocaleDateString("zh-CN")
+
 export const columns: ColumnDef<Message>[] = [
   {
     id: "select",
@@ -36,6 +38,7 @@ export const columns: ColumnDef<Message>[] = [
     enableHiding: false,
   },
   {
+    id: "user_id",
     accessorKey: "user_id",
     enableSorting: false,
     header: ({ column }) => (
@@ -70,20 +73,33 @@ export const columns: ColumnDef<Message>[] = [
     enableHiding: false,
   },
   {
+    id: "ts",
     accessorKey: "ts",
     enableSorting: false,
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="时间" />
     ),
     cell: ({ row }) => (
-      <div className="flex items-center gap-1">
-        <Clock size={14} />
-        <span className="text-nowrap">{new Date((row.getValue("ts") as number) * 1000).toLocaleString("zh-CN", { year: "numeric", month: "2-digit", day: "2-digit", weekday: undefined, hour: "2-digit", hour12: false, minute: "2-digit", second: "2-digit" })}</span>
+      <div className="-mt-px flex items-center">
+        <Clock size={16} />
+        <span className="text-nowrap">
+          {new Date((row.getValue("ts") as number) * 1000).toLocaleString("zh-CN", {
+            year: "numeric",
+            month: "numeric",
+            day: "numeric",
+            weekday: undefined,
+            hour: "2-digit",
+            hour12: false,
+            minute: "2-digit",
+            second: "2-digit",
+          }).replace(today, "").trim()}
+        </span>
       </div>
     ),
     enableHiding: false,
   },
   {
+    id: "status",
     accessorKey: "status",
     enableSorting: false,
     header: ({ column }) => (

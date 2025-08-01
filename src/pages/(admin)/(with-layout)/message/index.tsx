@@ -408,7 +408,15 @@ export function Component() {
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id} colSpan={header.colSpan}>
+                  <TableHead
+                    key={header.id}
+                    colSpan={header.colSpan}
+                    className={clsx({
+                      "w-14 max-w-14": ["select", "status", "actions"].includes(header.column.id),
+                      "w-48 max-w-48": header.column.id === "id",
+                      "w-24 max-w-40": header.column.id === "ts",
+                    })}
+                  >
                     {header.isPlaceholder ?
                       null :
                       flexRender(
@@ -435,17 +443,17 @@ export function Component() {
                       <TableCell
                         key={cell.id}
                         className={clsx("align-top", {
-                          "py-0": idx === 0 || cell.id.endsWith("actions"),
-                          "flex justify-center": cell.id.endsWith("status"),
-                          "text-center": cell.id.endsWith("user_id"),
+                          "py-0": idx === 0 || cell.column.id === "actions",
+                          "flex justify-center": cell.column.id === "status",
+                          "text-center": cell.column.id === "user_id",
                         })}
                       >
-                        {cell.id.endsWith("actions") && row.getValue("status") !== "Deleted" && row.getValue("status") !== "Failed" ? (
+                        {cell.column.id === "actions" && row.getValue("status") !== "Deleted" && row.getValue("status") !== "Failed" ? (
                           <Button size="sm" variant="ghost" title="删除" disabled={deletionMutation.isPending} onClick={() => onDelete(row.getValue("id"))}>
                             <Trash size={16} className="text-destructive" />
                             <span className="sr-only">删除</span>
                           </Button>
-                        ) : cell.id.endsWith("user_id") && !!users ?
+                        ) : cell.column.id === "user_id" && !!users ?
                             (
                               <Button
                                 variant="outline"
