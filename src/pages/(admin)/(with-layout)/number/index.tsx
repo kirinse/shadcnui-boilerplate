@@ -200,7 +200,7 @@ export function Component() {
                   </Badge>
                 </div>
               </PopoverTrigger>
-              <PopoverContent className="bg-zinc-100 shadow-xl">
+              <PopoverContent className="w-auto bg-zinc-100 shadow-xl">
                 {/* <PopoverArrow style={{ fill: "hsl(var(--accent))" }} /> */}
                 <div className="leading-9">
                   {`${tab}彩 ${day.toLocaleDateString("zh-CN")}`}
