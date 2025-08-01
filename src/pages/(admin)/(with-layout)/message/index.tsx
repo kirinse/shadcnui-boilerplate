@@ -437,6 +437,7 @@ export function Component() {
                         className={clsx("align-top", {
                           "py-0": idx === 0 || cell.id.endsWith("actions"),
                           "flex justify-center": cell.id.endsWith("status"),
+                          "text-center": cell.id.endsWith("user_id"),
                         })}
                       >
                         {cell.id.endsWith("actions") && row.getValue("status") !== "Deleted" && row.getValue("status") !== "Failed" ? (
