@@ -37,12 +37,12 @@ import { DataTablePagination } from "./components/data-table-pagination"
 import { OrderTable } from "./components/order-table"
 
 export const statusList = [
-  { value: "Deleted", label: "已删除", icon: () => <Trash className="mr-2 size-4 text-slate-400" /> },
-  { value: "Revoked", label: "已撤回", icon: () => <MessageCircleOff className="mr-2 size-4 text-gray-300" /> },
+  { value: "Deleted", label: "删除", icon: () => <Trash className="mr-2 size-4 text-slate-400" /> },
+  { value: "Revoked", label: "撤回", icon: () => <MessageCircleOff className="mr-2 size-4 text-gray-300" /> },
   { value: "Finished", label: "成功", icon: () => <CircleCheck className="mr-2 size-4 text-green-500" /> },
   { value: "Failed", label: "失败", icon: () => <CircleX className="mr-2 size-4 text-red-500" /> },
-  { value: "Pending", label: "等待", icon: () => <Hourglass className="mr-2 size-4 text-orange-400" /> },
-  { value: "Warning", label: "可疑", icon: () => <TriangleAlert className="mr-2 size-4 text-destructive" /> },
+  { value: "Pending", label: "等待", icon: () => <Hourglass className="mr-2 size-4 text-yellow-400" /> },
+  { value: "Warning", label: "可疑", icon: () => <TriangleAlert className="mr-2 size-4 text-orange-500" /> },
 ]
 
 export function Component() {
@@ -432,7 +432,7 @@ export function Component() {
                         })}
                       >
                         {cell.column.id === "actions" && !["Deleted", "Failed", "Revoked"].includes(row.getValue("status")) ? (
-                          <Button size="sm" variant="ghost" title="删除" disabled={deletionMutation.isPending || new Date((row.getValue("ts") as number) * 1000).toLocaleDateString("zh-CN") < today} onClick={() => onDelete(row.getValue("id"))} className="group">
+                          <Button size="sm" variant="link" title="删除" disabled={deletionMutation.isPending || new Date((row.getValue("ts") as number) * 1000).toLocaleDateString("zh-CN") < today} onClick={() => onDelete(row.getValue("id"))} className="group">
                             <Trash size={16} className="text-destructive group-disabled:text-slate-400" />
                             <span className="sr-only">删除</span>
                           </Button>
