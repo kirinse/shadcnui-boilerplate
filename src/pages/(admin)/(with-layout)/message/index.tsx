@@ -544,6 +544,7 @@ export function Component() {
 
 const order_columns: ColumnDef<Order>[] = [
   {
+    id: "id",
     accessorKey: "id",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="ID" />
@@ -553,14 +554,16 @@ const order_columns: ColumnDef<Order>[] = [
     enableHiding: false,
   },
   {
+    id: "lotto",
     accessorKey: "lotto",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title={i18n.t("message:lotto")} />
+      <DataTableColumnHeader column={column} title={i18n.t("message:lotto")} className="justify-center" />
     ),
     cell: ({ row }) => row.getValue("lotto"),
     enableHiding: false,
   },
   {
+    id: "day",
     accessorKey: "day",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title={i18n.t("message:day")} />

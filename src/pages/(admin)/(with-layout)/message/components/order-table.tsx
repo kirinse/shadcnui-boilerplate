@@ -70,7 +70,15 @@ export function OrderTable<TData, TValue>({
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className="bg-gray-300/40 hover:bg-gray-300/40">
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id} colSpan={header.colSpan}>
+                  <TableHead
+                    key={header.id}
+                    colSpan={header.colSpan}
+                    className={clsx({
+                      "w-8 max-w-48": header.column.id === "id",
+                      "w-24": header.column.id === "lotto",
+                      "w-24 max-w-40": header.column.id === "created_at",
+                    })}
+                  >
                     {header.isPlaceholder ?
                       null :
                       flexRender(
@@ -94,7 +102,13 @@ export function OrderTable<TData, TValue>({
                   })}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell
+                      key={cell.id}
+                      className={clsx({
+                        "text-nowrap": ["id", "day"].includes(cell.column.id),
+                        "text-center": ["lotto"].includes(cell.column.id),
+                      })}
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext(),
