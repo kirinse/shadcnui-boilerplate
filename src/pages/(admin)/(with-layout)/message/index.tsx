@@ -439,7 +439,6 @@ export function Component() {
                           "flex justify-center": cell.id.endsWith("status"),
                         })}
                       >
-                        {/* {cell.id.endsWith("user_id") && !!users && (<div>用户</div>)} */}
                         {cell.id.endsWith("actions") && row.getValue("status") !== "Deleted" && row.getValue("status") !== "Failed" ? (
                           <Button size="sm" variant="ghost" title="删除" disabled={deletionMutation.isPending} onClick={() => onDelete(row.getValue("id"))}>
                             <Trash size={16} className="text-destructive" />
@@ -474,7 +473,8 @@ export function Component() {
                       "bg-muted hover:bg-muted": idx % 2 === 1,
                     })}
                     >
-                      <TableCell colSpan={row.getVisibleCells().length}>
+                      <TableCell />
+                      <TableCell colSpan={row.getVisibleCells().length - 1}>
                         <OrderTable columns={order_columns} data={row.original.orders} />
                       </TableCell>
                     </TableRow>

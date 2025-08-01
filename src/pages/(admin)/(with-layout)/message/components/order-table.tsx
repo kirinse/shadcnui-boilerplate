@@ -63,7 +63,7 @@ export function OrderTable<TData, TValue>({
   })
 
   return (
-    <div className="m-4">
+    <div className="mb-2 mr-3">
       <div className="rounded-md border">
         <Table>
           <TableHeader>

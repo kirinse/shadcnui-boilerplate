@@ -87,7 +87,7 @@ export const columns: ColumnDef<Message>[] = [
     accessorKey: "status",
     enableSorting: false,
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="状态" className="text-nowrap" />
+      <DataTableColumnHeader column={column} title="状态" className="text-nowrap text-center" />
     ),
     cell: ({ row }) => {
       switch (row.getValue("status")) {
