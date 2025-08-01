@@ -296,7 +296,7 @@ export function Component() {
             <>
               <Separator orientation="vertical" decorative className="h-9" />
               <div className="relative">
-                <MultiSelect
+                {/* <MultiSelect
                   options={statusList}
                   onValueChange={(v) => {
                     setStatus(v.map((s) => messageStatusSchema.parse(s)))
@@ -307,8 +307,8 @@ export function Component() {
                   animation={2}
                   maxCount={3}
                   className="h-9 min-h-9 shadow-sm"
-                />
-                {/* <Select
+                /> */}
+                <Select
                   value={userId}
                   onValueChange={(v) => {
                     setUserId(v)
@@ -337,7 +337,7 @@ export function Component() {
                   >
                     <X className="size-2" />
                   </button>
-                )} */}
+                )}
               </div>
             </>
           )}
