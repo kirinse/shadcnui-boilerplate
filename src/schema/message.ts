@@ -12,7 +12,7 @@ export const orderSchema = z.object({
   prize: z.number(),
   created_at: z.date(),
 })
-export const messageStatusSchema = z.enum(["Pending", "Finished", "Failed", "Deleted"])
+export const messageStatusSchema = z.enum(["Pending", "Finished", "Failed", "Deleted", "Revoked", "Warning"])
 
 export type Order = z.infer<typeof orderSchema>
 export type MessageStatus = z.infer<typeof messageStatusSchema>

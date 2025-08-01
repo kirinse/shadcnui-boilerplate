@@ -9,7 +9,7 @@ import clsx from "clsx"
 import { format } from "date-fns"
 import { t } from "i18next"
 import { useAtom } from "jotai"
-import { CircleCheck, CircleX, Hourglass, RefreshCwIcon, Trash, UserRound, X } from "lucide-react"
+import { CircleCheck, CircleX, Hourglass, MessageCircleOff, RefreshCwIcon, Trash, TriangleAlert, UserRound, X } from "lucide-react"
 import * as React from "react"
 import { useEffect, useMemo, useState } from "react"
 import { toast } from "sonner"
@@ -20,6 +20,7 @@ import { Icons } from "@/components/icons"
 import { Refresher } from "@/components/refresher"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { MultiSelect } from "@/components/ui/multi-select"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -30,10 +31,19 @@ import { getFetchErrorMessage } from "@/lib/api-fetch"
 import type { MessageStatus, Order } from "@/schema/message"
 import { messageStatusSchema } from "@/schema/message"
 
-import { columns } from "./components/columns"
+import { columns, today } from "./components/columns"
 import { DataTableColumnHeader } from "./components/data-table-column-header"
 import { DataTablePagination } from "./components/data-table-pagination"
 import { OrderTable } from "./components/order-table"
+
+export const statusList = [
+  { value: "Deleted", label: "已删除", icon: () => <Trash className="mr-2 size-4 text-slate-400" /> },
+  { value: "Revoked", label: "已撤回", icon: () => <MessageCircleOff className="mr-2 size-4 text-gray-300" /> },
+  { value: "Finished", label: "成功", icon: () => <CircleCheck className="mr-2 size-4 text-green-500" /> },
+  { value: "Failed", label: "失败", icon: () => <CircleX className="mr-2 size-4 text-red-500" /> },
+  { value: "Pending", label: "等待", icon: () => <Hourglass className="mr-2 size-4 text-orange-400" /> },
+  { value: "Warning", label: "可疑", icon: () => <TriangleAlert className="mr-2 size-4 text-destructive" /> },
+]
 
 export function Component() {
   const [pagination, setPagination] = useState<PaginationState>({
@@ -45,7 +55,7 @@ export function Component() {
   const [lotto, setLotto] = useState<string>()
   const [method, setMethod] = useState<string>()
   const [userId, setUserId] = useState<string>("")
-  const [status, setStatus] = useState<MessageStatus>()
+  const [status, setStatus] = useState<MessageStatus[]>([])
 
   const [authToken, _] = useAtom(authTokenAtom)
   const isAdmin = useMemo(() => authToken.is_admin, [authToken])
@@ -236,59 +246,6 @@ export function Component() {
             )}
           </div>
           <div className="relative">
-            <Select
-              value={status || ""}
-              onValueChange={(v) => {
-                setStatus(messageStatusSchema.parse(v))
-                table.setPageIndex(0)
-                table.resetExpanded(true)
-              }}
-            >
-              <SelectTrigger className="w-[120px]">
-                <SelectValue placeholder="状态" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Pending">
-                  <div className="flex items-center">
-                    <Hourglass size={16} xlinkTitle="等待" className="text-orange-500" />
-                    待处理
-                  </div>
-                </SelectItem>
-                <SelectItem value="Finished">
-                  <div className="flex items-center gap-1">
-                    <CircleCheck size={16} className="text-green-500" />
-                    成功
-                  </div>
-                </SelectItem>
-                <SelectItem value="Failed">
-                  <div className="flex items-center gap-1">
-                    <CircleX size={16} className="text-red-500" />
-                    失败
-                  </div>
-                </SelectItem>
-                <SelectItem value="Deleted">
-                  <div className="flex items-center gap-1">
-                    <Trash size={16} className="text-slate-400" />
-                    已删除
-                  </div>
-                </SelectItem>
-              </SelectContent>
-            </Select>
-            {status && (
-              <button
-                type="button"
-                onClick={() => {
-                  setStatus(undefined)
-                  table.setPageIndex(0)
-                  table.resetExpanded(true)
-                }}
-                className="absolute right-6 top-1/2 -translate-y-1/2 rounded-full bg-accent/40 p-1 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-              >
-                <X className="size-2" />
-              </button>
-            )}
-          </div>
-          <div className="relative">
             <Input
               type="number"
               min={1}
@@ -321,11 +278,37 @@ export function Component() {
               </button>
             )}
           </div>
+          <div className="relative">
+            <MultiSelect
+              options={statusList}
+              onValueChange={(v) => {
+                setStatus(v.map((s) => messageStatusSchema.parse(s)))
+              }}
+              defaultValue={status}
+              placeholder="状态"
+              variant="inverted"
+              animation={2}
+              maxCount={3}
+              className="h-9 min-h-9 shadow-sm"
+            />
+          </div>
           {isAdmin && (
             <>
               <Separator orientation="vertical" decorative className="h-9" />
               <div className="relative">
-                <Select
+                <MultiSelect
+                  options={statusList}
+                  onValueChange={(v) => {
+                    setStatus(v.map((s) => messageStatusSchema.parse(s)))
+                  }}
+                  defaultValue={status}
+                  placeholder="用户"
+                  variant="inverted"
+                  animation={2}
+                  maxCount={3}
+                  className="h-9 min-h-9 shadow-sm"
+                />
+                {/* <Select
                   value={userId}
                   onValueChange={(v) => {
                     setUserId(v)
@@ -354,7 +337,7 @@ export function Component() {
                   >
                     <X className="size-2" />
                   </button>
-                )}
+                )} */}
               </div>
             </>
           )}
@@ -435,7 +418,7 @@ export function Component() {
                   <TableRow className={clsx({
                     "bg-gray hover:bg-gray": idx % 2 === 0,
                     "bg-muted hover:bg-muted": idx % 2 === 1,
-                    "text-slate-400 line-through": row.getValue("status") === "Deleted",
+                    "text-slate-400 line-through": ["Deleted", "Revoked"].includes(row.getValue("status")),
                     "border-transparent": row.getIsExpanded(),
                   })}
                   >
@@ -448,9 +431,9 @@ export function Component() {
                           "text-center": cell.column.id === "user_id",
                         })}
                       >
-                        {cell.column.id === "actions" && row.getValue("status") !== "Deleted" && row.getValue("status") !== "Failed" ? (
-                          <Button size="sm" variant="ghost" title="删除" disabled={deletionMutation.isPending} onClick={() => onDelete(row.getValue("id"))}>
-                            <Trash size={16} className="text-destructive" />
+                        {cell.column.id === "actions" && !["Deleted", "Failed", "Revoked"].includes(row.getValue("status")) ? (
+                          <Button size="sm" variant="ghost" title="删除" disabled={deletionMutation.isPending || new Date((row.getValue("ts") as number) * 1000).toLocaleDateString("zh-CN") < today} onClick={() => onDelete(row.getValue("id"))} className="group">
+                            <Trash size={16} className="text-destructive group-disabled:text-slate-400" />
                             <span className="sr-only">删除</span>
                           </Button>
                         ) : cell.column.id === "user_id" && !!users ?
@@ -458,7 +441,7 @@ export function Component() {
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className="h-5 px-1 font-semibold text-blue-700"
+                                className={clsx("h-5 px-1 font-semibold text-blue-700", { "line-through text-blue-700/30": ["Deleted", "Failed", "Revoked"].includes(row.getValue("status")) })}
                                 onClick={(_ev) => {
                                   setUserId(row.getValue("user_id"))
                                   table.setPageIndex(0)

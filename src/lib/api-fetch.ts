@@ -52,8 +52,8 @@ export const getFetchErrorMessage = (error: Error) => {
   if (error instanceof FetchError) {
     try {
       const json = error.response?._data
-      const { message } = json
-      return `${message || error.message}`
+      const { error: err, description: message } = json
+      return `${message || err || error.message}`
     } catch {
       return error.message
     }

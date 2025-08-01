@@ -1,12 +1,13 @@
 import type { ColumnDef } from "@tanstack/react-table"
-import { ChevronRight, CircleCheck, CircleX, Clock, Hourglass, Trash } from "lucide-react"
+import { ChevronRight, Clock } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import type { Message } from "@/schema/message"
 
+import { statusList } from ".."
 import { DataTableColumnHeader } from "./data-table-column-header"
 
-const today = new Date().toLocaleDateString("zh-CN")
+export const today = new Date().toLocaleDateString("zh-CN")
 
 export const columns: ColumnDef<Message>[] = [
   {
@@ -106,20 +107,9 @@ export const columns: ColumnDef<Message>[] = [
       <DataTableColumnHeader column={column} title="状态" className="text-nowrap text-center" />
     ),
     cell: ({ row }) => {
-      switch (row.getValue("status")) {
-        case "Deleted": {
-          return (<Trash size={16} className="text-slate-400" />)
-        }
-        case "Finished": {
-          return (<CircleCheck size={16} className="text-green-500" />)
-        }
-        case "Failed": {
-          return (<CircleX size={16} className="text-red-500" />)
-        }
-        default: {
-          return (<Hourglass size={16} xlinkTitle="等待" className="text-orange-500" />)
-        }
-      }
+      return statusList.filter((status) => status.value === row.getValue("status")).map((s) => (
+        <s.icon key={s.value} />
+      ))
     },
     enableHiding: false,
   },
