@@ -9,9 +9,9 @@ import clsx from "clsx"
 import { format } from "date-fns"
 import { t } from "i18next"
 import { useAtom } from "jotai"
-import { CircleCheck, CircleX, Hourglass, RefreshCwIcon, Trash, X } from "lucide-react"
+import { CircleCheck, CircleX, Hourglass, RefreshCwIcon, Trash, UserRound, X } from "lucide-react"
 import * as React from "react"
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { toast } from "sonner"
 
 import { authTokenAtom } from "@/atoms/auth"
@@ -85,7 +85,7 @@ export function Component() {
     status,
     refetchInterval,
   )
-  const { data: users } = useUsers({ pageIndex: 1, pageSize: 1000 })
+  const { data: users, fetch: fetchUsers } = useUsers({ pageIndex: 1, pageSize: 1000 })
 
   const deletionMutation = useMessageDeletionMutation()
 
@@ -124,6 +124,14 @@ export function Component() {
       },
     })
   }
+
+  useEffect(() => {
+    if (isAdmin) {
+      fetchUsers()
+    } else {
+      table.getColumn("user_id")?.toggleVisibility(false)
+    }
+  }, [isAdmin, fetchUsers, table])
 
   return (
     <div className="relative">
@@ -396,7 +404,7 @@ export function Component() {
               </TableCell>
             </TableRow>
           </TableHeader>
-          <TableHeader>
+          <TableHeader className="bg-muted/50 font-medium hover:bg-muted/50">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
@@ -428,17 +436,35 @@ export function Component() {
                         key={cell.id}
                         className={clsx("align-top", {
                           "py-0": idx === 0 || cell.id.endsWith("actions"),
+                          "flex justify-center": cell.id.endsWith("status"),
                         })}
                       >
+                        {/* {cell.id.endsWith("user_id") && !!users && (<div>用户</div>)} */}
                         {cell.id.endsWith("actions") && row.getValue("status") !== "Deleted" && row.getValue("status") !== "Failed" ? (
                           <Button size="sm" variant="ghost" title="删除" disabled={deletionMutation.isPending} onClick={() => onDelete(row.getValue("id"))}>
                             <Trash size={16} className="text-destructive" />
                             <span className="sr-only">删除</span>
                           </Button>
-                        ) : flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
+                        ) : cell.id.endsWith("user_id") && !!users ?
+                            (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="h-5 px-1 font-semibold text-blue-700"
+                                onClick={(_ev) => {
+                                  setUserId(row.getValue("user_id"))
+                                  table.setPageIndex(0)
+                                  table.resetExpanded(true)
+                                }}
+                              >
+                                <UserRound size={12} />
+                                {users.find((u) => u.id === row.getValue("user_id"))?.name}
+                              </Button>
+                            ) :
+                          flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
                       </TableCell>
                     ))}
                   </TableRow>

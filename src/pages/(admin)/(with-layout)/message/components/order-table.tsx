@@ -68,7 +68,7 @@ export function OrderTable<TData, TValue>({
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="bg-transparent hover:bg-transparent">
+              <TableRow key={headerGroup.id} className="bg-gray-300/40 hover:bg-gray-300/40">
                 {headerGroup.headers.map((header) => (
                   <TableHead key={header.id} colSpan={header.colSpan}>
                     {header.isPlaceholder ?
@@ -89,8 +89,8 @@ export function OrderTable<TData, TValue>({
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
                   className={clsx({
-                    "bg-gray-100/50 hover:bg-gray-100/50": idx % 2 === 0,
-                    "bg-gray-200/50 hover:bg-gray-200/50": idx % 2 === 1,
+                    "bg-gray-50/50 hover:bg-gray-50/50": idx % 2 === 0,
+                    "bg-gray-100/50 hover:bg-gray-100/50": idx % 2 === 1,
                   })}
                 >
                   {row.getVisibleCells().map((cell) => (

@@ -3,7 +3,7 @@ import { Packer } from "docx"
 import { saveAs } from "file-saver"
 import { useAtom } from "jotai"
 import { RefreshCwIcon, X } from "lucide-react"
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { toast } from "sonner"
 
 import { authTokenAtom } from "@/atoms/auth"
@@ -47,7 +47,7 @@ export function Component() {
     userId ? Number.parseInt(userId) : undefined,
   )
   const { data: details } = useNumberDetails(tab, day, detailNumber, userId ? Number.parseInt(userId) : undefined)
-  const { data: users } = useUsers({ pageIndex: 1, pageSize: 1000 })
+  const { data: users, fetch: fetchUsers } = useUsers({ pageIndex: 1, pageSize: 1000 })
 
   async function onDownload() {
     toast.promise(riskRefetch, {
@@ -74,6 +74,10 @@ export function Component() {
   const [authToken, _] = useAtom(authTokenAtom)
   const canDownRisk = useMemo(() => authToken.is_verified || authToken.is_admin, [authToken])
   const isAdmin = useMemo(() => authToken.is_admin, [authToken])
+
+  useEffect(() => {
+    if (isAdmin) { fetchUsers() }
+  }, [isAdmin, fetchUsers])
 
   return (
     <>
@@ -167,70 +171,84 @@ export function Component() {
         </div>
       </Tabs>
       <div className="grid flex-1 scroll-mt-20 grid-cols-4 items-start gap-4 md:grid-cols-5 md:gap-4 lg:grid-cols-8 lg:gap-3 xl:grid-cols-9 xl:gap-2 2xl:grid-cols-12 2xl:gap-2">
-        {data?.numbers.map((number) => (
-          <Popover
-            key={`${tab}-${number.number}`}
-            onOpenChange={(open) => {
-              if (open) {
-                setDetailNumber(number.number)
-              } else {
-                setDetailNumber("")
-              }
-            }}
-          >
-            <PopoverTrigger>
-              <div className={clsx("flex aspect-square flex-col items-center justify-around rounded-md border-2 border-muted p-4 text-sm font-medium leading-none hover:bg-accent hover:text-accent-foreground", { "bg-accent text-accent-foreground": detailNumber === number.number, "bg-popover": detailNumber !== number.number })}>
-                <NumberComp number={number.number} />
-                <Badge variant="outline" className={clsx("text-nowrap text-sidebar-primary-foreground", { "border-red-500 bg-red-500": (number.prize - data.total) / data.total >= 0.1, "border-yellow-400 bg-yellow-400": number.prize > data.total && (number.prize - data.total) / data.total < 0.1, "border-green-400 bg-green-400": number.prize <= data.total })}>¥ {number.prize.toLocaleString()}</Badge>
-              </div>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto bg-accent">
-              <div className="leading-9">
-                {`${tab}彩 ${day.toLocaleDateString("zh-CN")}`}
-                {` `}
-                <NumberComp number={number.number} />
-                {` `}
-                玩法分布
-                {/* </DialogTitle> */}
-                {/* </DialogHeader> */}
-              </div>
-              {details && (
-                <DataTable columns={detailsColumns} data={details} />
-              )}
-            </PopoverContent>
-          </Popover>
-          // <Dialog
-          //   key={`${tab}-${number.number}`}
-          //   onOpenChange={(open) => {
-          //     if (open) {
-          //       setDetailNumber(number.number)
-          //     }
-          //   }}
-          // >
-          //   <DialogTrigger>
-          //     <div className="flex aspect-square flex-col items-center justify-around rounded-md border-2 border-muted bg-popover p-4 text-sm font-medium leading-none hover:bg-accent hover:text-accent-foreground">
-          //       <NumberComp number={number.number} />
-          //       <Badge variant="outline" className={clsx("text-nowrap text-sidebar-primary-foreground", { "border-red-500 bg-red-500": (number.prize - data.total) / data.total >= 0.1, "border-yellow-400 bg-yellow-400": number.prize > data.total && (number.prize - data.total) / data.total < 0.1, "border-green-400 bg-green-400": number.prize <= data.total })}>¥ {number.prize.toLocaleString()}</Badge>
-          //     </div>
-          //   </DialogTrigger>
-          //   <DialogContent>
-          //     {details && (
-          //       <>
-          //         <DialogHeader>
-          //           <DialogTitle>
-          //             {`${tab}彩 ${day.toLocaleDateString("zh-CN")} 号码`}
-          //             {` `}
-          //             <NumberComp number={number.number} />
-          //             {` `}
-          //             玩法分布
-          //           </DialogTitle>
-          //         </DialogHeader>
-          //         <DataTable columns={detailsColumns} data={details} />
-          //       </>
-          //     )}
-          //   </DialogContent>
-          // </Dialog>
-        ))}
+        {data?.numbers.map((number) => {
+          const color = {
+            "border-red-500 bg-red-500": (number.prize - data.total) / data.total >= 0.1,
+            "border-yellow-400 bg-yellow-400": number.prize > data.total && (number.prize - data.total) / data.total < 0.1,
+            "border-green-400 bg-green-400": number.prize <= data.total,
+          }
+          return (
+            <Popover
+              key={`${tab}-${number.number}`}
+              onOpenChange={(open) => {
+                if (open) {
+                  setDetailNumber(number.number)
+                } else {
+                  setDetailNumber("")
+                }
+              }}
+            >
+              <PopoverTrigger>
+                <div className={clsx("flex aspect-square flex-col items-center justify-around rounded-md border-2 border-zinc-100 p-4 text-sm font-medium leading-none hover:bg-zinc-100 hover:text-accent-foreground", { "bg-zinc-100 text-accent-foreground shadow-md": detailNumber === number.number, "bg-popover": detailNumber !== number.number })}>
+                  <NumberComp number={number.number} />
+                  <Badge variant="outline" className={clsx("text-nowrap text-sidebar-primary-foreground", color)}>
+                    {new Intl.NumberFormat("zh-CN", {
+                      style: "currency",
+                      currency: "CNY",
+                      maximumFractionDigits: 0,
+                    }).format(number.prize)}
+                  </Badge>
+                </div>
+              </PopoverTrigger>
+              <PopoverContent className="bg-zinc-100 shadow-xl">
+                {/* <PopoverArrow style={{ fill: "hsl(var(--accent))" }} /> */}
+                <div className="leading-9">
+                  {`${tab}彩 ${day.toLocaleDateString("zh-CN")}`}
+                  {` `}
+                  <NumberComp number={number.number} />
+                  {` `}
+                  玩法分布
+                  {/* </DialogTitle> */}
+                  {/* </DialogHeader> */}
+                </div>
+                {details && (
+                  <DataTable columns={detailsColumns} data={details} color={color} />
+                )}
+              </PopoverContent>
+            </Popover>
+            // <Dialog
+            //   key={`${tab}-${number.number}`}
+            //   onOpenChange={(open) => {
+            //     if (open) {
+            //       setDetailNumber(number.number)
+            //     }
+            //   }}
+            // >
+            //   <DialogTrigger>
+            //     <div className="flex aspect-square flex-col items-center justify-around rounded-md border-2 border-muted bg-popover p-4 text-sm font-medium leading-none hover:bg-accent hover:text-accent-foreground">
+            //       <NumberComp number={number.number} />
+            //       <Badge variant="outline" className={clsx("text-nowrap text-sidebar-primary-foreground", { "border-red-500 bg-red-500": (number.prize - data.total) / data.total >= 0.1, "border-yellow-400 bg-yellow-400": number.prize > data.total && (number.prize - data.total) / data.total < 0.1, "border-green-400 bg-green-400": number.prize <= data.total })}>¥ {number.prize.toLocaleString()}</Badge>
+            //     </div>
+            //   </DialogTrigger>
+            //   <DialogContent>
+            //     {details && (
+            //       <>
+            //         <DialogHeader>
+            //           <DialogTitle>
+            //             {`${tab}彩 ${day.toLocaleDateString("zh-CN")} 号码`}
+            //             {` `}
+            //             <NumberComp number={number.number} />
+            //             {` `}
+            //             玩法分布
+            //           </DialogTitle>
+            //         </DialogHeader>
+            //         <DataTable columns={detailsColumns} data={details} />
+            //       </>
+            //     )}
+            //   </DialogContent>
+            // </Dialog>
+          )
+        })}
       </div>
     </>
   )

@@ -1,7 +1,6 @@
 import type { ColumnDef } from "@tanstack/react-table"
-import { ChevronRight, CircleCheck, CircleX, Hourglass, Trash } from "lucide-react"
+import { ChevronRight, CircleCheck, CircleX, Clock, Hourglass, Trash } from "lucide-react"
 
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import type { Message } from "@/schema/message"
 
@@ -37,23 +36,30 @@ export const columns: ColumnDef<Message>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "room_id",
+    accessorKey: "user_id",
     enableSorting: false,
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="群" />
+      <DataTableColumnHeader column={column} className="text-nowrap text-center" title="用户" />
     ),
-    cell: ({ row }) => <Badge className={`${row.getValue("status") === "Deleted" ? "text-slate-400 line-through" : ""}`} variant={row.getValue("status") === "Deleted" ? "outline" : "default"}>{row.getValue("room_id")}</Badge>,
-    enableHiding: false,
   },
-  {
-    accessorKey: "sender",
-    enableSorting: false,
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="发送" />
-    ),
-    cell: ({ row }) => <Badge className={`${row.getValue("status") === "Deleted" ? "text-slate-400 line-through" : ""}`} variant={row.getValue("status") === "Deleted" ? "outline" : "secondary"}>{row.getValue("sender")}</Badge>,
-    enableHiding: false,
-  },
+  // {
+  //   accessorKey: "room_id",
+  //   enableSorting: false,
+  //   header: ({ column }) => (
+  //     <DataTableColumnHeader column={column} title="群" />
+  //   ),
+  //   cell: ({ row }) => <Badge className={`${row.getValue("status") === "Deleted" ? "text-slate-400 line-through" : ""}`} variant={row.getValue("status") === "Deleted" ? "outline" : "default"}>{row.getValue("room_id")}</Badge>,
+  //   enableHiding: false,
+  // },
+  // {
+  //   accessorKey: "sender",
+  //   enableSorting: false,
+  //   header: ({ column }) => (
+  //     <DataTableColumnHeader column={column} title="发送" />
+  //   ),
+  //   cell: ({ row }) => <Badge className={`${row.getValue("status") === "Deleted" ? "text-slate-400 line-through" : ""}`} variant={row.getValue("status") === "Deleted" ? "outline" : "secondary"}>{row.getValue("sender")}</Badge>,
+  //   enableHiding: false,
+  // },
   {
     accessorKey: "content",
     enableSorting: false,
@@ -65,16 +71,23 @@ export const columns: ColumnDef<Message>[] = [
   },
   {
     accessorKey: "ts",
+    enableSorting: false,
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="时间" />
     ),
-    cell: ({ row }) => <span className="text-nowrap">{new Date((row.getValue("ts") as number) * 1000).toLocaleString("zh-CN", { year: "numeric", month: "2-digit", day: "2-digit", weekday: undefined, hour: "2-digit", hour12: false, minute: "2-digit", second: "2-digit" })}</span>,
+    cell: ({ row }) => (
+      <div className="flex items-center gap-1">
+        <Clock size={14} />
+        <span className="text-nowrap">{new Date((row.getValue("ts") as number) * 1000).toLocaleString("zh-CN", { year: "numeric", month: "2-digit", day: "2-digit", weekday: undefined, hour: "2-digit", hour12: false, minute: "2-digit", second: "2-digit" })}</span>
+      </div>
+    ),
     enableHiding: false,
   },
   {
     accessorKey: "status",
+    enableSorting: false,
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="状态" />
+      <DataTableColumnHeader column={column} title="状态" className="text-nowrap" />
     ),
     cell: ({ row }) => {
       switch (row.getValue("status")) {
