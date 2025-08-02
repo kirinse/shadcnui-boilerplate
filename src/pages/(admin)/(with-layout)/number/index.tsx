@@ -189,7 +189,7 @@ export function Component() {
               }}
             >
               <PopoverTrigger>
-                <div className={clsx("flex aspect-square flex-col items-center justify-around rounded-md border-2 border-zinc-100 p-4 text-sm font-medium leading-none hover:bg-zinc-100 hover:text-accent-foreground", { "bg-zinc-100 text-accent-foreground shadow-md": detailNumber === number.number, "bg-popover": detailNumber !== number.number })}>
+                <div className={clsx("flex aspect-square flex-col items-center justify-around rounded-md border-2 bg-background p-4 text-sm font-medium leading-none hover:bg-accent hover:text-accent-foreground", { "!bg-accent shadow-md": detailNumber === number.number })}>
                   <NumberComp number={number.number} />
                   <Badge variant="outline" className={clsx("text-nowrap text-sidebar-primary-foreground", color)}>
                     {new Intl.NumberFormat("zh-CN", {
@@ -200,7 +200,7 @@ export function Component() {
                   </Badge>
                 </div>
               </PopoverTrigger>
-              <PopoverContent className="w-auto bg-zinc-100 shadow-xl">
+              <PopoverContent className="w-auto bg-accent shadow-xl">
                 {/* <PopoverArrow style={{ fill: "hsl(var(--accent))" }} /> */}
                 <div className="leading-9">
                   {`${tab}彩 ${day.toLocaleDateString("zh-CN")}`}

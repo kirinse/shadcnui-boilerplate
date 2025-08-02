@@ -1,4 +1,3 @@
-import { env } from "@env"
 import type { LucideIcon } from "lucide-react"
 import * as React from "react"
 import { Link } from "react-router-dom"
@@ -11,7 +10,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 
-import { DevMonitorPanel } from "../devtools/dev-monitor-panel"
+// import { DevMonitorPanel } from "../devtools/dev-monitor-panel"
 
 export function NavSecondary({
   items,
@@ -27,7 +26,7 @@ export function NavSecondary({
   return (
     <SidebarGroup {...props}>
       <SidebarGroupContent>
-        {env.VITE_ENABLE_DEVTOOLS && <DevMonitorPanel />}
+        {/* {env.VITE_ENABLE_DEVTOOLS && <DevMonitorPanel />} */}
         <SidebarMenu>
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
