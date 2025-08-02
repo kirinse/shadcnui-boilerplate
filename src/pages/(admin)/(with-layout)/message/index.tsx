@@ -441,7 +441,7 @@ export function Component() {
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className={clsx("h-5 px-1 font-semibold text-blue-700", { "line-through text-blue-700/30": ["Deleted", "Failed", "Revoked"].includes(row.getValue("status")) })}
+                                className={clsx("h-5 px-1 font-semibold text-blue-700", { "line-through text-blue-700/30": ["Deleted", "Revoked"].includes(row.getValue("status")) })}
                                 onClick={(_ev) => {
                                   setUserId(row.getValue("user_id"))
                                   table.setPageIndex(0)
