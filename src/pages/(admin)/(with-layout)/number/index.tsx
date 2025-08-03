@@ -81,80 +81,83 @@ export function Component() {
 
   return (
     <>
-      <Tabs defaultValue={tab} onValueChange={setTab} className="space-y-4">
-        <div className="my-4 flex items-center justify-between space-x-4">
-          <TabsList>
-            <TabsTrigger value="福">福</TabsTrigger>
-            <TabsTrigger value="体">体</TabsTrigger>
-          </TabsList>
-          <div className="flex flex-1 space-x-4">
-            {data?.total !== undefined && data.total > 0 && (
-              <div className="inline-flex h-9 items-center justify-center rounded-lg bg-muted p-2 font-semibold text-blue-500">
-                {new Intl.NumberFormat("zh-CN", {
-                  style: "currency",
-                  currency: "CNY",
-                  maximumFractionDigits: 0,
-                }).format(data?.total)}
+      <div className="my-4 flex items-end justify-between sm:my-0 sm:items-center">
+        <div className="flex flex-col gap-3 sm:my-4 sm:flex-row">
+          <Tabs defaultValue={tab} onValueChange={setTab} className="space-y-4">
+            <TabsList>
+              <TabsTrigger value="福">福</TabsTrigger>
+              <TabsTrigger value="体">体</TabsTrigger>
+            </TabsList>
+          </Tabs>
+          {/* <div className="flex flex-1 space-x-4"> */}
+          {data?.total !== undefined && data.total > 0 && (
+            <div className="inline-flex h-9 items-center justify-center rounded-lg bg-muted p-2 font-semibold text-blue-500">
+              {new Intl.NumberFormat("zh-CN", {
+                style: "currency",
+                currency: "CNY",
+                maximumFractionDigits: 0,
+              }).format(data?.total)}
+            </div>
+          )}
+          {/* <div> */}
+          <DatePicker
+            mode="single"
+            required
+            selected={day}
+            onSelect={(date) => setDay(date!)}
+          />
+          {/* </div> */}
+          {/* <div> */}
+          <Input
+            type="number"
+            min={1}
+            max={999}
+            maxLength={3}
+            className="w-[60px] [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+            placeholder="号码"
+            value={number || undefined}
+            onChange={(e) => {
+              const v = e.target.value || undefined
+              if (v !== undefined && v.length > 3) { e.preventDefault(); return }
+              setNumber(v)
+            }}
+          />
+          {/* </div> */}
+          {isAdmin && (
+            <div className="inline-flex gap-3">
+              <Separator orientation="vertical" decorative className="h-9" />
+              <div className="relative">
+                <Select value={userId} onValueChange={(v) => setUserId(v)}>
+                  <SelectTrigger className="w-[90px]">
+                    <SelectValue placeholder="用户" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {users?.map((u) => (
+                      <SelectItem key={u.id} value={u.id}>{u.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {userId && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setUserId("")
+                    }}
+                    className="absolute right-6 top-1/2 -translate-y-1/2 rounded-full bg-accent/40 p-1 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                  >
+                    <X className="size-2" />
+                  </button>
+                )}
               </div>
-            )}
-            <div>
-              <DatePicker
-                mode="single"
-                required
-                selected={day}
-                onSelect={(date) => setDay(date!)}
-              />
             </div>
-            <div>
-              <Input
-                type="number"
-                min={1}
-                max={999}
-                maxLength={3}
-                className="w-[60px] [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                placeholder="号码"
-                value={number || undefined}
-                onChange={(e) => {
-                  const v = e.target.value || undefined
-                  if (v !== undefined && v.length > 3) { e.preventDefault(); return }
-                  setNumber(v)
-                }}
-              />
-            </div>
-            {isAdmin && (
-              <>
-                <Separator orientation="vertical" decorative className="h-9" />
-                <div className="relative">
-                  <Select value={userId} onValueChange={(v) => setUserId(v)}>
-                    <SelectTrigger className="w-[90px]">
-                      <SelectValue placeholder="用户" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {users?.map((u) => (
-                        <SelectItem key={u.id} value={u.id}>{u.name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {userId && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setUserId("")
-                      }}
-                      className="absolute right-6 top-1/2 -translate-y-1/2 rounded-full bg-accent/40 p-1 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                    >
-                      <X className="size-2" />
-                    </button>
-                  )}
-                </div>
-              </>
-            )}
-          </div>
+          )}
+          {/* </div> */}
+        </div>
+        <div className="flex gap-3">
           <Button variant="ghost" title="刷新" disabled={isFetching || isRefetching} onClick={() => refetch()}>
             <RefreshCwIcon className={isFetching || isRefetching ? "animate-spin" : ""} size={16} />
             <span className="sr-only">刷新</span>
           </Button>
-
           <Refresher onValueChange={(v: string) => {
             let vv: boolean | number = false
             if (v !== "off") {
@@ -169,7 +172,7 @@ export function Component() {
             </Button>
           ) : null}
         </div>
-      </Tabs>
+      </div>
       <div className="grid flex-1 scroll-mt-20 grid-cols-4 items-start gap-4 md:grid-cols-5 md:gap-4 lg:grid-cols-8 lg:gap-3 xl:grid-cols-9 xl:gap-2 2xl:grid-cols-12 2xl:gap-2">
         {data?.numbers.map((number) => {
           const color = {
@@ -189,7 +192,7 @@ export function Component() {
               }}
             >
               <PopoverTrigger>
-                <div className={clsx("flex aspect-square flex-col items-center justify-around rounded-md border-2 bg-background p-4 text-sm font-medium leading-none hover:bg-accent hover:text-accent-foreground", { "!bg-accent shadow-md": detailNumber === number.number })}>
+                <div className={clsx("flex aspect-square flex-col items-center justify-around rounded-md border-2 bg-background p-0 text-sm font-medium leading-none hover:bg-accent hover:text-accent-foreground sm:p-4", { "!bg-accent shadow-md": detailNumber === number.number })}>
                   <NumberComp number={number.number} />
                   <Badge variant="outline" className={clsx("text-nowrap text-sidebar-primary-foreground", color)}>
                     {new Intl.NumberFormat("zh-CN", {

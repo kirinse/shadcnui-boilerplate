@@ -54,7 +54,7 @@ export function Component() {
   const [number, setNumber] = useState<string>("")
   const [lotto, setLotto] = useState<string>()
   const [method, setMethod] = useState<string>()
-  const [userId, setUserId] = useState<string>("")
+  const [userIds, setUserIds] = useState<string[]>([])
   const [status, setStatus] = useState<MessageStatus[]>([])
 
   const [authToken, _] = useAtom(authTokenAtom)
@@ -75,7 +75,7 @@ export function Component() {
       value: number,
     }, {
       id: "user_id",
-      value: userId,
+      value: userIds,
     }, {
       id: "status",
       value: status,
@@ -91,7 +91,7 @@ export function Component() {
     lotto || undefined,
     method || undefined,
     number && number.length === 3 ? number : undefined,
-    userId ? Number.parseInt(userId) : undefined,
+    userIds ? userIds.map((n) => Number.parseInt(n)) : undefined,
     status,
     refetchInterval,
   )
@@ -135,17 +135,21 @@ export function Component() {
     })
   }
 
+  const [userList, setUserList] = useState<any[] | undefined>([])
+
   useEffect(() => {
     if (isAdmin) {
-      fetchUsers()
+      fetchUsers().then((_res) => {
+        setUserList(users?.map((i) => { return { value: i.id, label: i.name } }))
+      })
     } else {
       table.getColumn("user_id")?.toggleVisibility(false)
     }
-  }, [isAdmin, fetchUsers, table])
+  }, [isAdmin, fetchUsers, table, users])
 
   return (
     <div className="relative">
-      <div className="my-4 flex items-center justify-between space-x-4">
+      <div className="flex items-center justify-between space-x-4">
         <div className="flex flex-1 space-x-4">
           <div>
             <DatePicker
@@ -296,47 +300,19 @@ export function Component() {
             <>
               <Separator orientation="vertical" decorative className="h-9" />
               <div className="relative">
-                {/* <MultiSelect
-                  options={statusList}
-                  onValueChange={(v) => {
-                    setStatus(v.map((s) => messageStatusSchema.parse(s)))
-                  }}
-                  defaultValue={status}
-                  placeholder="用户"
-                  variant="inverted"
-                  animation={2}
-                  maxCount={3}
-                  className="h-9 min-h-9 shadow-sm"
-                /> */}
-                <Select
-                  value={userId}
-                  onValueChange={(v) => {
-                    setUserId(v)
-                    table.setPageIndex(0)
-                    table.resetExpanded(true)
-                  }}
-                >
-                  <SelectTrigger className="w-[90px]">
-                    <SelectValue placeholder="用户" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {users?.map((u) => (
-                      <SelectItem key={u.id} value={u.id}>{u.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {userId && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setUserId("")
-                      table.setPageIndex(0)
-                      table.resetExpanded(true)
+                {!!userList && (
+                  <MultiSelect
+                    options={userList!}
+                    onValueChange={(v) => {
+                      setUserIds(v)
                     }}
-                    className="absolute right-6 top-1/2 -translate-y-1/2 rounded-full bg-accent/40 p-1 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                  >
-                    <X className="size-2" />
-                  </button>
+                    defaultValue={userIds}
+                    placeholder="用户"
+                    variant="inverted"
+                    animation={2}
+                    maxCount={3}
+                    className="h-9 min-h-9 shadow-sm"
+                  />
                 )}
               </div>
             </>
@@ -443,7 +419,7 @@ export function Component() {
                                 size="sm"
                                 className={clsx("h-5 px-1 font-semibold text-blue-700", { "line-through text-blue-700/30": ["Deleted", "Revoked"].includes(row.getValue("status")) })}
                                 onClick={(_ev) => {
-                                  setUserId(row.getValue("user_id"))
+                                  setUserIds([row.getValue("user_id")])
                                   table.setPageIndex(0)
                                   table.resetExpanded(true)
                                 }}

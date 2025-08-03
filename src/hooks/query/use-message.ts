@@ -8,7 +8,7 @@ import type { PaginationState } from "@tanstack/react-table"
 import { apiFetch } from "@/lib/api-fetch"
 import type { MessageList, MessageStatus } from "@/schema/message"
 
-export function useMessages(pagination: PaginationState, day?: string, lotto?: string, method?: string, number?: string, user_id?: number, status?: MessageStatus[], refetchInterval?: any) {
+export function useMessages(pagination: PaginationState, day?: string, lotto?: string, method?: string, number?: string, user_id?: number[], status?: MessageStatus[], refetchInterval?: any) {
   const { data, isFetching, isRefetching, refetch } = useQuery({
     queryKey: ["messages", pagination.pageIndex, pagination.pageSize, day, lotto, method, number, user_id, status],
     queryFn: async () => apiFetch<MessageList>("/api/messages", {

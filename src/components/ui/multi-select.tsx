@@ -21,7 +21,6 @@ import {
     Command,
     CommandEmpty,
     CommandGroup,
-    CommandInput,
     CommandItem,
     CommandList,
     CommandSeparator,
@@ -32,7 +31,7 @@ import {
  * Uses class-variance-authority (cva) to define different styles based on "variant" prop.
  */
 const multiSelectVariants = cva(
-    "m-1 transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110 duration-300",
+    "m-1 transition ease-in-out delay-150 hover:scale-110 duration-200",
     {
         variants: {
             variant: {

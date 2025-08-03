@@ -7,8 +7,8 @@ export function Refresher(
   { onValueChange }: Partial<SelectProps>,
 ) {
   return (
-    <div className="inline-flex items-center space-x-2">
-      <Label htmlFor="refresher" className="hidden font-normal sm:flex">
+    <div className="inline-flex items-center">
+      <Label htmlFor="refresher" className="hidden font-normal md:mr-2 md:flex">
         <span>自动刷新</span>
       </Label>
       <Select defaultValue="off" onValueChange={onValueChange}>
