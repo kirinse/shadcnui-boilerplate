@@ -18,6 +18,7 @@ import { authTokenAtom } from "@/atoms/auth"
 import { DatePicker } from "@/components/date-picker"
 import { Icons } from "@/components/icons"
 import { Refresher } from "@/components/refresher"
+import { Summary } from "@/components/summary"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { MultiSelect } from "@/components/ui/multi-select"
@@ -149,192 +150,198 @@ export function Component() {
 
   return (
     <div className="relative">
-      <div className="flex items-center justify-between space-x-4">
-        <div className="flex flex-1 space-x-4">
-          <div>
-            <DatePicker
-              className="flex-none"
-              mode="single"
-              required
-              selected={filter?.value as Date}
-              onSelect={(date: any) => table.setColumnFilters((old) => {
-                const index = old.findIndex((o) => o.id === "day")
-                if (index !== -1) old![index]!["value"] = date
-                else old.push({ id: "day", value: date })
-                table.setPageIndex(0)
-                table.resetExpanded(true)
-                return old
-              })}
-            />
-          </div>
-          <div className="relative">
-            <Select
-              value={lotto}
-              onValueChange={(v) => {
-                setLotto(v)
-                table.setPageIndex(0)
-                table.resetExpanded(true)
-              }}
-            >
-              <SelectTrigger className="w-[90px]">
-                <SelectValue placeholder="彩种" />
-              </SelectTrigger>
-              <SelectContent className="w-[90px]">
-                <SelectItem value="福">福彩</SelectItem>
-                <SelectItem value="体">体彩</SelectItem>
-              </SelectContent>
-            </Select>
-            {lotto && (
-              <button
-                type="button"
-                onClick={() => {
-                  setLotto("")
-                  table.setPageIndex(0)
-                  table.resetExpanded(true)
-                }}
-                className="absolute right-6 top-1/2 -translate-y-1/2 rounded-full bg-accent/40 p-1 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-              >
-                <X className="size-2" />
-              </button>
-            )}
-          </div>
-          <div className="relative">
-            <Select
-              value={method}
-              onValueChange={(v) => {
-                setMethod(v)
-                table.setPageIndex(0)
-                table.resetExpanded(true)
-              }}
-            >
-              <SelectTrigger className="w-[90px]">
-                <SelectValue placeholder="玩法" />
-              </SelectTrigger>
-              <SelectContent className="w-[90px]">
-                <SelectItem value="单">单</SelectItem>
-                <SelectItem value="复">复</SelectItem>
-                <SelectItem value="豹">豹</SelectItem>
-                <SelectItem value="组三">组三</SelectItem>
-                <SelectItem value="组六">组六</SelectItem>
-                <SelectItem value="三码组三">三码组三</SelectItem>
-                <SelectItem value="四码组三">四码组三</SelectItem>
-                <SelectItem value="五码组三">五码组三</SelectItem>
-                <SelectItem value="六码组三">六码组三</SelectItem>
-                <SelectItem value="七码组三">七码组三</SelectItem>
-                <SelectItem value="四码组六">四码组六</SelectItem>
-                <SelectItem value="五码组六">五码组六</SelectItem>
-                <SelectItem value="六码组六">六码组六</SelectItem>
-                <SelectItem value="七码组六">七码组六</SelectItem>
-                <SelectItem value="独胆">独胆</SelectItem>
-                <SelectItem value="双飞">双飞</SelectItem>
-                <SelectItem value="单码定位">单码定位</SelectItem>
-                <SelectItem value="双飞定位">双飞定位</SelectItem>
-                <SelectItem value="包对子">包对子</SelectItem>
-                <SelectItem value="包豹子">包豹子</SelectItem>
-                <SelectItem value="胆直271">胆直271</SelectItem>
-                <SelectItem value="胆直270">胆直270</SelectItem>
-              </SelectContent>
-            </Select>
-            {method && (
-              <button
-                type="button"
-                onClick={() => {
-                  setMethod("")
-                  table.setPageIndex(0)
-                  table.resetExpanded(true)
-                }}
-                className="absolute right-6 top-1/2 -translate-y-1/2 rounded-full bg-accent/40 p-1 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-              >
-                <X className="size-2" />
-              </button>
-            )}
-          </div>
-          <div className="relative">
-            <Input
-              type="number"
-              min={1}
-              max={999}
-              maxLength={3}
-              className="w-[80px] [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-              placeholder="号码"
-              value={number}
-              onChange={(e) => {
-                // const v = e.target.value || undefined
-                // if (v !== undefined && v.length < 3) { return }
-                setNumber(e.target.value)
-                if (e.target.value.length === 3) {
-                  table.setPageIndex(0)
-                  table.resetExpanded(true)
-                }
-              }}
-            />
-            {number && (
-              <button
-                type="button"
-                onClick={() => {
-                  setNumber("")
-                  table.setPageIndex(0)
-                  table.resetExpanded(true)
-                }}
-                className="absolute right-6 top-1/2 -translate-y-1/2 rounded-full bg-accent/40 p-1 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-              >
-                <X className="size-2" />
-              </button>
-            )}
-          </div>
-          <div className="relative">
-            <MultiSelect
-              options={statusList}
-              onValueChange={(v) => {
-                setStatus(v.map((s) => messageStatusSchema.parse(s)))
-              }}
-              defaultValue={status}
-              placeholder="状态"
-              variant="inverted"
-              animation={2}
-              maxCount={3}
-              className="h-9 min-h-9 shadow-sm"
-            />
-          </div>
-          {isAdmin && (
-            <>
-              <Separator orientation="vertical" decorative className="h-9" />
+      <Summary day={filter?.value as Date} userId={userIds} />
+
+      <DataTablePagination
+        table={table}
+        extra={(
+          <div className="flex items-center justify-between space-x-4">
+            <div className="flex flex-1 space-x-4">
+              <div>
+                <DatePicker
+                  className="flex-none"
+                  mode="single"
+                  required
+                  selected={filter?.value as Date}
+                  onSelect={(date: any) => table.setColumnFilters((old) => {
+                    const index = old.findIndex((o) => o.id === "day")
+                    if (index !== -1) old![index]!["value"] = date
+                    else old.push({ id: "day", value: date })
+                    table.setPageIndex(0)
+                    table.resetExpanded(true)
+                    return old
+                  })}
+                />
+              </div>
               <div className="relative">
-                {!!userList && (
-                  <MultiSelect
-                    options={userList!}
-                    onValueChange={(v) => {
-                      setUserIds(v)
+                <Select
+                  value={lotto}
+                  onValueChange={(v) => {
+                    setLotto(v)
+                    table.setPageIndex(0)
+                    table.resetExpanded(true)
+                  }}
+                >
+                  <SelectTrigger className="w-[90px]">
+                    <SelectValue placeholder="彩种" />
+                  </SelectTrigger>
+                  <SelectContent className="w-[90px]">
+                    <SelectItem value="福">福彩</SelectItem>
+                    <SelectItem value="体">体彩</SelectItem>
+                  </SelectContent>
+                </Select>
+                {lotto && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setLotto("")
+                      table.setPageIndex(0)
+                      table.resetExpanded(true)
                     }}
-                    defaultValue={userIds}
-                    placeholder="用户"
-                    variant="inverted"
-                    animation={2}
-                    maxCount={3}
-                    className="h-9 min-h-9 shadow-sm"
-                  />
+                    className="absolute right-6 top-1/2 -translate-y-1/2 rounded-full bg-accent/40 p-1 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                  >
+                    <X className="size-2" />
+                  </button>
                 )}
               </div>
-            </>
-          )}
-        </div>
-        <Button variant="ghost" title="刷新" disabled={isFetching || isRefetching} onClick={() => refetch()}>
-          <RefreshCwIcon className={isFetching || isRefetching ? "animate-spin" : ""} size={16} />
-          <span className="sr-only">刷新</span>
-        </Button>
+              <div className="relative">
+                <Select
+                  value={method}
+                  onValueChange={(v) => {
+                    setMethod(v)
+                    table.setPageIndex(0)
+                    table.resetExpanded(true)
+                  }}
+                >
+                  <SelectTrigger className="w-[90px]">
+                    <SelectValue placeholder="玩法" />
+                  </SelectTrigger>
+                  <SelectContent className="w-[90px]">
+                    <SelectItem value="单">单</SelectItem>
+                    <SelectItem value="复">复</SelectItem>
+                    <SelectItem value="豹">豹</SelectItem>
+                    <SelectItem value="组三">组三</SelectItem>
+                    <SelectItem value="组六">组六</SelectItem>
+                    <SelectItem value="三码组三">三码组三</SelectItem>
+                    <SelectItem value="四码组三">四码组三</SelectItem>
+                    <SelectItem value="五码组三">五码组三</SelectItem>
+                    <SelectItem value="六码组三">六码组三</SelectItem>
+                    <SelectItem value="七码组三">七码组三</SelectItem>
+                    <SelectItem value="四码组六">四码组六</SelectItem>
+                    <SelectItem value="五码组六">五码组六</SelectItem>
+                    <SelectItem value="六码组六">六码组六</SelectItem>
+                    <SelectItem value="七码组六">七码组六</SelectItem>
+                    <SelectItem value="独胆">独胆</SelectItem>
+                    <SelectItem value="双飞">双飞</SelectItem>
+                    <SelectItem value="单码定位">单码定位</SelectItem>
+                    <SelectItem value="双飞定位">双飞定位</SelectItem>
+                    <SelectItem value="包对子">包对子</SelectItem>
+                    <SelectItem value="包豹子">包豹子</SelectItem>
+                    <SelectItem value="胆直271">胆直271</SelectItem>
+                    <SelectItem value="胆直270">胆直270</SelectItem>
+                  </SelectContent>
+                </Select>
+                {method && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMethod("")
+                      table.setPageIndex(0)
+                      table.resetExpanded(true)
+                    }}
+                    className="absolute right-6 top-1/2 -translate-y-1/2 rounded-full bg-accent/40 p-1 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                  >
+                    <X className="size-2" />
+                  </button>
+                )}
+              </div>
+              <div className="relative">
+                <Input
+                  type="number"
+                  min={1}
+                  max={999}
+                  maxLength={3}
+                  className="w-[80px] [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                  placeholder="号码"
+                  value={number}
+                  onChange={(e) => {
+                    // const v = e.target.value || undefined
+                    // if (v !== undefined && v.length < 3) { return }
+                    setNumber(e.target.value)
+                    if (e.target.value.length === 3) {
+                      table.setPageIndex(0)
+                      table.resetExpanded(true)
+                    }
+                  }}
+                />
+                {number && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setNumber("")
+                      table.setPageIndex(0)
+                      table.resetExpanded(true)
+                    }}
+                    className="absolute right-6 top-1/2 -translate-y-1/2 rounded-full bg-accent/40 p-1 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                  >
+                    <X className="size-2" />
+                  </button>
+                )}
+              </div>
+              <div className="relative">
+                <MultiSelect
+                  options={statusList}
+                  onValueChange={(v) => {
+                    setStatus(v.map((s) => messageStatusSchema.parse(s)))
+                  }}
+                  defaultValue={status}
+                  placeholder="状态"
+                  variant="inverted"
+                  animation={2}
+                  maxCount={3}
+                  className="h-9 min-h-9 shadow-sm"
+                />
+              </div>
+              {isAdmin && (
+                <>
+                  <Separator orientation="vertical" decorative className="h-9" />
+                  <div className="relative">
+                    {!!userList && (
+                      <MultiSelect
+                        options={userList!}
+                        onValueChange={(v) => {
+                          setUserIds(v)
+                        }}
+                        defaultValue={userIds}
+                        placeholder="用户"
+                        variant="inverted"
+                        animation={2}
+                        maxCount={3}
+                        className="h-9 min-h-9 shadow-sm"
+                      />
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
+            <Button variant="ghost" title="刷新" disabled={isFetching || isRefetching} onClick={() => refetch()}>
+              <RefreshCwIcon className={isFetching || isRefetching ? "animate-spin" : ""} size={16} />
+              <span className="sr-only">刷新</span>
+            </Button>
 
-        <Refresher onValueChange={(v: string) => {
-          let vv: boolean | number = false
-          if (v !== "off") {
-            vv = Number.parseInt(v)
-          }
-          setRefetchInterval(vv)
-          table.setPageIndex(0)
-          table.resetExpanded(true)
-        }}
-        />
-      </div>
-      <DataTablePagination table={table} />
+            <Refresher onValueChange={(v: string) => {
+              let vv: boolean | number = false
+              if (v !== "off") {
+                vv = Number.parseInt(v)
+              }
+              setRefetchInterval(vv)
+              table.setPageIndex(0)
+              table.resetExpanded(true)
+            }}
+            />
+          </div>
+        )}
+      />
       <div className="rounded-md border">
         <Table>
           <TableHeader className="bg-muted/50 font-medium">
@@ -346,20 +353,6 @@ export function Component() {
                   currency: "CNY",
                   maximumFractionDigits: 0,
                 }).format(messages.summary?.page_total ?? 0)}
-                /总计
-                {` `}
-                {messages.summary?.total ?
-                  Object.entries(messages.summary?.total).map(([k, v]) => (
-                    <React.Fragment key={k}>
-                      <span className="text-red-500">{k}:</span>
-                      {new Intl.NumberFormat("zh-CN", {
-                        style: "currency",
-                        currency: "CNY",
-                        maximumFractionDigits: 0,
-                      }).format(v)}
-                    </React.Fragment>
-                  )) :
-                  ""}
               </TableCell>
             </TableRow>
           </TableHeader>
@@ -469,20 +462,6 @@ export function Component() {
                   currency: "CNY",
                   maximumFractionDigits: 0,
                 }).format(messages.summary?.page_total ?? 0)}
-                /总计
-                {` `}
-                {messages.summary?.total ?
-                  Object.entries(messages.summary?.total).map(([k, v]) => (
-                    <React.Fragment key={k}>
-                      <span className="text-red-500">{k}:</span>
-                      {new Intl.NumberFormat("zh-CN", {
-                        style: "currency",
-                        currency: "CNY",
-                        maximumFractionDigits: 0,
-                      }).format(v)}
-                    </React.Fragment>
-                  )) :
-                  ""}
               </TableCell>
             </TableRow>
           </TableFooter>

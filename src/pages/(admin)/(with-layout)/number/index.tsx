@@ -9,6 +9,7 @@ import { toast } from "sonner"
 import { authTokenAtom } from "@/atoms/auth"
 import { DatePicker } from "@/components/date-picker"
 import { Refresher } from "@/components/refresher"
+import { Summary } from "@/components/summary"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -26,7 +27,7 @@ import { DataTable } from "./components/detailsTable"
 import { NumberComp } from "./components/number"
 
 export function Component() {
-  const [tab, setTab] = useState("福")
+  const [lotto, setLotto] = useState("福")
   const [day, setDay] = useState(() => new Date())
   const [number, setNumber] = useState<string | undefined>()
   const [detailNumber, setDetailNumber] = useState<string>("")
@@ -34,20 +35,21 @@ export function Component() {
 
   const [refetchInterval, setRefetchInterval] = useState<number | boolean>(false)
   const { data, refetch, isFetching, isRefetching } = useNumbers(
-    tab,
+    lotto,
     day,
     refetchInterval,
     number,
     userId ? Number.parseInt(userId) : undefined,
   )
   const { refetch: riskRefetch, isFetching: riskIsFetching, isRefetching: riskIsRefetching } = useRisk(
-    tab,
+    lotto,
     day,
     number,
     userId ? Number.parseInt(userId) : undefined,
   )
-  const { data: details } = useNumberDetails(tab, day, detailNumber, userId ? Number.parseInt(userId) : undefined)
+  const { data: details } = useNumberDetails(lotto, day, detailNumber, userId ? Number.parseInt(userId) : undefined)
   const { data: users, fetch: fetchUsers } = useUsers({ pageIndex: 1, pageSize: 1000 })
+  // const { data: summary } = useSummary(day, userId ? Number.parseInt(userId) : undefined)
 
   async function onDownload() {
     toast.promise(riskRefetch, {
@@ -59,9 +61,9 @@ export function Component() {
           return
         }
         const documentCreator = new DocumentCreator()
-        const doc = documentCreator.create(tab, day, res.data!, number)
+        const doc = documentCreator.create(lotto, day, res.data!, number)
         Packer.toBlob(doc).then((blob) => {
-          saveAs(blob, `${day.toLocaleDateString()} ${tab}彩直选${number ?? ""}报告.docx`)
+          saveAs(blob, `${day.toLocaleDateString()} ${lotto}彩直选${number ?? ""}报告.docx`)
         })
         return "下载成功"
       },
@@ -81,33 +83,21 @@ export function Component() {
 
   return (
     <>
+      <Summary day={day} userId={userId ? [userId] : undefined} />
       <div className="my-4 flex items-end justify-between sm:my-0 sm:items-center">
         <div className="flex flex-col gap-3 sm:my-4 sm:flex-row">
-          <Tabs defaultValue={tab} onValueChange={setTab} className="space-y-4">
+          <Tabs defaultValue={lotto} onValueChange={setLotto} className="space-y-4">
             <TabsList>
               <TabsTrigger value="福">福</TabsTrigger>
               <TabsTrigger value="体">体</TabsTrigger>
             </TabsList>
           </Tabs>
-          {/* <div className="flex flex-1 space-x-4"> */}
-          {data?.total !== undefined && data.total > 0 && (
-            <div className="inline-flex h-9 items-center justify-center rounded-lg bg-muted p-2 font-semibold text-blue-500">
-              {new Intl.NumberFormat("zh-CN", {
-                style: "currency",
-                currency: "CNY",
-                maximumFractionDigits: 0,
-              }).format(data?.total)}
-            </div>
-          )}
-          {/* <div> */}
           <DatePicker
             mode="single"
             required
             selected={day}
             onSelect={(date) => setDay(date!)}
           />
-          {/* </div> */}
-          {/* <div> */}
           <Input
             type="number"
             min={1}
@@ -122,7 +112,6 @@ export function Component() {
               setNumber(v)
             }}
           />
-          {/* </div> */}
           {isAdmin && (
             <div className="inline-flex gap-3">
               <Separator orientation="vertical" decorative className="h-9" />
@@ -151,7 +140,6 @@ export function Component() {
               </div>
             </div>
           )}
-          {/* </div> */}
         </div>
         <div className="flex gap-3">
           <Button variant="ghost" title="刷新" disabled={isFetching || isRefetching} onClick={() => refetch()}>
@@ -182,7 +170,7 @@ export function Component() {
           }
           return (
             <Popover
-              key={`${tab}-${number.number}`}
+              key={`${lotto}-${number.number}`}
               onOpenChange={(open) => {
                 if (open) {
                   setDetailNumber(number.number)
@@ -206,7 +194,7 @@ export function Component() {
               <PopoverContent className="w-auto bg-accent shadow-xl">
                 {/* <PopoverArrow style={{ fill: "hsl(var(--accent))" }} /> */}
                 <div className="leading-9">
-                  {`${tab}彩 ${day.toLocaleDateString("zh-CN")}`}
+                  {`${lotto}彩 ${day.toLocaleDateString("zh-CN")}`}
                   {` `}
                   <NumberComp number={number.number} />
                   {` `}

@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query"
 import { format } from "date-fns"
 
 import { apiFetch } from "@/lib/api-fetch"
-import type { INumber, INumberDetails, IRisk } from "@/schema/number"
+import type { INumber, INumberDetails, IRisk, ISummary } from "@/schema/number"
 
 export function useNumbers(lotto = "福", day = new Date(), refetchInterval?: any, number?: string, userId?: number) {
   return useQuery({
@@ -18,6 +18,21 @@ export function useNumbers(lotto = "福", day = new Date(), refetchInterval?: an
     refetchInterval,
     refetchIntervalInBackground: true,
     staleTime: 1000,
+  })
+}
+
+export function useSummary(day = new Date(), userId?: number[]) {
+  return useQuery({
+    queryKey: ["summary", day, userId],
+    queryFn: async () => apiFetch<ISummary>("/api/summary", {
+      params: {
+        day: format(day, "yyyy-MM-dd"),
+        user_id: userId,
+      },
+    }),
+    refetchInterval: 10000,
+    refetchIntervalInBackground: true,
+    refetchOnWindowFocus: true,
   })
 }
 

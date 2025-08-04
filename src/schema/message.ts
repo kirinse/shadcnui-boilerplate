@@ -31,7 +31,7 @@ export type Message = z.infer<typeof messageSchema>
 export const messageListSchema = z.object({
   summary: z.object({
     page_total: z.number(),
-    total: z.record(z.string(), z.number()),
+    // total: z.record(z.string(), z.number()),
   }),
   results: z.array(messageSchema),
   pagination: z.object({

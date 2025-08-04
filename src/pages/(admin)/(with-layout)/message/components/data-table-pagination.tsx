@@ -17,19 +17,22 @@ import {
 
 interface DataTablePaginationProps<TData> {
   table: Table<TData>
+  extra?: any
 }
 
 const PAGINATION_STEP = 3 // You can easily change this value to adjust the pagination step
 
 export function DataTablePagination<TData>({
   table,
+  extra,
 }: DataTablePaginationProps<TData>) {
   const { t } = useTranslation("pagination")
 
   return (
     <div className="flex items-center justify-end space-x-2 py-4">
       <div className="flex-1 text-sm text-muted-foreground">
-        {table.getPageCount() > 0 && (
+        {extra}
+        {/* {table.getPageCount() > 0 && (
           <>
             {t("page")}
             {" "}
@@ -39,7 +42,7 @@ export function DataTablePagination<TData>({
             {" "}
             {table.getPageCount().toLocaleString()}
           </>
-        )}
+        )} */}
       </div>
       <div className="space-x-2">
         <Pagination>
