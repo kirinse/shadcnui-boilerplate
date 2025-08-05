@@ -25,6 +25,8 @@ export function useMessages(pagination: PaginationState, day?: string, lotto?: s
     }),
     placeholderData: keepPreviousData,
     refetchInterval,
+    refetchIntervalInBackground: true,
+    refetchOnWindowFocus: true,
   })
 
   return {
