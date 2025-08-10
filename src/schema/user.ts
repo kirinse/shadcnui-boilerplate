@@ -43,7 +43,7 @@ export const userSchema = z.object({
   email: z.string().email(),
   name: z.string(),
   avatar: z.string(),
-  createdAt: z.string(),
+  created_at: z.date(),
   role: z.enum(userRoles),
   bio: z.string(),
   is_admin: z.boolean(),

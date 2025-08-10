@@ -96,7 +96,7 @@ export function Component() {
     status,
     refetchInterval,
   )
-  const { data: users, fetch: fetchUsers } = useUsers({ pageIndex: 1, pageSize: 1000 })
+  const { data: users, fetch: fetchUsers } = useUsers({ pageIndex: 0, pageSize: 1000 })
 
   const deletionMutation = useMessageDeletionMutation()
 
@@ -406,21 +406,21 @@ export function Component() {
                             <span className="sr-only">删除</span>
                           </Button>
                         ) : cell.column.id === "user_id" && !!users ?
-                            (
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                className={clsx("h-5 px-1 font-semibold text-blue-700", { "line-through text-blue-700/30": ["Deleted", "Revoked"].includes(row.getValue("status")) })}
-                                onClick={(_ev) => {
-                                  setUserIds([row.getValue("user_id")])
-                                  table.setPageIndex(0)
-                                  table.resetExpanded(true)
-                                }}
-                              >
-                                <UserRound size={12} />
-                                {users.find((u) => u.id === row.getValue("user_id"))?.name}
-                              </Button>
-                            ) :
+                          (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className={clsx("h-5 px-1 font-semibold text-blue-700", { "line-through text-blue-700/30": ["Deleted", "Revoked"].includes(row.getValue("status")) })}
+                              onClick={(_ev) => {
+                                setUserIds([row.getValue("user_id")])
+                                table.setPageIndex(0)
+                                table.resetExpanded(true)
+                              }}
+                            >
+                              <UserRound size={12} />
+                              {users.find((u) => u.id === row.getValue("user_id"))?.name}
+                            </Button>
+                          ) :
                           flexRender(
                             cell.column.columnDef.cell,
                             cell.getContext(),

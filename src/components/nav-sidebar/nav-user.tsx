@@ -87,13 +87,13 @@ export function NavUser() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator className="my-1" /> */}
-            <DropdownMenuGroup>
+            {/* <DropdownMenuGroup>
               <DropdownMenuItem className="flex items-center gap-2 px-2 py-1.5" asChild>
                 <Link to="/settings/profile">
                   <BadgeCheck className="size-4" />
                   <span>{t("user.account")}</span>
                 </Link>
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
               {/* <DropdownMenuItem className="flex items-center gap-2 px-2 py-1.5" asChild>
                 <Link to="/system/account/billing">
                   <CreditCard className="size-4" />
@@ -106,8 +106,8 @@ export function NavUser() {
                   <span>{t("user.notifications")}</span>
                 </Link>
               </DropdownMenuItem> */}
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator className="my-1" />
+            {/* </DropdownMenuGroup> */}
+            {/* <DropdownMenuSeparator className="my-1" /> */}
             <DropdownMenuItem
               className="flex items-center gap-2 px-2 py-1.5"
               onSelect={() => { setAuthTokenAtom({}); navigate("/login") }}

@@ -1,0 +1,11 @@
+steps:
+  - name: docker
+    args:
+      - build
+      - "-t"
+      - "$LOCATION-docker.pkg.dev/$PROJECT_ID/wcf/wcf-ui:$BRANCH_NAME"
+      - .
+images:
+  - "$LOCATION-docker.pkg.dev/$PROJECT_ID/wcf/wcf-ui:$BRANCH_NAME"
+options:
+  logging: CLOUD_LOGGING_ONLY

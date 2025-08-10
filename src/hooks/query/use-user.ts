@@ -3,6 +3,7 @@ import {
   queryOptions,
   useMutation,
   useQuery,
+  useQueryClient,
   useSuspenseQuery,
 } from "@tanstack/react-query"
 import type { PaginationState } from "@tanstack/react-table"
@@ -54,7 +55,7 @@ export function useUsers(pagination: PaginationState) {
     queryKey: ["users", pagination.pageIndex, pagination.pageSize],
     queryFn: async () => apiFetch<IUsers[]>("/api/users", {
       params: {
-        page: pagination.pageIndex,
+        page: pagination.pageIndex + 1,
         page_size: pagination.pageSize,
       },
     }),
@@ -66,4 +67,20 @@ export function useUsers(pagination: PaginationState) {
     data,
     fetch,
   }
+}
+
+export function useUpdateUser() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (user: IUsers) =>
+      await apiFetch(`/api/users/${user.id}`, {
+        method: "PUT",
+        body: user,
+      }),
+    onSuccess: () => {
+      // 更新用户列表缓存
+      queryClient.invalidateQueries({ queryKey: ["users"] })
+    },
+  })
 }
