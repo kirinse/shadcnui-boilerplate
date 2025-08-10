@@ -5,6 +5,14 @@ steps:
       - "-t"
       - "$LOCATION-docker.pkg.dev/$PROJECT_ID/wcf/wcf-ui:$BRANCH_NAME"
       - .
+  - name: "gcr.io/cloud-builders/gke-deploy"
+    args:
+      - run
+      - --namespace=default
+      - --app=wcf-ui
+      - --location=asia-northeast2
+      - --cluster=wcf
+      - --image=$LOCATION-docker.pkg.dev/$PROJECT_ID/wcf/wcf-ui:$BRANCH_NAME
 images:
   - "$LOCATION-docker.pkg.dev/$PROJECT_ID/wcf/wcf-ui:$BRANCH_NAME"
 options:
