@@ -1,10 +1,12 @@
 import { env } from "@env"
+import { useAtom } from "jotai"
 import {
   Command,
 } from "lucide-react"
 import * as React from "react"
 import { Link } from "react-router-dom"
 
+import { authTokenAtom } from "@/atoms/auth"
 import { NavMain } from "@/components/nav-sidebar/nav-main"
 import { NavSecondary } from "@/components/nav-sidebar/nav-secondary"
 import { NavUser } from "@/components/nav-sidebar/nav-user"
@@ -30,6 +32,7 @@ import { useNavMenu } from "@/hooks/query/user-memu"
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { data: menus } = useNavMenu()
+  const [token] = useAtom(authTokenAtom)
 
   return (
     <Sidebar variant="inset" {...props}>
@@ -51,7 +54,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={menus} />
+        <NavMain items={menus} token={token} />
         <NavSecondary items={[]} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>

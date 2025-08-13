@@ -31,7 +31,6 @@ export const RootProviders: FC<PropsWithChildren> = ({ children }) => (
           <Provider>
             <ThemeWrapper>
               <ThemeProvider defaultTheme="system">
-
                 <TooltipProvider>
                   <HotkeysProvider initiallyActiveScopes={["home"]}>
                     {children}

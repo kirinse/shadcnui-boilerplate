@@ -2,6 +2,7 @@ import { queryOptions, useSuspenseQuery } from "@tanstack/react-query"
 import {
   Gauge,
   MessageSquare,
+  UsersRound,
 } from "lucide-react"
 
 import type { IMenu } from "@/schema/menu"
@@ -144,6 +145,11 @@ export const menus: IMenu[] = [
     title: "message",
     icon: MessageSquare,
     to: "/message",
+  },
+  {
+    title: "users",
+    icon: UsersRound,
+    to: "/users",
   },
   // {
   //   title: "number",

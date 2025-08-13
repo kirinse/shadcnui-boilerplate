@@ -9,7 +9,7 @@ import clsx from "clsx"
 import { format } from "date-fns"
 import { t } from "i18next"
 import { useAtom } from "jotai"
-import { CircleCheck, CircleX, Hourglass, MessageCircleOff, RefreshCwIcon, Trash, TriangleAlert, UserRound, X } from "lucide-react"
+import { CircleCheck, CircleX, Hourglass, MessageCircleDashed, RefreshCwIcon, Trash, TriangleAlert, UserRound, X } from "lucide-react"
 import * as React from "react"
 import { useEffect, useMemo, useState } from "react"
 import { toast } from "sonner"
@@ -39,7 +39,7 @@ import { OrderTable } from "./components/order-table"
 
 export const statusList = [
   { value: "Deleted", label: "删除", icon: () => <Trash className="mr-2 size-4 text-slate-400" /> },
-  { value: "Revoked", label: "撤回", icon: () => <MessageCircleOff className="mr-2 size-4 text-gray-300" /> },
+  { value: "Revoked", label: "撤回", icon: () => <MessageCircleDashed className="mr-2 size-4 text-gray-300" /> },
   { value: "Finished", label: "成功", icon: () => <CircleCheck className="mr-2 size-4 text-green-500" /> },
   { value: "Failed", label: "失败", icon: () => <CircleX className="mr-2 size-4 text-red-500" /> },
   { value: "Pending", label: "等待", icon: () => <Hourglass className="mr-2 size-4 text-yellow-400" /> },
@@ -141,7 +141,7 @@ export function Component() {
   useEffect(() => {
     if (isAdmin) {
       fetchUsers().then((_res) => {
-        setUserList(users?.map((i) => { return { value: i.id, label: i.name } }))
+        setUserList(users?.results.map((i) => { return { value: i.id, label: i.name } }))
       })
     } else {
       table.getColumn("user_id")?.toggleVisibility(false)
@@ -292,6 +292,8 @@ export function Component() {
                 <MultiSelect
                   options={statusList}
                   onValueChange={(v) => {
+                    table.setPageIndex(0)
+                    table.resetExpanded(true)
                     setStatus(v.map((s) => messageStatusSchema.parse(s)))
                   }}
                   defaultValue={status}
@@ -310,6 +312,8 @@ export function Component() {
                       <MultiSelect
                         options={userList!}
                         onValueChange={(v) => {
+                          table.setPageIndex(0)
+                          table.resetExpanded(true)
                           setUserIds(v)
                         }}
                         defaultValue={userIds}
@@ -406,21 +410,21 @@ export function Component() {
                             <span className="sr-only">删除</span>
                           </Button>
                         ) : cell.column.id === "user_id" && !!users ?
-                          (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className={clsx("h-5 px-1 font-semibold text-blue-700", { "line-through text-blue-700/30": ["Deleted", "Revoked"].includes(row.getValue("status")) })}
-                              onClick={(_ev) => {
-                                setUserIds([row.getValue("user_id")])
-                                table.setPageIndex(0)
-                                table.resetExpanded(true)
-                              }}
-                            >
-                              <UserRound size={12} />
-                              {users.find((u) => u.id === row.getValue("user_id"))?.name}
-                            </Button>
-                          ) :
+                            (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className={clsx("h-5 px-1 font-semibold text-blue-700", { "line-through text-blue-700/30": ["Deleted", "Revoked"].includes(row.getValue("status")) })}
+                                onClick={(_ev) => {
+                                  setUserIds([row.getValue("user_id")])
+                                  table.setPageIndex(0)
+                                  table.resetExpanded(true)
+                                }}
+                              >
+                                <UserRound size={12} />
+                                {users.results.find((u) => u.id === row.getValue("user_id"))?.name}
+                              </Button>
+                            ) :
                           flexRender(
                             cell.column.columnDef.cell,
                             cell.getContext(),

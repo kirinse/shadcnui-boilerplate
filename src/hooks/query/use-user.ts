@@ -10,7 +10,7 @@ import type { PaginationState } from "@tanstack/react-table"
 import { useNavigate } from "react-router-dom"
 
 import { apiFetch } from "@/lib/api-fetch"
-import type { ILoginForm, IUserProfile, IUsers } from "@/schema/user"
+import type { ILoginForm, IUser, IUserList, IUserProfile, UserForm } from "@/schema/user"
 
 export const queryUser = () => queryOptions({
   queryKey: ["userInfo"],
@@ -20,7 +20,7 @@ export const queryUser = () => queryOptions({
 export const queryUserInfo = () =>
   queryOptions({
     queryKey: ["user-info"],
-    queryFn: async () => apiFetch<IUsers>(`/api/auth/current`),
+    queryFn: async () => apiFetch<IUser>(`/api/auth/current`),
   })
 
 export function useUser() {
@@ -50,17 +50,17 @@ export function useUserLogoutMutation() {
   })
 }
 
-export function useUsers(pagination: PaginationState) {
+export function useUsers(pagination: PaginationState, enabled = false) {
   const { data, isPending, refetch: fetch } = useQuery({
-    queryKey: ["users", pagination.pageIndex, pagination.pageSize],
-    queryFn: async () => apiFetch<IUsers[]>("/api/users", {
+    queryKey: ["users", pagination],
+    queryFn: async () => apiFetch<IUserList>("/api/users", {
       params: {
         page: pagination.pageIndex + 1,
         page_size: pagination.pageSize,
       },
     }),
     placeholderData: keepPreviousData,
-    enabled: false,
+    enabled,
   })
   return {
     isPending,
@@ -73,9 +73,25 @@ export function useUpdateUser() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async (user: IUsers) =>
+    mutationFn: async (user: UserForm) =>
       await apiFetch(`/api/users/${user.id}`, {
         method: "PUT",
+        body: user,
+      }),
+    onSuccess: () => {
+      // 更新用户列表缓存
+      queryClient.invalidateQueries({ queryKey: ["users"] })
+    },
+  })
+}
+
+export function useRegisterUser() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (user: UserForm) =>
+      await apiFetch(`/api/auth/register`, {
+        method: "POST",
         body: user,
       }),
     onSuccess: () => {

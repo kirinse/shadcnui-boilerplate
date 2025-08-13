@@ -24,7 +24,6 @@ export function Component() {
           </div>
         </nav>
       </header>
-
       <div className="flex-1">
         <Outlet />
       </div>

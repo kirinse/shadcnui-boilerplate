@@ -32,24 +32,20 @@ export const userProfileSchema = z.object({
     .default([]),
 })
 export type IUserProfile = z.infer<typeof userProfileSchema>
-export const userStatuses = ["pending", "processing", "success", "failed"] as const
 
 export const userRoles = ["admin", "user", "guest"] as const
 
 export const userSchema = z.object({
-  id: z.string(),
-  amount: z.number(),
-  status: z.enum(userStatuses),
+  id: z.number(),
   email: z.string().email(),
   name: z.string(),
-  avatar: z.string(),
+  pid: z.string().uuid(),
   created_at: z.date(),
   role: z.enum(userRoles),
-  bio: z.string(),
   is_admin: z.boolean(),
 })
 
-export type IUsers = z.infer<typeof userSchema>
+export type IUser = z.infer<typeof userSchema>
 
 export const loginFormSchema = z.object({
   email: z
@@ -64,3 +60,77 @@ export const loginFormSchema = z.object({
 })
 
 export type ILoginForm = z.infer<typeof loginFormSchema>
+
+export const userListSchema = z.object({
+  results: z.array(userSchema),
+  pagination: z.object({
+    page: z.number(),
+    page_size: z.number(),
+    total_pages: z.number(),
+    total_items: z.number(),
+  }),
+})
+export type IUserList = z.infer<typeof userListSchema>
+
+export const formSchema = z
+  .object({
+    id: z.number().optional(),
+    name: z.string().min(1, "名称必须填写"),
+    email: z.string().email({
+      message: "Email 必须填写",
+    }),
+    password: z.string().transform((pwd) => pwd.trim()),
+    confirm_password: z.string().transform((pwd) => pwd.trim()),
+    isEdit: z.boolean(),
+  })
+  .refine(
+    (data) => {
+      if (data.isEdit && !data.password) return true
+      return data.password.length > 0
+    },
+    {
+      message: "密码必须填写",
+      path: ["password"],
+    },
+  )
+  .refine(
+    ({ isEdit, password }) => {
+      if (isEdit && !password) return true
+      return password.length >= 8
+    },
+    {
+      message: "密码至少8个字符",
+      path: ["password"],
+    },
+  )
+  .refine(
+    ({ isEdit, password }) => {
+      if (isEdit && !password) return true
+      return /[a-z]/.test(password)
+    },
+    {
+      message: "密码必须包含字母",
+      path: ["password"],
+    },
+  )
+  .refine(
+    ({ isEdit, password }) => {
+      if (isEdit && !password) return true
+      return /\d/.test(password)
+    },
+    {
+      message: "密码必须包含数字",
+      path: ["password"],
+    },
+  )
+  .refine(
+    ({ isEdit, password, confirm_password }) => {
+      if (isEdit && !password) return true
+      return password === confirm_password
+    },
+    {
+      message: "两次密码不相同",
+      path: ["confirm_password"],
+    },
+  )
+export type UserForm = z.infer<typeof formSchema>

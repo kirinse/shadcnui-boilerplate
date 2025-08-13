@@ -48,7 +48,7 @@ export function Component() {
     userId ? Number.parseInt(userId) : undefined,
   )
   const { data: details } = useNumberDetails(lotto, day, detailNumber, userId ? Number.parseInt(userId) : undefined)
-  const { data: users, fetch: fetchUsers } = useUsers({ pageIndex: 1, pageSize: 1000 })
+  const { data: users, fetch: fetchUsers } = useUsers({ pageIndex: 0, pageSize: 1000 })
   // const { data: summary } = useSummary(day, userId ? Number.parseInt(userId) : undefined)
 
   async function onDownload() {
@@ -121,8 +121,8 @@ export function Component() {
                     <SelectValue placeholder="用户" />
                   </SelectTrigger>
                   <SelectContent>
-                    {users?.map((u) => (
-                      <SelectItem key={u.id} value={u.id}>{u.name}</SelectItem>
+                    {users?.results.map((u) => (
+                      <SelectItem key={u.id} value={u.id.toString()}>{u.name}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
