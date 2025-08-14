@@ -1,9 +1,9 @@
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useMutation } from "@tanstack/react-query"
 
 import { apiFetch } from "@/lib/api-fetch"
 import type { CheckResp, Qr, WechatCheck, WechatForm } from "@/schema/wechat"
 
-export function useLoginMutation(user_pid: string) {
+export function useLoginMutation(user_pid: string | null) {
   return useMutation({
     mutationFn: async (loginForm: WechatForm) =>
       await apiFetch<Qr>(`/api/users/${user_pid}/wechats`, {
@@ -14,17 +14,19 @@ export function useLoginMutation(user_pid: string) {
   })
 }
 
-export function useCheck(user_pid: string, body: WechatCheck) {
-  return useQuery({
-    queryKey: ["wechat-login-check", user_pid],
-    queryFn: async () => apiFetch<CheckResp>(`/api/users/${user_pid}/wechats`, {
-      method: "TRACE",
+export function useCheckMutation(user_pid: string | null) {
+  return useMutation({
+    mutationKey: ["wechat-login-check", user_pid],
+    mutationFn: async (body: WechatCheck) => apiFetch<CheckResp>(`/api/users/${user_pid}/wechats/${body.appId}`, {
+      method: "POST",
       body,
     }),
-    refetchInterval: 5000,
-    refetchIntervalInBackground: true,
-    refetchOnWindowFocus: true,
-    enabled: false,
+    retry: 3,
+    retryDelay: 5000,
+    // refetchInterval: 5000,
+    // refetchIntervalInBackground: true,
+    // refetchOnWindowFocus: true,
+    // enabled: false,
   })
 }
 

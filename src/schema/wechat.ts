@@ -135,35 +135,47 @@ export const wechatFormSchema = z.object({
   appId: z.string(),
   regionId: z.string().length(6, { message: "请选择地区" }).refine((id) => regions.map((r) => r.value).includes(id)),
   proxyIp: z.string().optional(),
-  type: deviceTypeSchema.optional(),
+  type: deviceTypeSchema,
 })
 
 export type WechatForm = z.infer<typeof wechatFormSchema>
 
 export const qrSchema = z.object({
-  qr_data: z.string(),
-  app_id: z.string(),
-  qr_img_base64: z.string().base64(),
+  appId: z.string(),
+  qrData: z.string(),
+  qrImgBase64: z.string().base64(),
   uuid: z.string(),
 })
 export type Qr = z.infer<typeof qrSchema>
 
 export const wechatCheckSchema = z.object({
-  app_id: z.string(),
-  proxy_ip: z.string().optional(),
+  appId: z.string(),
+  proxyIp: z.string().optional(),
   uuid: z.string(),
-  captch_code: z.string().optional(),
+  captchCode: z.string().optional(),
 })
 
 export type WechatCheck = z.infer<typeof wechatCheckSchema>
 
-export const checkRespSchema = z.object({
-  headImageUrl: z.string().url().optional(),
+const checkSucceedSchema = z.object({
+  headImgUrl: z.string().url().optional(),
   nickName: z.string().optional(),
   expiredTime: z.number(),
   status: z.number().refine((n) => n >= 0 && n < 3), // 0: 未扫码; 1: 已扫码; 2: 登录成功
   uuid: z.string(),
 })
+export type CheckSucceedResp = z.infer<typeof checkSucceedSchema>
+
+const checkFailedSchema = z.object({
+  code: z.number(),
+  msg: z.string(),
+  detail: z.string(),
+})
+
+export type CheckFailedResp = z.infer<typeof checkFailedSchema>
+
+export const checkRespSchema = z.union([checkSucceedSchema, checkFailedSchema])
+
 export type CheckResp = z.infer<typeof checkRespSchema>
 
 export const appSchema = z.object({

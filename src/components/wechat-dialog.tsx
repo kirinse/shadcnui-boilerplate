@@ -29,43 +29,42 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useLoginMutation } from "@/hooks/query/use-wechat"
 import { getFetchErrorMessage } from "@/lib/api-fetch"
-import type { WechatForm } from "@/schema/wechat"
+import { useWechat } from "@/providers/wechat-provider"
+import type { Qr, WechatForm } from "@/schema/wechat"
 import { deviceType, regions, wechatFormSchema } from "@/schema/wechat"
 
-import { useUsers } from "../context/users-context"
+import { Icons } from "./icons"
 
 interface Props {
-  pid: string
-  currentRow?: WechatForm
   open: boolean
   onOpenChange: (open: boolean) => void
 }
 
-export function UsersWechatDialog({ pid, currentRow, open, onOpenChange }: Props) {
-  const isEdit = !!currentRow
+export function WechatDialog({ open, onOpenChange }: Props) {
+  const { pid, form: req, setOpen, setQr, setForm } = useWechat()
   const form = useForm<WechatForm>({
     resolver: zodResolver(wechatFormSchema),
-    defaultValues: isEdit ?
-      currentRow :
-        {
-          appId: "",
-          regionId: "",
-          proxyIp: "",
-          type: undefined,
-        },
+    defaultValues: req ??
+      {
+        appId: "",
+        regionId: "",
+        proxyIp: "",
+        type: undefined,
+      },
   })
   const loginMutation = useLoginMutation(pid)
-  const { setOpen } = useUsers()
 
   function onSubmit(values: WechatForm) {
     toast.promise(loginMutation.mutateAsync(values), {
       position: "top-center",
       loading: `正在获取二维码`,
-      success: () => {
+      success: (data: Qr) => {
         form.reset()
         onOpenChange(false)
+        setForm(values)
+        setQr(data)
         setOpen("qr")
-        return ""
+        return "获取二维码成功"
       },
       error: (error) => {
         const errorMessage = getFetchErrorMessage(error)
@@ -188,7 +187,8 @@ export function UsersWechatDialog({ pid, currentRow, open, onOpenChange }: Props
           <DialogClose asChild>
             <Button variant="outline">取消</Button>
           </DialogClose>
-          <Button type="submit" form="wechat-form">
+          <Button type="submit" form="wechat-form" disabled={loginMutation.isPending}>
+            {loginMutation.isPending && <Icons.spinner className="mr-2 size-4 animate-spin" />}
             确定
           </Button>
         </DialogFooter>

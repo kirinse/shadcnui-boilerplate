@@ -2,6 +2,7 @@ import { Outlet } from "react-router-dom"
 
 import { AppSidebar } from "@/components/nav-sidebar/app-sidebar"
 import { NavBreadcrumb } from "@/components/nav-sidebar/nav-breadcrumb"
+import { QrDialog } from "@/components/qr-dialog"
 import { ThemeCustomizer } from "@/components/theme/theme-customizer"
 import { ThemeSwitcher } from "@/components/theme/theme-switcher"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
@@ -11,11 +12,13 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
+import { WechatDialog } from "@/components/wechat-dialog"
 import { SIDEBAR_COOKIE_NAME } from "@/constants"
+import { useWechat } from "@/providers/wechat-provider"
 
 export function Component() {
   const sidebarState = localStorage.getItem(SIDEBAR_COOKIE_NAME) === "true" || true
-
+  const { open, setOpen } = useWechat()
   return (
     <SidebarProvider defaultOpen={sidebarState}>
       <AppSidebar collapsible="icon" />
@@ -44,7 +47,6 @@ export function Component() {
             </div>
           </header>
         </div>
-
         <ScrollArea className="flex h-[calc(100vh-3.5rem)] flex-col gap-4 p-2 sm:h-[calc(100vh-4rem)] sm:p-4">
           {/* <div className="p-2 sm:py-4"> */}
           <Outlet />
@@ -52,6 +54,15 @@ export function Component() {
           <ScrollBar orientation="horizontal" />
         </ScrollArea>
       </SidebarInset>
+      <QrDialog
+        open={open === "qr"}
+      />
+      <WechatDialog
+        open={open === "wechat"}
+        onOpenChange={() => {
+          setOpen("wechat")
+        }}
+      />
     </SidebarProvider>
   )
 }

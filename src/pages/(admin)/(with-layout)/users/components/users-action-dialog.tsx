@@ -152,7 +152,7 @@ export function UsersActionDialog({ currentRow, open, onOpenChange }: Props) {
                     </FormLabel>
                     <FormControl>
                       <PasswordInput
-                        placeholder="e.g., S3cur3P@ssw0rd"
+                        placeholder="密码"
                         {...field}
                       />
                     </FormControl>
@@ -171,7 +171,7 @@ export function UsersActionDialog({ currentRow, open, onOpenChange }: Props) {
                     <FormControl>
                       <PasswordInput
                         disabled={!isPasswordTouched}
-                        placeholder="e.g., S3cur3P@ssw0rd"
+                        placeholder="确认密码"
                         {...field}
                       />
                     </FormControl>
