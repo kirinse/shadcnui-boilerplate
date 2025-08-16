@@ -49,7 +49,6 @@ export function Component() {
   )
   const { data: details } = useNumberDetails(lotto, day, detailNumber, userId ? Number.parseInt(userId) : undefined)
   const { data: users, fetch: fetchUsers } = useUsers({ pageIndex: 0, pageSize: 1000 })
-  // const { data: summary } = useSummary(day, userId ? Number.parseInt(userId) : undefined)
 
   async function onDownload() {
     toast.promise(riskRefetch, {
@@ -75,11 +74,11 @@ export function Component() {
   }
   const [authToken, _] = useAtom(authTokenAtom)
   const canDownRisk = useMemo(() => authToken.is_verified || authToken.is_admin, [authToken])
-  const isAdmin = useMemo(() => authToken.is_admin, [authToken])
+  const isAdmin = authToken.is_admin
 
   useEffect(() => {
-    if (isAdmin) { fetchUsers() }
-  }, [isAdmin, fetchUsers])
+    if (isAdmin && !users) { fetchUsers() }
+  }, [isAdmin, fetchUsers, users])
 
   return (
     <>

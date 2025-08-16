@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 import { apiFetch } from "@/lib/api-fetch"
 import type { CheckResp, Qr, WechatCheck, WechatForm } from "@/schema/wechat"
@@ -30,12 +30,23 @@ export function useCheckMutation(user_pid: string | null) {
   })
 }
 
-export function useLogoutMutation(user_pid: string) {
+export function useLogoutMutation(src?: string) {
+  const queryClient = useQueryClient()
+
   return useMutation({
-    mutationFn: async (app_id: string) =>
-      await apiFetch<Qr>(`/api/users/${user_pid}/wechats/${app_id}`, {
-        method: "DELETE",
+    mutationFn: async ({ user_pid, app_id }: { user_pid: string, app_id: string }) =>
+      await apiFetch(`/api/users/${user_pid}/wechats/${app_id}`, {
+        method: "PATCH",
       }),
     mutationKey: ["wechat-logout"],
+    onSuccess: () => {
+      if (src === "list") {
+        // 更新用户列表缓存
+        queryClient.invalidateQueries({ queryKey: ["users"] })
+      } else {
+        // TODO: 更新用户自己信息
+        queryClient.invalidateQueries({ queryKey: ["user-info"] })
+      }
+    },
   })
 }

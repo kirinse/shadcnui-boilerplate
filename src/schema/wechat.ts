@@ -133,8 +133,12 @@ export const regions = [
 
 export const wechatFormSchema = z.object({
   appId: z.string(),
-  regionId: z.string().length(6, { message: "请选择地区" }).refine((id) => regions.map((r) => r.value).includes(id)),
-  proxyIp: z.string().optional(),
+  regionId: z.string({
+    required_error: "请选择一个地区",
+  }).refine((id) => {
+    return regions.findIndex((r) => r.value === id) !== -1
+  }, { message: "地区无效" }),
+  proxyIp: z.string(),
   type: deviceTypeSchema,
 })
 

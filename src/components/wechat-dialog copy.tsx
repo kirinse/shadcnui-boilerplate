@@ -1,11 +1,8 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import * as SelectPrimitive from "@radix-ui/react-select"
-import { SelectScrollDownButton, SelectScrollUpButton } from "@radix-ui/react-select"
 import { t } from "i18next"
-import { AlertCircleIcon, CheckIcon } from "lucide-react"
-import * as React from "react"
+import { AlertCircleIcon } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 
@@ -29,10 +26,9 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Select, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useLoginMutation } from "@/hooks/query/use-wechat"
 import { getFetchErrorMessage } from "@/lib/api-fetch"
-import { cn } from "@/lib/utils"
 import { useWechat } from "@/providers/wechat-provider"
 import type { Qr, WechatForm } from "@/schema/wechat"
 import { deviceType, regions, wechatFormSchema } from "@/schema/wechat"
@@ -42,21 +38,20 @@ import { Icons } from "./icons"
 interface Props {
   open: boolean
   onOpenChange: (open: boolean) => void
+  data?: WechatForm
 }
 
-const DEFAULT_VALUE = {
-  appId: "",
-  regionId: "",
-  proxyIp: "",
-  type: undefined,
-}
-
-export function WechatDialog({ open, onOpenChange }: Props) {
-  const { pid, form: req, setOpen, setQr, setForm } = useWechat()
+export function WechatDialog({ open, onOpenChange, data }: Props) {
+  const { pid, setOpen, setQr, setForm } = useWechat()
   const form = useForm<WechatForm>({
     resolver: zodResolver(wechatFormSchema),
-    values: req ?? undefined,
-    defaultValues: DEFAULT_VALUE,
+    defaultValues: data ??
+      {
+        appId: "",
+        regionId: "",
+        proxyIp: "",
+        type: undefined,
+      },
   })
   const loginMutation = useLoginMutation(pid)
 
@@ -65,7 +60,7 @@ export function WechatDialog({ open, onOpenChange }: Props) {
       position: "top-center",
       loading: `正在获取二维码`,
       success: (data: Qr) => {
-        form.reset(DEFAULT_VALUE)
+        form.reset()
         onOpenChange(false)
         setForm(values)
         setQr(data)
@@ -83,8 +78,10 @@ export function WechatDialog({ open, onOpenChange }: Props) {
     <Dialog
       open={open}
       onOpenChange={(state) => {
-        form.reset(DEFAULT_VALUE)
-        setForm(null)
+        // if (!state) {
+        form.reset()
+        //   setForm(null)
+        // }
         onOpenChange(state)
       }}
     >
@@ -111,14 +108,10 @@ export function WechatDialog({ open, onOpenChange }: Props) {
                 name="regionId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
-                      地区
-                    </FormLabel>
+                    <FormLabel>地区</FormLabel>
                     <Select
-                      value={field.value}
+                      defaultValue={field.value}
                       onValueChange={field.onChange}
-                    // defaultOpen
-                    // open={true}
                     >
                       <FormControl>
                         <SelectTrigger>
@@ -152,7 +145,7 @@ export function WechatDialog({ open, onOpenChange }: Props) {
                             <FormControl>
                               <RadioGroupItem value={v} />
                             </FormControl>
-                            <FormLabel className="cursor-pointer font-normal">{v}</FormLabel>
+                            <FormLabel className="font-normal">{v}</FormLabel>
                           </FormItem>
                         ))}
                       </RadioGroup>
@@ -171,7 +164,7 @@ export function WechatDialog({ open, onOpenChange }: Props) {
                     </FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="john.doe@gmail.com"
+                        placeholder="sock5://username:password@ip:port"
                         {...field}
                       />
                     </FormControl>
@@ -205,57 +198,3 @@ export function WechatDialog({ open, onOpenChange }: Props) {
     </Dialog>
   )
 }
-
-const SelectContent = React.forwardRef<
-  React.ElementRef<typeof SelectPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>
->(({ className, children, position = "popper", ...props }, ref) => (
-  <SelectPrimitive.Portal>
-    <SelectPrimitive.Content
-      ref={ref}
-      className={cn(
-        "relative z-50 max-h-96 min-w-32 overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
-        position === "popper" &&
-        "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
-        className,
-      )}
-      position={position}
-      {...props}
-    >
-      <SelectScrollUpButton />
-      <SelectPrimitive.Viewport
-        className={cn(
-          "p-1",
-          position === "popper" &&
-          "grid h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)] grid-cols-5 gap-2",
-        )}
-      >
-        {children}
-      </SelectPrimitive.Viewport>
-      <SelectScrollDownButton />
-    </SelectPrimitive.Content>
-  </SelectPrimitive.Portal>
-))
-SelectContent.displayName = SelectPrimitive.Content.displayName
-
-const SelectItem = React.forwardRef<
-  React.ElementRef<typeof SelectPrimitive.Item>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item>
->(({ className, children, ...props }, ref) => (
-  <SelectPrimitive.Item
-    ref={ref}
-    className={cn(
-      "relative flex w-full cursor-pointer select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[state=checked]:bg-accent data-[state=checked]:text-accent-foreground data-[disabled]:opacity-50",
-      className,
-    )}
-    {...props}
-  >
-    <span className="absolute right-2 flex size-3.5 items-center justify-center">
-      <SelectPrimitive.ItemIndicator>
-        <CheckIcon className="size-4" />
-      </SelectPrimitive.ItemIndicator>
-    </span>
-    <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
-  </SelectPrimitive.Item>
-))
-SelectItem.displayName = SelectPrimitive.Item.displayName

@@ -1,12 +1,11 @@
 import clsx from "clsx"
 import { useAtom } from "jotai"
 import {
-  BadgeCheck,
   ChevronsUpDown,
   LogOut,
 } from "lucide-react"
 import { useTranslation } from "react-i18next"
-import { Link, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 
 import { authTokenAtom } from "@/atoms/auth"
 import {
@@ -17,7 +16,6 @@ import {
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -49,7 +47,7 @@ export function NavUser() {
               className={clsx("data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground")}
             >
               <Avatar className="size-8 rounded-lg">
-                {/* <AvatarImage src={user.avatar} alt={user.name} /> */}
+                <AvatarImage src={user.apps && user.apps[0] && user.apps[0].avatar} className={clsx({ grayscale: user.apps && user.apps[0] && !user.apps[0].online })} />
                 <AvatarFallback className={clsx("rounded-lg", { "text-red-500 font-bold": user.is_admin })}>{user.name.slice(0, 2)}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
@@ -68,7 +66,7 @@ export function NavUser() {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-2 py-1.5 text-left text-sm">
                 <Avatar className="size-8 rounded-lg">
-                  <AvatarImage src={user.avatar} alt={user.name} />
+                  <AvatarImage src={user.apps && user.apps[0] && user.apps[0].avatar} className={clsx({ grayscale: user.apps && user.apps[0] && !user.apps[0].online })} />
                   <AvatarFallback className="rounded-lg">
                     {user.name.slice(0, 2)}
                   </AvatarFallback>
@@ -94,7 +92,7 @@ export function NavUser() {
                   <span>{t("user.account")}</span>
                 </Link>
               </DropdownMenuItem> */}
-              {/* <DropdownMenuItem className="flex items-center gap-2 px-2 py-1.5" asChild>
+            {/* <DropdownMenuItem className="flex items-center gap-2 px-2 py-1.5" asChild>
                 <Link to="/system/account/billing">
                   <CreditCard className="size-4" />
                   <span>{t("user.billing")}</span>

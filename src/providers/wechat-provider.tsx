@@ -3,7 +3,7 @@ import { createContext, useContext, useMemo, useState } from "react"
 import useDialogState from "@/hooks/use-dialog-state"
 import type { Qr, WechatForm } from "@/schema/wechat"
 
-type DialogType = "wechat" | "qr"
+type DialogType = "wechat" | "qr" | "wechat-logout"
 
 interface WechatContextType {
   pid: string | null

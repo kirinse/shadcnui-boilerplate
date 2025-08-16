@@ -11,7 +11,7 @@ import { t } from "i18next"
 import { useAtom } from "jotai"
 import { CircleCheck, CircleX, Hourglass, MessageCircleDashed, RefreshCwIcon, Trash, TriangleAlert, UserRound, X } from "lucide-react"
 import * as React from "react"
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useState } from "react"
 import { toast } from "sonner"
 
 import { authTokenAtom } from "@/atoms/auth"
@@ -59,7 +59,7 @@ export function Component() {
   const [status, setStatus] = useState<MessageStatus[]>([])
 
   const [authToken, _] = useAtom(authTokenAtom)
-  const isAdmin = useMemo(() => authToken.is_admin, [authToken])
+  const isAdmin = authToken.is_admin
 
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(() =>
     [{
@@ -136,17 +136,15 @@ export function Component() {
     })
   }
 
-  const [userList, setUserList] = useState<any[] | undefined>([])
-
   useEffect(() => {
-    if (isAdmin) {
-      fetchUsers().then((_res) => {
-        setUserList(users?.results.map((i) => { return { value: i.id, label: i.name } }))
-      })
-    } else {
+    if (!isAdmin) {
       table.getColumn("user_id")?.toggleVisibility(false)
     }
-  }, [isAdmin, fetchUsers, table, users])
+  }, [isAdmin, table])
+
+  useEffect(() => {
+    if (isAdmin && !users) { fetchUsers() }
+  }, [isAdmin, fetchUsers, users])
 
   return (
     <div className="relative">
@@ -308,9 +306,9 @@ export function Component() {
                 <>
                   <Separator orientation="vertical" decorative className="h-9" />
                   <div className="relative">
-                    {!!userList && (
+                    {!!users?.results && (
                       <MultiSelect
-                        options={userList!}
+                        options={users.results.map((u) => ({ value: u.id.toString(), label: u.name }))}
                         onValueChange={(v) => {
                           table.setPageIndex(0)
                           table.resetExpanded(true)
