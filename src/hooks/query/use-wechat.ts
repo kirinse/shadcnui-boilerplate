@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 import { apiFetch } from "@/lib/api-fetch"
-import type { CheckResp, Qr, WechatCheck, WechatForm } from "@/schema/wechat"
+import type { CheckResp, DispatchForm, Qr, WechatCheck, WechatForm } from "@/schema/wechat"
 
 export function useLoginMutation(user_pid: string | null) {
   return useMutation({
@@ -48,5 +48,16 @@ export function useLogoutMutation(src?: string) {
         queryClient.invalidateQueries({ queryKey: ["user-info"] })
       }
     },
+  })
+}
+
+export function useDispatchMutation() {
+  return useMutation({
+    mutationFn: async (body: DispatchForm) =>
+      await apiFetch(`/api/users/${body.pid}/${body.appId}/dispatch`, {
+        method: "POST",
+        body,
+      }),
+    mutationKey: ["dispatch"],
   })
 }

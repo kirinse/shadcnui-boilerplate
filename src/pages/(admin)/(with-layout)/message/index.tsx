@@ -29,6 +29,7 @@ import { useMessageDeletionMutation, useMessages } from "@/hooks/query/use-messa
 import { useUsers } from "@/hooks/query/use-user"
 import { i18n } from "@/i18n"
 import { getFetchErrorMessage } from "@/lib/api-fetch"
+import { useSummaryCtx } from "@/providers/summary-provider"
 import type { MessageStatus, Order } from "@/schema/message"
 import { messageStatusSchema } from "@/schema/message"
 
@@ -57,6 +58,7 @@ export function Component() {
   const [method, setMethod] = useState<string>()
   const [userIds, setUserIds] = useState<string[]>([])
   const [status, setStatus] = useState<MessageStatus[]>([])
+  const { setDay: setSummaryDay } = useSummaryCtx()
 
   const [authToken, _] = useAtom(authTokenAtom)
   const isAdmin = authToken.is_admin
@@ -148,7 +150,7 @@ export function Component() {
 
   return (
     <div className="relative">
-      <Summary day={filter?.value as Date} userId={userIds} />
+      <Summary />
 
       <DataTablePagination
         table={table}
@@ -165,6 +167,7 @@ export function Component() {
                     const index = old.findIndex((o) => o.id === "day")
                     if (index !== -1) old![index]!["value"] = date
                     else old.push({ id: "day", value: date })
+                    setSummaryDay(date)
                     table.setPageIndex(0)
                     table.resetExpanded(true)
                     return old

@@ -9,13 +9,13 @@ import {
   TableRow,
   WidthType,
 } from "docx"
-import { chunk, groupBy, reverse } from "lodash-es"
+import { chunk } from "lodash-es"
 
 import type { IRisk } from "@/schema/number"
 
 export class DocumentCreator {
-  public create(lotto: string, day: Date, data: IRisk[], number?: string): Document {
-    const data_ = chunk(reverse(Object.entries(groupBy(data.map((r) => { return { ...r, bets: Math.ceil(r.prize / 1800) } }), (d) => d.bets))), 4)
+  public create(lotto: string, day: Date, data: [string, IRisk[]][], number?: string): Document {
+    const data_ = chunk(data, 4)
     const title = `${day.toLocaleDateString("zh-CN")} ${lotto}彩直选${number ?? ""}报告`
     const rows = []
     for (const ck of data_) {

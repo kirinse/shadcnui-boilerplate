@@ -27,15 +27,15 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
-import { useUser } from "@/hooks/query/use-user"
+import { useAuth } from "@/providers/auth-provider"
 
 export function NavUser() {
   const { isMobile } = useSidebar()
   const { t } = useTranslation("navigation")
-  const { data: user } = useUser()
   // const logout = useUserLogoutMutation()
   const [_, setAuthTokenAtom] = useAtom(authTokenAtom)
   const navigate = useNavigate()
+  const { user } = useAuth()
 
   return (
     <SidebarMenu>
@@ -47,12 +47,12 @@ export function NavUser() {
               className={clsx("data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground")}
             >
               <Avatar className="size-8 rounded-lg">
-                <AvatarImage src={user.apps && user.apps[0] && user.apps[0].avatar} className={clsx({ grayscale: user.apps && user.apps[0] && !user.apps[0].online })} />
-                <AvatarFallback className={clsx("rounded-lg", { "text-red-500 font-bold": user.is_admin })}>{user.name.slice(0, 2)}</AvatarFallback>
+                <AvatarImage src={user?.apps && user.apps[0] && user.apps[0].avatar} className={clsx({ grayscale: user?.apps && user.apps[0] && !user.apps[0].online })} />
+                <AvatarFallback className={clsx("rounded-lg", { "text-red-500 font-bold": user?.is_admin })}>{user?.name.slice(0, 2)}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">{user.name}</span>
-                <span className="truncate text-xs">{user.email}</span>
+                <span className="truncate font-semibold">{user?.name}</span>
+                <span className="truncate text-xs">{user?.email}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -66,14 +66,14 @@ export function NavUser() {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-2 py-1.5 text-left text-sm">
                 <Avatar className="size-8 rounded-lg">
-                  <AvatarImage src={user.apps && user.apps[0] && user.apps[0].avatar} className={clsx({ grayscale: user.apps && user.apps[0] && !user.apps[0].online })} />
+                  <AvatarImage src={user?.apps && user.apps[0] && user.apps[0].avatar} className={clsx({ grayscale: user?.apps && user.apps[0] && !user.apps[0].online })} />
                   <AvatarFallback className="rounded-lg">
-                    {user.name.slice(0, 2)}
+                    {user?.name.slice(0, 2)}
                   </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">{user.name}</span>
-                  <span className="truncate text-xs text-muted-foreground">{user.email}</span>
+                  <span className="truncate font-semibold">{user?.name}</span>
+                  <span className="truncate text-xs text-muted-foreground">{user?.email}</span>
                 </div>
               </div>
             </DropdownMenuLabel>

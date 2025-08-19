@@ -195,3 +195,20 @@ export const appSchema = z.object({
   updated_at: z.date(),
 })
 export type App = z.infer<typeof appSchema>
+
+export const lottoType = ["福", "体"] as const
+export const lottoTypeSchema = z.enum(lottoType)
+export type LottoType = z.infer<typeof lottoTypeSchema>
+
+export const dispatchFormSchema = z.object({
+  // pid: z.string().uuid(),
+  // appId: z.string({
+  //   required_error: "请选择微信",
+  // }).refine((appId) => appId.trim().length > 0, { message: "请选择微信" }),
+  // toWxId: z.string().refine((id) => id.startsWith("wxid_") || id.endsWith("@chatroom"), { message: "微信号无效" }),
+  lotto: lottoTypeSchema,
+  keep: z.number().min(1, { message: "最少保留1单" }),
+  content: z.string(),
+})
+
+export type DispatchForm = z.infer<typeof dispatchFormSchema>
