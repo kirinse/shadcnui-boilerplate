@@ -114,7 +114,7 @@ export function Component() {
               setNumber(v)
             }}
           />
-          {isAdmin && (
+          {isAdmin && !!users && !!users.results && (
             <div className="inline-flex gap-3">
               <Separator orientation="vertical" decorative className="h-9" />
               <div className="relative">
@@ -123,7 +123,7 @@ export function Component() {
                     <SelectValue placeholder="用户" />
                   </SelectTrigger>
                   <SelectContent>
-                    {users?.results.map((u) => (
+                    {users.results.map((u) => (
                       <SelectItem key={u.id} value={u.id.toString()}>{u.name}</SelectItem>
                     ))}
                   </SelectContent>
@@ -161,7 +161,7 @@ export function Component() {
               <span>风险报告</span>
             </Button>
           ) : null}
-          <DispatchDialog />
+          {!isAdmin && <DispatchDialog />}
         </div>
       </div>
       <div className="grid flex-1 scroll-mt-20 grid-cols-4 items-start gap-4 md:grid-cols-5 md:gap-4 lg:grid-cols-8 lg:gap-3 xl:grid-cols-9 xl:gap-2 2xl:grid-cols-12 2xl:gap-2">

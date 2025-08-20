@@ -305,7 +305,7 @@ export function Component() {
                   className="h-9 min-h-9 shadow-sm"
                 />
               </div>
-              {isAdmin && (
+              {isAdmin && users && users.results && (
                 <>
                   <Separator orientation="vertical" decorative className="h-9" />
                   <div className="relative">
@@ -423,7 +423,7 @@ export function Component() {
                                 }}
                               >
                                 <UserRound size={12} />
-                                {users.results.find((u) => u.id === row.getValue("user_id"))?.name}
+                                {users?.results?.find((u) => u.id === row.getValue("user_id"))?.name}
                               </Button>
                             ) :
                           flexRender(

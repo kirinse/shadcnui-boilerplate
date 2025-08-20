@@ -8,8 +8,8 @@ type AuthProviderProps = {
 }
 
 type AuthProviderState = {
-  user?: IUser
-  setUser: React.Dispatch<React.SetStateAction<IUser | undefined>>
+  user: IUser | null
+  setUser: React.Dispatch<React.SetStateAction<IUser | null>>
 }
 
 const AuthProviderContext = createContext<AuthProviderState | undefined>(undefined)
@@ -19,7 +19,7 @@ export function AuthProvider({
   current,
   ...props
 }: AuthProviderProps) {
-  const [user, setUser] = useState<IUser | undefined>(current)
+  const [user, setUser] = useState<IUser | null>(current || null)
 
   const providerValue = useMemo(() => {
     return {

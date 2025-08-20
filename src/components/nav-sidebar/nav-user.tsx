@@ -35,7 +35,7 @@ export function NavUser() {
   // const logout = useUserLogoutMutation()
   const [_, setAuthTokenAtom] = useAtom(authTokenAtom)
   const navigate = useNavigate()
-  const { user } = useAuth()
+  const { user, setUser } = useAuth()
 
   return (
     <SidebarMenu>
@@ -108,7 +108,11 @@ export function NavUser() {
             {/* <DropdownMenuSeparator className="my-1" /> */}
             <DropdownMenuItem
               className="flex items-center gap-2 px-2 py-1.5"
-              onSelect={() => { setAuthTokenAtom({}); navigate("/login") }}
+              onSelect={() => {
+                setUser(null)
+                setAuthTokenAtom({})
+                navigate("/login")
+              }}
             >
               <LogOut className="size-4" />
               <span>{t("user.logout")}</span>
