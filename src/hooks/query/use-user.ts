@@ -28,12 +28,16 @@ export function useUser() {
 }
 
 export function useUserLoginMutation() {
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (loginForm: ILoginForm) =>
       await apiFetch("/api/auth/login", {
         method: "POST",
         body: loginForm,
       }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user-info"] })
+    },
     mutationKey: ["user-login"],
   })
 }
@@ -50,7 +54,7 @@ export function useUserLogoutMutation() {
   })
 }
 
-export function useUsers(pagination: PaginationState, enabled = false) {
+export function useUsers(pagination: PaginationState) {
   const { data, isPending, refetch: fetch } = useQuery({
     queryKey: ["users", pagination],
     queryFn: async () => apiFetch<IUserList>("/api/users", {
@@ -60,7 +64,7 @@ export function useUsers(pagination: PaginationState, enabled = false) {
       },
     }),
     placeholderData: keepPreviousData,
-    enabled,
+    enabled: false,
   })
   return {
     isPending,

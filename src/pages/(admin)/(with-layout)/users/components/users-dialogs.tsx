@@ -1,11 +1,14 @@
+import { useWechat } from "@/providers/wechat-provider"
+
 import { useUsers } from "../context/users-context"
 import { UsersActionDialog } from "./users-action-dialog"
 import { UsersDeleteDialog } from "./users-delete-dialog"
-import { UsersQrDialog } from "./users-qr-dialog"
-import { UsersWechatDialog } from "./users-wechat-dialog"
+import { UsersWechatLogoutDialog } from "./users-wechat-logout-dialog"
 
 export function UsersDialogs() {
   const { open, setOpen, currentRow, setCurrentRow } = useUsers()
+  const { open: wxOpen, setOpen: setWxOpen } = useWechat()
+
   return (
     <>
       <UsersActionDialog
@@ -13,13 +16,11 @@ export function UsersDialogs() {
         open={open === "add"}
         onOpenChange={() => setOpen("add")}
       />
-
-      <UsersQrDialog
-        key="user-qr"
-        open={open === "qr"}
-        onOpenChange={() => setOpen("qr")}
+      <UsersWechatLogoutDialog
+        key="user-wechat-logout"
+        open={wxOpen === "wechat-logout"}
+        onOpenChange={() => setWxOpen("wechat-logout")}
       />
-
       {currentRow && (
         <>
           <UsersActionDialog
@@ -32,17 +33,6 @@ export function UsersDialogs() {
               }, 500)
             }}
             currentRow={currentRow}
-          />
-          <UsersWechatDialog
-            key={`user-wechat-${currentRow.id}`}
-            open={open === "wechat"}
-            onOpenChange={() => {
-              setOpen("wechat")
-              setTimeout(() => {
-                setCurrentRow(null)
-              }, 500)
-            }}
-            pid={currentRow.pid}
           />
           <UsersDeleteDialog
             key={`user-delete-${currentRow.id}`}

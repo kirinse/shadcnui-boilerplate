@@ -11,6 +11,7 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useWechat } from "@/providers/wechat-provider"
 import type { IUser } from "@/schema/user"
 
 import { useUsers } from "../context/users-context"
@@ -21,6 +22,7 @@ interface DataTableRowActionsProps {
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
   const { setOpen, setCurrentRow } = useUsers()
+  const { setPid, setOpen: setWxOpen } = useWechat()
   return (
     <>
       <DropdownMenu modal={false}>
@@ -47,8 +49,8 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => {
-              setCurrentRow(row.original)
-              setOpen("wechat")
+              setPid(row.original.pid)
+              setWxOpen("wechat")
             }}
           >
             微信

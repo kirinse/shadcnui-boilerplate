@@ -1,42 +1,35 @@
-import { createContext, useContext, useState } from "react"
+import { createContext, useContext, useMemo, useState } from "react"
+
+import type { IUser } from "@/schema/user"
 
 type AuthProviderProps = {
   children: React.ReactNode
-  storageKey?: string
+  current?: IUser
 }
 
 type AuthProviderState = {
-  token: string
-  setToken: (token: string) => void
+  user?: IUser
+  setUser: React.Dispatch<React.SetStateAction<IUser | undefined>>
 }
 
-const initialState: AuthProviderState = {
-  token: "",
-  setToken: () => null,
-}
-
-const AuthProviderContext = createContext<AuthProviderState>(initialState)
+const AuthProviderContext = createContext<AuthProviderState | undefined>(undefined)
 
 export function AuthProvider({
   children,
-  storageKey = "token",
+  current,
   ...props
 }: AuthProviderProps) {
-  const [token, setToken] = useState<string>(
-    () => (localStorage.getItem(storageKey) as string) || "",
-  )
+  const [user, setUser] = useState<IUser | undefined>(current)
 
-  // eslint-disable-next-line @eslint-react/no-unstable-context-value
-  const value = {
-    token,
-    setToken: (token: string) => {
-      localStorage.setItem(storageKey, token)
-      setToken(token)
-    },
-  }
+  const providerValue = useMemo(() => {
+    return {
+      user,
+      setUser,
+    }
+  }, [user, setUser])
 
   return (
-    <AuthProviderContext.Provider {...props} value={value}>
+    <AuthProviderContext.Provider {...props} value={providerValue}>
       {children}
     </AuthProviderContext.Provider>
   )

@@ -11,7 +11,7 @@ import { t } from "i18next"
 import { useAtom } from "jotai"
 import { CircleCheck, CircleX, Hourglass, MessageCircleDashed, RefreshCwIcon, Trash, TriangleAlert, UserRound, X } from "lucide-react"
 import * as React from "react"
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useState } from "react"
 import { toast } from "sonner"
 
 import { authTokenAtom } from "@/atoms/auth"
@@ -29,6 +29,7 @@ import { useMessageDeletionMutation, useMessages } from "@/hooks/query/use-messa
 import { useUsers } from "@/hooks/query/use-user"
 import { i18n } from "@/i18n"
 import { getFetchErrorMessage } from "@/lib/api-fetch"
+import { useSummaryCtx } from "@/providers/summary-provider"
 import type { MessageStatus, Order } from "@/schema/message"
 import { messageStatusSchema } from "@/schema/message"
 
@@ -57,9 +58,10 @@ export function Component() {
   const [method, setMethod] = useState<string>()
   const [userIds, setUserIds] = useState<string[]>([])
   const [status, setStatus] = useState<MessageStatus[]>([])
+  const { setDay: setSummaryDay } = useSummaryCtx()
 
   const [authToken, _] = useAtom(authTokenAtom)
-  const isAdmin = useMemo(() => authToken.is_admin, [authToken])
+  const isAdmin = authToken.is_admin
 
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(() =>
     [{
@@ -136,21 +138,19 @@ export function Component() {
     })
   }
 
-  const [userList, setUserList] = useState<any[] | undefined>([])
-
   useEffect(() => {
-    if (isAdmin) {
-      fetchUsers().then((_res) => {
-        setUserList(users?.results.map((i) => { return { value: i.id, label: i.name } }))
-      })
-    } else {
+    if (!isAdmin) {
       table.getColumn("user_id")?.toggleVisibility(false)
     }
-  }, [isAdmin, fetchUsers, table, users])
+  }, [isAdmin, table])
+
+  useEffect(() => {
+    if (isAdmin && !users) { fetchUsers() }
+  }, [isAdmin, fetchUsers, users])
 
   return (
     <div className="relative">
-      <Summary day={filter?.value as Date} userId={userIds} />
+      <Summary />
 
       <DataTablePagination
         table={table}
@@ -167,6 +167,7 @@ export function Component() {
                     const index = old.findIndex((o) => o.id === "day")
                     if (index !== -1) old![index]!["value"] = date
                     else old.push({ id: "day", value: date })
+                    setSummaryDay(date)
                     table.setPageIndex(0)
                     table.resetExpanded(true)
                     return old
@@ -308,9 +309,9 @@ export function Component() {
                 <>
                   <Separator orientation="vertical" decorative className="h-9" />
                   <div className="relative">
-                    {!!userList && (
+                    {!!users?.results && (
                       <MultiSelect
-                        options={userList!}
+                        options={users.results.map((u) => ({ value: u.id.toString(), label: u.name }))}
                         onValueChange={(v) => {
                           table.setPageIndex(0)
                           table.resetExpanded(true)

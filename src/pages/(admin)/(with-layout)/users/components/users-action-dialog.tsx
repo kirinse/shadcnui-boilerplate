@@ -90,11 +90,8 @@ export function UsersActionDialog({ currentRow, open, onOpenChange }: Props) {
     >
       <DialogContent className="sm:max-w-lg">
         <DialogHeader className="text-left">
-          <DialogTitle>{isEdit ? "Edit User" : "Add New User"}</DialogTitle>
-          <DialogDescription>
-            {isEdit ? "Update the user here. " : "Create new user here. "}
-            Click save when you&apos;re done.
-          </DialogDescription>
+          <DialogTitle>{isEdit ? "编辑用户" : "新增用户"}</DialogTitle>
+          <DialogDescription />
         </DialogHeader>
         <div className="w-full overflow-y-auto py-1">
           <Form {...form}>
@@ -113,8 +110,6 @@ export function UsersActionDialog({ currentRow, open, onOpenChange }: Props) {
                     </FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="john_doe"
-                        className="col-span-4"
                         {...field}
                       />
                     </FormControl>
@@ -152,7 +147,7 @@ export function UsersActionDialog({ currentRow, open, onOpenChange }: Props) {
                     </FormLabel>
                     <FormControl>
                       <PasswordInput
-                        placeholder="e.g., S3cur3P@ssw0rd"
+                        placeholder="密码"
                         {...field}
                       />
                     </FormControl>
@@ -171,7 +166,7 @@ export function UsersActionDialog({ currentRow, open, onOpenChange }: Props) {
                     <FormControl>
                       <PasswordInput
                         disabled={!isPasswordTouched}
-                        placeholder="e.g., S3cur3P@ssw0rd"
+                        placeholder="确认密码"
                         {...field}
                       />
                     </FormControl>

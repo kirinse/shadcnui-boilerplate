@@ -8,6 +8,7 @@ import { toast } from "sonner"
 
 import { authTokenAtom } from "@/atoms/auth"
 import { DatePicker } from "@/components/date-picker"
+import { DispatchDialog } from "@/components/dispatch-dialog"
 import { Refresher } from "@/components/refresher"
 import { Summary } from "@/components/summary"
 import { Badge } from "@/components/ui/badge"
@@ -21,6 +22,7 @@ import { useNumberDetails, useNumbers, useRisk } from "@/hooks/query/use-number"
 import { useUsers } from "@/hooks/query/use-user"
 import { getFetchErrorMessage } from "@/lib/api-fetch"
 import { DocumentCreator } from "@/lib/risk_generator"
+import { useSummaryCtx } from "@/providers/summary-provider"
 
 import { detailsColumns } from "./components/detailsCol"
 import { DataTable } from "./components/detailsTable"
@@ -49,7 +51,6 @@ export function Component() {
   )
   const { data: details } = useNumberDetails(lotto, day, detailNumber, userId ? Number.parseInt(userId) : undefined)
   const { data: users, fetch: fetchUsers } = useUsers({ pageIndex: 0, pageSize: 1000 })
-  // const { data: summary } = useSummary(day, userId ? Number.parseInt(userId) : undefined)
 
   async function onDownload() {
     toast.promise(riskRefetch, {
@@ -75,15 +76,16 @@ export function Component() {
   }
   const [authToken, _] = useAtom(authTokenAtom)
   const canDownRisk = useMemo(() => authToken.is_verified || authToken.is_admin, [authToken])
-  const isAdmin = useMemo(() => authToken.is_admin, [authToken])
+  const isAdmin = authToken.is_admin
+  const { setDay: setSummaryDay } = useSummaryCtx()
 
   useEffect(() => {
-    if (isAdmin) { fetchUsers() }
-  }, [isAdmin, fetchUsers])
+    if (isAdmin && !users) { fetchUsers() }
+  }, [isAdmin, fetchUsers, users])
 
   return (
     <>
-      <Summary day={day} userId={userId ? [userId] : undefined} />
+      <Summary />
       <div className="my-4 flex items-end justify-between sm:my-0 sm:items-center">
         <div className="flex flex-col gap-3 sm:my-4 sm:flex-row">
           <Tabs defaultValue={lotto} onValueChange={setLotto} className="space-y-4">
@@ -96,7 +98,7 @@ export function Component() {
             mode="single"
             required
             selected={day}
-            onSelect={(date) => setDay(date!)}
+            onSelect={(date) => { setDay(date!); setSummaryDay(date!) }}
           />
           <Input
             type="number"
@@ -159,6 +161,7 @@ export function Component() {
               <span>风险报告</span>
             </Button>
           ) : null}
+          <DispatchDialog />
         </div>
       </div>
       <div className="grid flex-1 scroll-mt-20 grid-cols-4 items-start gap-4 md:grid-cols-5 md:gap-4 lg:grid-cols-8 lg:gap-3 xl:grid-cols-9 xl:gap-2 2xl:grid-cols-12 2xl:gap-2">
@@ -207,37 +210,6 @@ export function Component() {
                 )}
               </PopoverContent>
             </Popover>
-            // <Dialog
-            //   key={`${tab}-${number.number}`}
-            //   onOpenChange={(open) => {
-            //     if (open) {
-            //       setDetailNumber(number.number)
-            //     }
-            //   }}
-            // >
-            //   <DialogTrigger>
-            //     <div className="flex aspect-square flex-col items-center justify-around rounded-md border-2 border-muted bg-popover p-4 text-sm font-medium leading-none hover:bg-accent hover:text-accent-foreground">
-            //       <NumberComp number={number.number} />
-            //       <Badge variant="outline" className={clsx("text-nowrap text-sidebar-primary-foreground", { "border-red-500 bg-red-500": (number.prize - data.total) / data.total >= 0.1, "border-yellow-400 bg-yellow-400": number.prize > data.total && (number.prize - data.total) / data.total < 0.1, "border-green-400 bg-green-400": number.prize <= data.total })}>¥ {number.prize.toLocaleString()}</Badge>
-            //     </div>
-            //   </DialogTrigger>
-            //   <DialogContent>
-            //     {details && (
-            //       <>
-            //         <DialogHeader>
-            //           <DialogTitle>
-            //             {`${tab}彩 ${day.toLocaleDateString("zh-CN")} 号码`}
-            //             {` `}
-            //             <NumberComp number={number.number} />
-            //             {` `}
-            //             玩法分布
-            //           </DialogTitle>
-            //         </DialogHeader>
-            //         <DataTable columns={detailsColumns} data={details} />
-            //       </>
-            //     )}
-            //   </DialogContent>
-            // </Dialog>
           )
         })}
       </div>

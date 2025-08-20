@@ -1,9 +1,40 @@
 import { Eye, EyeOff } from "lucide-react"
 import * as React from "react"
+import { useFormContext } from "react-hook-form"
 
 import { cn } from "@/lib/utils"
 
 import { Button } from "./ui/button"
+import { Input } from "./ui/input"
+
+function generatePassword(length = 10, includeUppercase = true, includeNumbers = true, includeSymbols = false) {
+  let characters = "abcdefghijklmnopqrstuvwxyz"
+  const reg = []
+  reg.push(/[a-z]/)
+  if (includeUppercase) {
+    characters += "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    reg.push(/[A-Z]/)
+  }
+  if (includeNumbers) {
+    characters += "0123456789"
+    reg.push(/\d/)
+  }
+  if (includeSymbols) {
+    characters += "!@#$%^&*()_+[]{}|;:,.<>?"
+    reg.push(/[!@#$%^&*()_+[\]{}|;:,.<>?]/)
+  }
+
+  for (; ;) {
+    let password = ""
+    for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length)
+      password += characters.charAt(randomIndex)
+    }
+    if (reg.every((re) => re.test(password))) {
+      return password
+    }
+  }
+}
 
 type PasswordInputProps = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
@@ -11,27 +42,43 @@ type PasswordInputProps = Omit<
 >
 
 const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputProps>(
-  ({ className, disabled, ...props }, ref) => {
+  ({ className, disabled, name, ...props }, ref) => {
     const [showPassword, setShowPassword] = React.useState(false)
+    const { setValue } = useFormContext()
     return (
       <div className={cn("relative rounded-md", className)}>
-        <input
+        <Input
           type={showPassword ? "text" : "password"}
-          className="focus-visible:outline-hidden flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
           ref={ref}
           disabled={disabled}
           {...props}
         />
-        <Button
-          type="button"
-          size="icon"
-          variant="ghost"
-          disabled={disabled}
-          className="absolute right-1 top-1/2 size-6 -translate-y-1/2 rounded-md text-muted-foreground"
-          onClick={() => setShowPassword((prev) => !prev)}
-        >
-          {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
-        </Button>
+        <div className="absolute right-1 top-1/2 flex -translate-y-1/2 items-center">
+          <Button
+            type="button"
+            size="icon"
+            variant="ghost"
+            disabled={disabled}
+            className="size-6 rounded-md text-muted-foreground"
+            onClick={() => setShowPassword((prev) => !prev)}
+          >
+            {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
+          </Button>
+          {!name?.startsWith("confirm_") && (
+            <Button
+              type="button"
+              variant="link"
+              size="icon"
+              // disabled={disabled}
+              className="rounded-md text-muted-foreground"
+              onClick={() => {
+                setValue(name!, generatePassword(), { shouldValidate: true, shouldDirty: true })
+              }}
+            >
+              生成
+            </Button>
+          )}
+        </div>
       </div>
     )
   },

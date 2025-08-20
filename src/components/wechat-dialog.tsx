@@ -26,46 +26,48 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Select, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useLoginMutation } from "@/hooks/query/use-wechat"
 import { getFetchErrorMessage } from "@/lib/api-fetch"
-import type { WechatForm } from "@/schema/wechat"
+import { useWechat } from "@/providers/wechat-provider"
+import type { Qr, WechatForm } from "@/schema/wechat"
 import { deviceType, regions, wechatFormSchema } from "@/schema/wechat"
 
-import { useUsers } from "../context/users-context"
+import { Icons } from "./icons"
+import { SelectContentGrid, SelectItemGrid } from "./select-content"
 
 interface Props {
-  pid: string
-  currentRow?: WechatForm
   open: boolean
   onOpenChange: (open: boolean) => void
 }
 
-export function UsersWechatDialog({ pid, currentRow, open, onOpenChange }: Props) {
-  const isEdit = !!currentRow
+const DEFAULT_VALUE = {
+  appId: "",
+  regionId: "",
+  proxyIp: "",
+  type: undefined,
+}
+
+export function WechatDialog({ open, onOpenChange }: Props) {
+  const { pid, form: req, setOpen, setQr, setForm } = useWechat()
   const form = useForm<WechatForm>({
     resolver: zodResolver(wechatFormSchema),
-    defaultValues: isEdit ?
-      currentRow :
-        {
-          appId: "",
-          regionId: "",
-          proxyIp: "",
-          type: undefined,
-        },
+    values: req ?? undefined,
+    defaultValues: DEFAULT_VALUE,
   })
   const loginMutation = useLoginMutation(pid)
-  const { setOpen } = useUsers()
 
   function onSubmit(values: WechatForm) {
     toast.promise(loginMutation.mutateAsync(values), {
       position: "top-center",
       loading: `正在获取二维码`,
-      success: () => {
-        form.reset()
+      success: (data: Qr) => {
+        form.reset(DEFAULT_VALUE)
         onOpenChange(false)
+        setForm(values)
+        setQr(data)
         setOpen("qr")
-        return ""
+        return "获取二维码成功"
       },
       error: (error) => {
         const errorMessage = getFetchErrorMessage(error)
@@ -78,11 +80,12 @@ export function UsersWechatDialog({ pid, currentRow, open, onOpenChange }: Props
     <Dialog
       open={open}
       onOpenChange={(state) => {
-        form.reset()
+        form.reset(DEFAULT_VALUE)
+        setForm(null)
         onOpenChange(state)
       }}
     >
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="sm:max-w-lg" onEscapeKeyDown={(e) => e.preventDefault()} onPointerDownOutside={(e) => e.preventDefault()} onInteractOutside={(e) => e.preventDefault()}>
         <DialogHeader className="text-left">
           <DialogTitle>扫码登录</DialogTitle>
         </DialogHeader>
@@ -111,15 +114,17 @@ export function UsersWechatDialog({ pid, currentRow, open, onOpenChange }: Props
                     <Select
                       value={field.value}
                       onValueChange={field.onChange}
+                    // defaultOpen
+                    // open={true}
                     >
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="选择地区" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent>
-                        {regions.map(({ value, label }) => (<SelectItem key={value} value={value}>{label}</SelectItem>))}
-                      </SelectContent>
+                      <SelectContentGrid>
+                        {regions.map(({ value, label }) => (<SelectItemGrid key={value} value={value}>{label}</SelectItemGrid>))}
+                      </SelectContentGrid>
                     </Select>
                     <FormMessage />
                   </FormItem>
@@ -144,7 +149,7 @@ export function UsersWechatDialog({ pid, currentRow, open, onOpenChange }: Props
                             <FormControl>
                               <RadioGroupItem value={v} />
                             </FormControl>
-                            <FormLabel className="font-normal">{v}</FormLabel>
+                            <FormLabel className="cursor-pointer font-normal">{v}</FormLabel>
                           </FormItem>
                         ))}
                       </RadioGroup>
@@ -188,7 +193,8 @@ export function UsersWechatDialog({ pid, currentRow, open, onOpenChange }: Props
           <DialogClose asChild>
             <Button variant="outline">取消</Button>
           </DialogClose>
-          <Button type="submit" form="wechat-form">
+          <Button type="submit" form="wechat-form" disabled={loginMutation.isPending}>
+            {loginMutation.isPending && <Icons.spinner className="mr-2 size-4 animate-spin" />}
             确定
           </Button>
         </DialogFooter>

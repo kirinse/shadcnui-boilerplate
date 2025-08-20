@@ -2,7 +2,6 @@ import { QueryClientProvider } from "@tanstack/react-query"
 import { LazyMotion, MotionConfig } from "framer-motion"
 import { Provider } from "jotai"
 import type { FC, PropsWithChildren } from "react"
-import { HotkeysProvider } from "react-hotkeys-hook"
 import { I18nextProvider } from "react-i18next"
 
 import { ThemeProvider } from "@/components/theme/theme-provider"
@@ -13,6 +12,8 @@ import { Toaster as PrimitiveToaster } from "@/components/ui/toaster"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { i18n } from "@/i18n"
 import { queryClient } from "@/lib/query-client"
+
+import WechatProvider from "./wechat-provider"
 
 const loadFeatures = () =>
   import("../framer-lazy-feature").then((res) => res.default)
@@ -32,9 +33,11 @@ export const RootProviders: FC<PropsWithChildren> = ({ children }) => (
             <ThemeWrapper>
               <ThemeProvider defaultTheme="system">
                 <TooltipProvider>
-                  <HotkeysProvider initiallyActiveScopes={["home"]}>
+                  {/* <HotkeysProvider initiallyActiveScopes={["home"]}> */}
+                  <WechatProvider>
                     {children}
-                  </HotkeysProvider>
+                  </WechatProvider>
+                  {/* </HotkeysProvider> */}
                 </TooltipProvider>
                 <ThemesStyle />
                 <Toaster richColors />

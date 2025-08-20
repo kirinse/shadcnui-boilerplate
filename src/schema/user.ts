@@ -1,5 +1,7 @@
 import { z } from "zod"
 
+import { deviceTypeSchema } from "./wechat"
+
 export const userProfileSchema = z.object({
   userId: z.string(),
   avatar: z.string(),
@@ -35,6 +37,20 @@ export type IUserProfile = z.infer<typeof userProfileSchema>
 
 export const userRoles = ["admin", "user", "guest"] as const
 
+export const appSchema = z.object({
+  id: z.string(),
+  wx_id: z.string(),
+  avatar: z.string().url().optional(),
+  device: deviceTypeSchema,
+  region_id: z.string().length(6),
+  name: z.string().optional(),
+  online: z.boolean(),
+  proxy: z.string(),
+  phone: z.string().optional(),
+})
+
+export type App = z.infer<typeof appSchema>
+
 export const userSchema = z.object({
   id: z.number(),
   email: z.string().email(),
@@ -43,6 +59,7 @@ export const userSchema = z.object({
   created_at: z.date(),
   role: z.enum(userRoles),
   is_admin: z.boolean(),
+  apps: z.array(appSchema),
 })
 
 export type IUser = z.infer<typeof userSchema>
