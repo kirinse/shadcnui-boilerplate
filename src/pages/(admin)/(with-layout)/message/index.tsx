@@ -308,11 +308,11 @@ export function Component() {
                   className="h-9 min-h-9 shadow-sm"
                 />
               </div>
-              {isAdmin && users && users.results && (
+              {isAdmin && !!users && !!users.results && (
                 <>
                   <Separator orientation="vertical" decorative className="h-9" />
                   <div className="relative">
-                    {!!users?.results && (
+                    {users.results && (
                       <MultiSelect
                         options={users.results.map((u) => ({ value: u.id.toString(), label: u.name }))}
                         onValueChange={(v) => {
