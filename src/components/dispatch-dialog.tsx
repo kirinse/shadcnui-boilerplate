@@ -1,10 +1,8 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import { t } from "i18next"
 import { useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
-import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -27,7 +25,6 @@ import {
 } from "@/components/ui/form"
 // import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useDispatchMutation } from "@/hooks/query/use-wechat"
-import { getFetchErrorMessage } from "@/lib/api-fetch"
 // import { useAuth } from "@/providers/auth-provider"
 import { useSummaryCtx } from "@/providers/summary-provider"
 import type { DispatchForm } from "@/schema/wechat"
@@ -75,25 +72,25 @@ export function DispatchDialog({ open }: Props) {
   })
   const dispatchMutation = useDispatchMutation()
 
-  function onSubmit(values: DispatchForm) {
+  function onSubmit(_values: DispatchForm) {
     // console.log(values)
     return
-    toast.promise(dispatchMutation.mutateAsync(values), {
-      position: "top-center",
-      loading: `正在发送消息`,
-      success: (_data) => {
-        // console.log(data)
-        form.reset()
-        // setForm(values)
-        // setQr(data)
-        // setOpen("qr")
-        return "消息发送成功"
-      },
-      error: (error) => {
-        const errorMessage = getFetchErrorMessage(error)
-        return t(errorMessage)
-      },
-    })
+    // toast.promise(dispatchMutation.mutateAsync(values), {
+    //   position: "top-center",
+    //   loading: `正在发送消息`,
+    //   success: (_data) => {
+    //     // console.log(data)
+    //     form.reset()
+    //     // setForm(values)
+    //     // setQr(data)
+    //     // setOpen("qr")
+    //     return "消息发送成功"
+    //   },
+    //   error: (error) => {
+    //     const errorMessage = getFetchErrorMessage(error)
+    //     return t(errorMessage)
+    //   },
+    // })
   }
 
   return (
