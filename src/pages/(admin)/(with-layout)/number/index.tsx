@@ -126,7 +126,7 @@ export function Component() {
                     <SelectValue placeholder="用户" />
                   </SelectTrigger>
                   <SelectContent>
-                    {users.results.map((u) => (
+                    {Array.from(users?.results).map((u) => (
                       <SelectItem key={u.id} value={u.id.toString()}>{u.name}</SelectItem>
                     ))}
                   </SelectContent>
