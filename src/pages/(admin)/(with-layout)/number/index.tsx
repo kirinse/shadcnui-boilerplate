@@ -83,9 +83,6 @@ export function Component() {
     if (isAdmin) { fetchUsers() }
   }, [isAdmin, fetchUsers])
 
-  // eslint-disable-next-line no-console
-  console.log(users)
-
   return (
     <>
       <Summary />

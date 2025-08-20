@@ -426,7 +426,7 @@ export function Component() {
                                 }}
                               >
                                 <UserRound size={12} />
-                                {users?.results?.find((u) => u.id === row.getValue("user_id"))?.name}
+                                {Array.from(users?.results).find((u) => u.id === row.getValue("user_id"))?.name}
                               </Button>
                             ) :
                           flexRender(
