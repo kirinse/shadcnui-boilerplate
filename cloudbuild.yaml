@@ -3,7 +3,7 @@ steps:
     args:
       - build
       - "-t"
-      - "$LOCATION-docker.pkg.dev/$PROJECT_ID/wcf/wcf-ui:$SHORT_SHA"
+      - "$LOCATION-docker.pkg.dev/$PROJECT_ID/wcf/wcf-ui:$TAG_NAME"
       - .
   - name: "gcr.io/cloud-builders/gke-deploy"
     args:
@@ -12,8 +12,8 @@ steps:
       - --app=wcf-ui
       - --location=asia-northeast2
       - --cluster=wcf
-      - --image=$LOCATION-docker.pkg.dev/$PROJECT_ID/wcf/wcf-ui:$SHORT_SHA
+      - --image=$LOCATION-docker.pkg.dev/$PROJECT_ID/wcf/wcf-ui:$TAG_NAME
 images:
-  - "$LOCATION-docker.pkg.dev/$PROJECT_ID/wcf/wcf-ui:$SHORT_SHA"
+  - "$LOCATION-docker.pkg.dev/$PROJECT_ID/wcf/wcf-ui:$TAG_NAME"
 options:
   logging: CLOUD_LOGGING_ONLY
