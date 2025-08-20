@@ -145,8 +145,11 @@ export function Component() {
   }, [isAdmin, table])
 
   useEffect(() => {
-    if (isAdmin && !users) { fetchUsers() }
-  }, [isAdmin, fetchUsers, users])
+    if (isAdmin) { fetchUsers() }
+  }, [isAdmin, fetchUsers])
+
+  // eslint-disable-next-line no-console
+  console.log(users)
 
   return (
     <div className="relative">
