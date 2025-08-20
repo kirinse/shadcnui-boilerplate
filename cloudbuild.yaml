@@ -1,10 +1,33 @@
 steps:
   - name: docker
     args:
-      - build
-      - "-t"
-      - "$LOCATION-docker.pkg.dev/$PROJECT_ID/wcf/wcf-ui:$TAG_NAME"
-      - .
+      [
+        "buildx",
+        "create",
+        "--driver",
+        "docker-container",
+        "--name",
+        "mybuilder",
+        "--use",
+      ]
+  - name: docker
+    args:
+      [
+        "buildx",
+        "build",
+        "--platform",
+        "linux/amd64",
+        "-t",
+        "$LOCATION-docker.pkg.dev/$PROJECT_ID/wcf/wcf-ui:$TAG_NAME",
+        "--push",
+        ".",
+      ]
+  # - name: docker
+  #   args:
+  #     - build
+  #     - "-t"
+  #     - "$LOCATION-docker.pkg.dev/$PROJECT_ID/wcf/wcf-ui:$TAG_NAME"
+  #     - .
   - name: "gcr.io/cloud-builders/gke-deploy"
     args:
       - run
@@ -13,7 +36,7 @@ steps:
       - --location=asia-northeast2
       - --cluster=wcf
       - --image=$LOCATION-docker.pkg.dev/$PROJECT_ID/wcf/wcf-ui:$TAG_NAME
-images:
-  - "$LOCATION-docker.pkg.dev/$PROJECT_ID/wcf/wcf-ui:$TAG_NAME"
+# images:
+#   - "$LOCATION-docker.pkg.dev/$PROJECT_ID/wcf/wcf-ui:$TAG_NAME"
 options:
   logging: CLOUD_LOGGING_ONLY
