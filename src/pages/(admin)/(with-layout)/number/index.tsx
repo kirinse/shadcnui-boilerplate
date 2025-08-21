@@ -22,7 +22,6 @@ import { useNumberDetails, useNumbers, useRisk } from "@/hooks/query/use-number"
 import { useUsers } from "@/hooks/query/use-user"
 import { getFetchErrorMessage } from "@/lib/api-fetch"
 import { DocumentCreator } from "@/lib/risk_generator"
-import { useSummaryCtx } from "@/providers/summary-provider"
 
 import { detailsColumns } from "./components/detailsCol"
 import { DataTable } from "./components/detailsTable"
@@ -77,7 +76,6 @@ export function Component() {
   const [authToken, _] = useAtom(authTokenAtom)
   const canDownRisk = useMemo(() => authToken.is_verified || authToken.is_admin, [authToken])
   const isAdmin = authToken.is_admin
-  const { setDay: setSummaryDay } = useSummaryCtx()
 
   useEffect(() => {
     if (isAdmin) { fetchUsers() }
@@ -85,7 +83,7 @@ export function Component() {
 
   return (
     <>
-      <Summary />
+      <Summary day={day} userId={userId ? [userId] : undefined} />
       <div className="my-4 flex items-end justify-between sm:my-0 sm:items-center">
         <div className="flex flex-col gap-3 sm:my-4 sm:flex-row">
           <Tabs defaultValue={lotto} onValueChange={setLotto} className="space-y-4">
@@ -98,7 +96,7 @@ export function Component() {
             mode="single"
             required
             selected={day}
-            onSelect={(date) => { setDay(date!); setSummaryDay(date!) }}
+            onSelect={(date) => { setDay(date!) }}
           />
           <Input
             type="number"
@@ -118,7 +116,7 @@ export function Component() {
             <div className="inline-flex gap-3">
               <Separator orientation="vertical" decorative className="h-9" />
               <div className="relative">
-                <Select value={userId} onValueChange={(v) => setUserId(v)}>
+                <Select value={userId} onValueChange={(v) => { setUserId(v) }}>
                   <SelectTrigger className="w-[90px]">
                     <SelectValue placeholder="用户" />
                   </SelectTrigger>
@@ -161,7 +159,7 @@ export function Component() {
               <span>风险报告</span>
             </Button>
           ) : null}
-          {!isAdmin && <DispatchDialog />}
+          {!isAdmin && !!data?.numbers.length && day.toLocaleDateString() === new Date().toLocaleDateString() && <DispatchDialog />}
         </div>
       </div>
       <div className="grid flex-1 scroll-mt-20 grid-cols-4 items-start gap-4 md:grid-cols-5 md:gap-4 lg:grid-cols-8 lg:gap-3 xl:grid-cols-9 xl:gap-2 2xl:grid-cols-12 2xl:gap-2">

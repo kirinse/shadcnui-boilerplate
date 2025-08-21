@@ -31,7 +31,7 @@ export function useSummary(day = new Date(), userId?: number[]) {
         user_id: userId,
       },
     }),
-    refetchInterval: 10000,
+    refetchInterval: 5000,
     refetchIntervalInBackground: true,
     refetchOnWindowFocus: true,
   })
