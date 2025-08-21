@@ -207,8 +207,9 @@ export const dispatchFormSchema = z.object({
   // }).refine((appId) => appId.trim().length > 0, { message: "请选择微信" }),
   // toWxId: z.string().refine((id) => id.startsWith("wxid_") || id.endsWith("@chatroom"), { message: "微信号无效" }),
   lotto: lottoTypeSchema,
-  keep: z.number().min(1, { message: "最少保留1单" }),
+  keep: z.number().min(0, { message: "最少保留0单" }),
   content: z.string(),
+  filter: z.array(z.string()),
 })
 
 export type DispatchForm = z.infer<typeof dispatchFormSchema>
