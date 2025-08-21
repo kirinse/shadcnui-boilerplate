@@ -1,8 +1,8 @@
 import { map, orderBy } from "lodash-es"
 
 import { Card, CardHeader, CardTitle } from "@/components/ui/card"
+import { useSummary } from "@/hooks/query/use-number"
 import { cn } from "@/lib/utils"
-import { useSummaryCtx } from "@/providers/summary-provider"
 
 const lotto: any = {
   福: {
@@ -64,10 +64,16 @@ const lotto: any = {
     amountColor: "text-blue-500",
   },
 }
+interface SummaryProps {
+  day?: Date
+  userId?: string[]
+}
 
-export function Summary() {
-  // const { data: summary } = useSummary(day, userId ? userId.map((n) => Number.parseInt(n)) : undefined)
-  const { summary } = useSummaryCtx()
+export function Summary({
+  day,
+  userId,
+}: SummaryProps) {
+  const { data: summary } = useSummary(day, userId ? userId.map((n) => Number.parseInt(n)) : undefined)
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {!!summary && orderBy(map(summary, (v, k) => [k, v]), (arr) => arr[1], "desc").map(([k, v]) => (
