@@ -42,13 +42,15 @@ export function useUserLoginMutation() {
   })
 }
 
-export function useUserLogoutMutation() {
+export function useUserLogoutMutation(setAuthTokenAtom: any) {
+  const queryClient = useQueryClient()
   const navigate = useNavigate()
   return useMutation({
     mutationFn: async () => await apiFetch("/api/auth/logout"),
     mutationKey: ["user-logout"],
     onSuccess: () => {
-      localStorage.clear()
+      setAuthTokenAtom({})
+      queryClient.invalidateQueries({ queryKey: ["user-info"] })
       navigate("/login")
     },
   })

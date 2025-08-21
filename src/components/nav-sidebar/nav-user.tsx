@@ -5,7 +5,7 @@ import {
   LogOut,
 } from "lucide-react"
 import { useTranslation } from "react-i18next"
-import { useNavigate } from "react-router-dom"
+import { toast } from "sonner"
 
 import { authTokenAtom } from "@/atoms/auth"
 import {
@@ -27,15 +27,16 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import { useUserLogoutMutation } from "@/hooks/query/use-user"
+import { getFetchErrorMessage } from "@/lib/api-fetch"
 import { useAuth } from "@/providers/auth-provider"
 
 export function NavUser() {
   const { isMobile } = useSidebar()
   const { t } = useTranslation("navigation")
-  // const logout = useUserLogoutMutation()
   const [_, setAuthTokenAtom] = useAtom(authTokenAtom)
-  const navigate = useNavigate()
-  const { user, setUser } = useAuth()
+  const logout = useUserLogoutMutation(setAuthTokenAtom)
+  const { user } = useAuth()
 
   return (
     <SidebarMenu>
@@ -109,9 +110,17 @@ export function NavUser() {
             <DropdownMenuItem
               className="flex items-center gap-2 px-2 py-1.5"
               onSelect={() => {
-                setUser(null)
-                setAuthTokenAtom({})
-                navigate("/login")
+                toast.promise(logout.mutateAsync(), {
+                  position: "top-center",
+                  loading: "正在退出登录",
+                  success: () => {
+                    return "退出登录成功"
+                  },
+                  error: (error) => {
+                    const errorMessage = getFetchErrorMessage(error)
+                    return t(errorMessage)
+                  },
+                })
               }}
             >
               <LogOut className="size-4" />

@@ -1,32 +1,29 @@
-import { createContext, useContext, useMemo, useState } from "react"
+import { createContext, useContext, useMemo } from "react"
 
+import { useUser } from "@/hooks/query/use-user"
 import type { IUser } from "@/schema/user"
 
 type AuthProviderProps = {
   children: React.ReactNode
-  current?: IUser
 }
 
 type AuthProviderState = {
-  user: IUser | null
-  setUser: React.Dispatch<React.SetStateAction<IUser | null>>
+  user: IUser
 }
 
 const AuthProviderContext = createContext<AuthProviderState | undefined>(undefined)
 
 export function AuthProvider({
   children,
-  current,
   ...props
 }: AuthProviderProps) {
-  const [user, setUser] = useState<IUser | null>(current || null)
+  const { data: user } = useUser()
 
   const providerValue = useMemo(() => {
     return {
       user,
-      setUser,
     }
-  }, [user, setUser])
+  }, [user])
 
   return (
     <AuthProviderContext.Provider {...props} value={providerValue}>
