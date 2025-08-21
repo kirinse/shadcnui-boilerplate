@@ -27,10 +27,12 @@ import {
 import { useDispatchMutation } from "@/hooks/query/use-wechat"
 // import { useAuth } from "@/providers/auth-provider"
 import { useSummaryCtx } from "@/providers/summary-provider"
+import type { IRisk } from "@/schema/number"
 import type { DispatchForm } from "@/schema/wechat"
 import { dispatchFormSchema, lottoType, lottoTypeSchema } from "@/schema/wechat"
 
 import { Icons } from "./icons"
+import { Checkbox } from "./ui/checkbox"
 // import { SelectContentGrid, SelectItemGrid } from "./select-content"
 // import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
 import { Input } from "./ui/input"
@@ -38,18 +40,60 @@ import { RadioGroup, RadioGroupItem } from "./ui/radio-group"
 import { ScrollArea } from "./ui/scroll-area"
 import { Textarea } from "./ui/textarea"
 
+const items = [
+  {
+    id: "combo3",
+    label: "组三",
+  },
+  {
+    id: "full_house",
+    label: "豹子",
+  },
+] as const
 interface Props {
   open?: boolean
 }
 
+function is_combo3(number: string) {
+  return new Set(number.split("")).size === 2
+}
+
+function is_full_house(number: string) {
+  return new Set(number.split("")).size === 1
+}
+
 export function DispatchDialog({ open }: Props) {
-  // const { user } = useAuth()
   const { lotto, setLotto, risk, setRiskEnabled } = useSummaryCtx()
-  const [keep, setKeep] = useState(1)
+  const [keep, setKeep] = useState(0)
+  const [filter, setFilter] = useState<string[]>([])
 
   const riskData = useMemo(() => {
-    return risk?.filter(([bets]) => Number.parseInt(bets) > keep)
-  }, [keep, risk])
+    let data = risk ?? []
+    if (keep > 0) {
+      data = data.filter(([bets]) => Number.parseInt(bets) > keep)
+    }
+    if (filter.length > 0 && filter.includes("combo3")) {
+      const d: [string, IRisk[]][] = []
+      for (const [bets, numbers] of data) {
+        const filtered = numbers.filter((n) => !is_combo3(n.number))
+        if (filtered.length > 0) {
+          d.push([bets, filtered])
+        }
+      }
+      data = d
+    }
+    if (filter.length > 0 && filter.includes("full_house")) {
+      const d: [string, IRisk[]][] = []
+      for (const [bets, numbers] of data) {
+        const filtered = numbers.filter((n) => !is_full_house(n.number))
+        if (filtered.length > 0) {
+          d.push([bets, filtered])
+        }
+      }
+      data = d
+    }
+    return data
+  }, [keep, risk, filter])
 
   const content = useMemo(() => {
     return riskData?.map(([bets, numbers]) => {
@@ -68,6 +112,7 @@ export function DispatchDialog({ open }: Props) {
       lotto,
       content,
       keep,
+      filter,
     },
   })
   const dispatchMutation = useDispatchMutation()
@@ -100,7 +145,8 @@ export function DispatchDialog({ open }: Props) {
         if (!state) {
           form.reset()
           setLotto("福")
-          setKeep(1)
+          setKeep(0)
+          setFilter([])
           setRiskEnabled(false)
           return
         }
@@ -242,13 +288,63 @@ export function DispatchDialog({ open }: Props) {
                             }}
                             value={field.value}
                             type="number"
-                            min={1}
+                            min={0}
                             maxLength={3}
                             className="w-[70px]"
                           />
                           单
                         </div>
                       </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="filter"
+                  render={() => (
+                    <FormItem>
+                      <FormLabel>
+                        排除
+                      </FormLabel>
+                      <div>
+                        {items.map((item) => (
+                          <FormField
+                            key={item.id}
+                            control={form.control}
+                            name="filter"
+                            render={({ field }) => {
+                              return (
+                                <FormItem
+                                  key={item.id}
+                                  className="flex flex-row items-center gap-2 space-y-0"
+                                >
+                                  <FormControl>
+                                    <Checkbox
+                                      checked={field.value?.includes(item.id)}
+                                      onCheckedChange={(checked) => {
+                                        if (checked) {
+                                          field.onChange([...field.value, item.id])
+                                          setFilter([...field.value, item.id])
+                                        } else {
+                                          const v = field.value?.filter(
+                                            (value) => value !== item.id,
+                                          )
+                                          field.onChange(v)
+                                          setFilter(v)
+                                        }
+                                      }}
+                                    />
+                                  </FormControl>
+                                  <FormLabel className="text-sm font-normal">
+                                    {item.label}
+                                  </FormLabel>
+                                </FormItem>
+                              )
+                            }}
+                          />
+                        ))}
+                      </div>
                       <FormMessage />
                     </FormItem>
                   )}
