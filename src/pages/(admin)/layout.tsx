@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/sidebar"
 import { WechatDialog } from "@/components/wechat-dialog"
 import { SIDEBAR_COOKIE_NAME } from "@/constants"
-import { useUser } from "@/hooks/query/use-user"
 import { AuthProvider } from "@/providers/auth-provider"
 import SummaryProvider from "@/providers/summary-provider"
 import { useWechat } from "@/providers/wechat-provider"
@@ -22,10 +21,9 @@ import { useWechat } from "@/providers/wechat-provider"
 export function Component() {
   const sidebarState = localStorage.getItem(SIDEBAR_COOKIE_NAME) === "true" || true
   const { open, setOpen } = useWechat()
-  const { data: user } = useUser()
 
   return (
-    <AuthProvider current={user}>
+    <AuthProvider>
       <SummaryProvider>
         <SidebarProvider defaultOpen={sidebarState}>
           <AppSidebar collapsible="icon" />

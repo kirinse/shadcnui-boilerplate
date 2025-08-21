@@ -1,5 +1,4 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useEffect } from "react"
 import { useFieldArray, useForm } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 import { Link } from "react-router-dom"
@@ -25,8 +24,8 @@ import {
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "@/components/ui/use-toast"
-import { useUser } from "@/hooks/query/use-user"
 import { cn } from "@/lib/utils"
+// import { useAuth } from "@/providers/auth-provider"
 
 const profileFormSchema = z.object({
   username: z
@@ -64,7 +63,7 @@ type ProfileFormValues = z.infer<typeof profileFormSchema>
 
 export function ProfileForm() {
   const { t } = useTranslation(["settings"])
-  const user = useUser()
+  // const {user} = useAuth()
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
@@ -72,14 +71,14 @@ export function ProfileForm() {
     mode: "onChange",
   })
   // note: https://github.com/orgs/react-hook-form/discussions/4918#discussioncomment-3568702
-  useEffect(() => {
-    if (user.data) {
-      form.setValue("username", user.data.username)
-      form.setValue("email", user.data.email)
-      form.setValue("bio", user.data.bio)
-      form.setValue("urls", user.data.urls)
-    }
-  }, [user])
+  // useEffect(() => {
+  //   if (user) {
+  //     form.setValue("username", user.username)
+  //     form.setValue("email", user.data.email)
+  //     form.setValue("bio", user.data.bio)
+  //     form.setValue("urls", user.data.urls)
+  //   }
+  // }, [user])
 
   const { fields, append } = useFieldArray({
     name: "urls",
