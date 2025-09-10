@@ -1,6 +1,7 @@
 import { map, orderBy } from "lodash-es"
 
 import { Card, CardHeader, CardTitle } from "@/components/ui/card"
+import { CURRENCY_FORMAT } from "@/constants"
 import { useSummary } from "@/hooks/query/use-number"
 import { cn } from "@/lib/utils"
 
@@ -82,12 +83,8 @@ export function Summary({
           <CardHeader className="flex flex-row items-center justify-between space-y-0 py-2">
             {/* @ts-ignore */}
             <CardTitle className={cn("text-3xl font-normal", lotto[k].amountColor)}>
-              {new Intl.NumberFormat("zh-CN", {
-                style: "currency",
-                currency: "CNY",
-                maximumFractionDigits: 2,
-                // @ts-ignore
-              }).format(v)}
+              {/* @ts-ignore */}
+              {CURRENCY_FORMAT.format(v)}
             </CardTitle>
             {/* @ts-ignore */}
             {lotto[k].icon}

@@ -56,7 +56,7 @@ export function useUserLogoutMutation(setAuthTokenAtom: any) {
   })
 }
 
-export function useUsers(pagination: PaginationState) {
+export function useUsers(pagination: PaginationState, enabled = false) {
   const { data, isPending, refetch: fetch } = useQuery({
     queryKey: ["users", pagination],
     queryFn: async () => apiFetch<IUserList>("/api/users", {
@@ -66,7 +66,7 @@ export function useUsers(pagination: PaginationState) {
       },
     }),
     placeholderData: keepPreviousData,
-    enabled: false,
+    enabled,
   })
   return {
     isPending,
@@ -81,7 +81,7 @@ export function useUpdateUser() {
   return useMutation({
     mutationFn: async (user: UserForm) =>
       await apiFetch(`/api/users/${user.id}`, {
-        method: "PUT",
+        method: "PATCH",
         body: user,
       }),
     onSuccess: () => {
@@ -101,8 +101,9 @@ export function useRegisterUser() {
         body: user,
       }),
     onSuccess: () => {
-      // 更新用户列表缓存
+      // 更新用户列表
       queryClient.invalidateQueries({ queryKey: ["users"] })
+      // queryClient.refetchQueries({ queryKey: ["users"] })
     },
   })
 }

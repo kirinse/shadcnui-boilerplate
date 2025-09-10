@@ -161,7 +161,7 @@ export function Component() {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
-  const { data: users, isPending, fetch: fetchUsers } = useUsers(pagination)
+  const { data: users, isPending, fetch: fetchUsers } = useUsers(pagination, true)
 
   const table = useReactTable({
     data: users?.results ?? [],

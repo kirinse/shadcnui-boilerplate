@@ -23,13 +23,15 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
+import { CURRENCY_FORMAT } from "@/constants"
 // import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useDispatchMutation } from "@/hooks/query/use-wechat"
 // import { useAuth } from "@/providers/auth-provider"
 import { useSummaryCtx } from "@/providers/summary-provider"
+import { lottoType, lottoTypeSchema } from "@/schema/message"
 import type { IRisk } from "@/schema/number"
 import type { DispatchForm } from "@/schema/wechat"
-import { dispatchFormSchema, lottoType, lottoTypeSchema } from "@/schema/wechat"
+import { dispatchFormSchema } from "@/schema/wechat"
 
 import { Icons } from "./icons"
 import { Checkbox } from "./ui/checkbox"
@@ -96,11 +98,15 @@ export function DispatchDialog({ open }: Props) {
   }, [keep, risk, filter])
 
   const content = useMemo(() => {
-    return riskData?.map(([bets, numbers]) => {
+    return riskData.map(([bets, numbers]) => {
       const n = numbers.map((n) => n.number)
       return `${lotto}彩 ${n.join(" ")} ${numbers.length > 9 ? `共${numbers.length}注 ` : ""}直选${Number.parseInt(bets) - keep}单\n`
     }).join("\n") || ""
   }, [keep, lotto, riskData])
+
+  const totalPrice = useMemo(() => {
+    return riskData.reduce((acc, [bets, numbers]) => acc + (Number.parseInt(bets) - keep) * numbers.length * 2, 0)
+  }, [keep, riskData])
 
   const form = useForm<DispatchForm>({
     resolver: zodResolver(dispatchFormSchema),
@@ -249,7 +255,7 @@ export function DispatchDialog({ open }: Props) {
                           onValueChange={(v) => {
                             field.onChange(v)
                             setLotto(lottoTypeSchema.parse(v))
-                            setKeep(1)
+                            setKeep(0)
                             // form.setValue("keep", 1)
                           }}
                           defaultValue={field.value}
@@ -283,8 +289,8 @@ export function DispatchDialog({ open }: Props) {
                         <div className="flex items-center gap-1">
                           <Input
                             onChange={(v) => {
-                              field.onChange(Number.parseInt(v.currentTarget.value))
-                              setKeep(Number.parseInt(v.currentTarget.value))
+                              field.onChange(Number.parseInt(v.currentTarget.value) || 0)
+                              setKeep(Number.parseInt(v.currentTarget.value) || 0)
                             }}
                             value={field.value}
                             type="number"
@@ -349,6 +355,16 @@ export function DispatchDialog({ open }: Props) {
                     </FormItem>
                   )}
                 />
+                <FormItem className="ml-auto text-right">
+                  <FormLabel>
+                    总价
+                  </FormLabel>
+                  <FormControl>
+                    <div className="text-nowrap font-medium text-destructive">
+                      {CURRENCY_FORMAT.format(totalPrice)}
+                    </div>
+                  </FormControl>
+                </FormItem>
               </div>
               <div className="flex flex-col space-y-2">
                 <span className="text-sm font-medium leading-none">

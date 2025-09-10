@@ -1,6 +1,7 @@
 import type {
   ColumnDef,
   ColumnFiltersState,
+  RowSelectionState,
   SortingState,
   VisibilityState,
 } from "@tanstack/react-table"
@@ -15,7 +16,8 @@ import {
   useReactTable,
 } from "@tanstack/react-table"
 import clsx from "clsx"
-import * as React from "react"
+import type { Dispatch, SetStateAction } from "react"
+import { useState } from "react"
 
 import {
   Table,
@@ -29,18 +31,19 @@ import {
 interface OrderTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  rowSelection?: RowSelectionState
+  onRowSelectionChange?: Dispatch<SetStateAction<RowSelectionState>>
 }
 
 export function OrderTable<TData, TValue>({
   data,
   columns,
+  rowSelection,
+  onRowSelectionChange,
 }: OrderTableProps<TData, TValue>) {
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    [],
-  )
-  const [sorting, setSorting] = React.useState<SortingState>([])
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [sorting, setSorting] = useState<SortingState>([])
 
   const table = useReactTable({
     data,
@@ -49,6 +52,7 @@ export function OrderTable<TData, TValue>({
       sorting,
       columnVisibility,
       columnFilters,
+      rowSelection,
     },
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -60,76 +64,77 @@ export function OrderTable<TData, TValue>({
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
     manualPagination: true,
+    onRowSelectionChange,
   })
 
   return (
-    <div className="mb-2 mr-3">
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="bg-gray-300/40 hover:bg-gray-300/40">
-                {headerGroup.headers.map((header) => (
-                  <TableHead
-                    key={header.id}
-                    colSpan={header.colSpan}
-                    className={clsx({
-                      "w-8 max-w-48": header.column.id === "id",
-                      "w-24": header.column.id === "lotto",
-                      "w-24 max-w-40": header.column.id === "created_at",
-                    })}
-                  >
-                    {header.isPlaceholder ?
-                      null :
-                      flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row, idx) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                  className={clsx({
-                    "bg-gray-50/50 hover:bg-gray-50/50": idx % 2 === 0,
-                    "bg-gray-100/50 hover:bg-gray-100/50": idx % 2 === 1,
+    <div className="rounded-md border">
+      <Table>
+        <TableHeader>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow key={headerGroup.id} className="bg-gray-300/40 hover:bg-gray-300/40">
+              {headerGroup.headers.map((header) => (
+                <TableHead
+                  key={header.id}
+                  colSpan={header.colSpan}
+                  className={clsx("text-nowrap", {
+                    "w-8 max-w-48": header.column.id === "id" || header.column.id === "select",
+                    "w-12": header.column.id === "lotto" || header.column.id === "times" || header.column.id === "price" || header.column.id === "prize" || header.column.id === "method",
+                    "max-w-24": header.column.id === "price" || header.column.id === "prize",
+                    "w-24 max-w-40": header.column.id === "created_at" || header.column.id === "day",
                   })}
                 >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell
-                      key={cell.id}
-                      className={clsx({
-                        "text-nowrap": ["id", "day"].includes(cell.column.id),
-                        "text-center": ["lotto"].includes(cell.column.id),
-                      })}
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
+                  {header.isPlaceholder ?
+                    null :
+                    flexRender(
+                      header.column.columnDef.header,
+                      header.getContext(),
+                    )}
+                </TableHead>
+              ))}
+            </TableRow>
+          ))}
+        </TableHeader>
+        <TableBody>
+          {table.getRowModel().rows?.length ? (
+            table.getRowModel().rows.map((row, idx) => (
+              <TableRow
+                key={row.id}
+                data-state={row.getIsSelected() && "selected"}
+                className={clsx({
+                  "bg-gray-50/50 hover:bg-gray-50/50": idx % 2 === 0,
+                  "bg-gray-100/50 hover:bg-gray-100/50": idx % 2 === 1,
+                })}
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell
+                    key={cell.id}
+                    className={clsx({
+                      "text-nowrap": ["id", "day", "created_at", "method", "times"].includes(cell.column.id),
+                      "text-right": cell.column.id === "prize",
+                      // "text-center": ["lotto"].includes(cell.column.id),
+                    })}
+                  >
+                    {flexRender(
+                      cell.column.columnDef.cell,
+                      cell.getContext(),
+                    )}
+                  </TableCell>
+                ))}
               </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell
+                colSpan={table.getVisibleFlatColumns().length}
+                className="h-24 text-center"
+              >
+                No results.
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
     </div>
   )
 }

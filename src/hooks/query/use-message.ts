@@ -2,6 +2,7 @@ import {
   keepPreviousData,
   useMutation,
   useQuery,
+  useQueryClient,
 } from "@tanstack/react-query"
 import type { PaginationState } from "@tanstack/react-table"
 
@@ -44,11 +45,30 @@ export function useMessages(pagination: PaginationState, day?: string, lotto?: s
 }
 
 export function useMessageDeletionMutation() {
+  const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async (id: number) =>
+    mutationFn: async (id: bigint) =>
       await apiFetch(`/api/messages/${id}`, {
         method: "DELETE",
       }),
     mutationKey: ["message-delete"],
+    onSuccess: () => {
+      queryClient.refetchQueries({ queryKey: ["messages"] })
+    },
+  })
+}
+
+export function useMessageCorrectionMutation() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (body: { id: bigint, content: string }) =>
+      await apiFetch(`/api/messages/${body.id}`, {
+        method: "PATCH",
+        body: { content: body.content },
+      }),
+    mutationKey: ["message-correct"],
+    onSuccess: () => {
+      queryClient.refetchQueries({ queryKey: ["messages"] })
+    },
   })
 }

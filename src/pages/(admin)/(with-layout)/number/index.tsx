@@ -18,6 +18,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { CURRENCY_FORMAT } from "@/constants"
 import { useNumberDetails, useNumbers, useRisk } from "@/hooks/query/use-number"
 import { useUsers } from "@/hooks/query/use-user"
 import { getFetchErrorMessage } from "@/lib/api-fetch"
@@ -154,16 +155,16 @@ export function Component() {
             setRefetchInterval(vv)
           }}
           />
-          {canDownRisk && data?.numbers.length ? (
+          {canDownRisk && !!data?.numbers ? (
             <Button variant="destructive" title="风险报告" disabled={riskIsFetching || riskIsRefetching} onClick={onDownload}>
               <span>风险报告</span>
             </Button>
           ) : null}
-          {!isAdmin && !!data?.numbers.length && day.toLocaleDateString() === new Date().toLocaleDateString() && <DispatchDialog />}
+          {!isAdmin && !!data?.numbers && day.toLocaleDateString() === new Date().toLocaleDateString() && <DispatchDialog />}
         </div>
       </div>
       <div className="grid flex-1 scroll-mt-20 grid-cols-4 items-start gap-4 md:grid-cols-5 md:gap-4 lg:grid-cols-8 lg:gap-3 xl:grid-cols-9 xl:gap-2 2xl:grid-cols-12 2xl:gap-2">
-        {data?.numbers.map((number) => {
+        {data?.numbers?.map((number) => {
           const color = {
             "border-red-500 bg-red-500": (number.prize - data.total) / data.total >= 0.1,
             "border-yellow-400 bg-yellow-400": number.prize > data.total && (number.prize - data.total) / data.total < 0.1,
@@ -184,11 +185,7 @@ export function Component() {
                 <div className={clsx("flex aspect-square flex-col items-center justify-around rounded-md border-2 bg-background p-0 text-sm font-medium leading-none hover:bg-accent hover:text-accent-foreground sm:p-4", { "!bg-accent shadow-md": detailNumber === number.number })}>
                   <NumberComp number={number.number} />
                   <Badge variant="outline" className={clsx("text-nowrap text-sidebar-primary-foreground", color)}>
-                    {new Intl.NumberFormat("zh-CN", {
-                      style: "currency",
-                      currency: "CNY",
-                      maximumFractionDigits: 0,
-                    }).format(number.prize)}
+                    {CURRENCY_FORMAT.format(number.prize)}
                   </Badge>
                 </div>
               </PopoverTrigger>

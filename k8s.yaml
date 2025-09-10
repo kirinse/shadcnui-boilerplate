@@ -1,0 +1,76 @@
+---
+# ui deployment
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata:
+  name: "wcf-ui"
+  namespace: "default"
+  labels:
+    app: "wcf-ui"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "wcf-ui"
+  template:
+    metadata:
+      labels:
+        app: "wcf-ui"
+    spec:
+      containers:
+        - name: "wcf-ui"
+          image: "asia-northeast2-docker.pkg.dev/waver-888/wcf/wcf-ui:v1.0.2"
+          env:
+            - name: SERVER_NAME
+              value: _
+            - name: API_URL
+              value: http://wcf-api:5150
+          ports:
+            - name: http
+              containerPort: 80
+          readinessProbe:
+            httpGet:
+              path: /login
+              port: 80
+              scheme: HTTP
+            initialDelaySeconds: 5
+            timeoutSeconds: 1
+---
+# ui autoscaling
+apiVersion: "autoscaling/v2"
+kind: "HorizontalPodAutoscaler"
+metadata:
+  name: "wcf-ui-hpa-xppx"
+  namespace: "default"
+  labels:
+    app: "wcf-ui"
+spec:
+  scaleTargetRef:
+    kind: "Deployment"
+    name: "wcf-ui"
+    apiVersion: "apps/v1"
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+    - type: "Resource"
+      resource:
+        name: "cpu"
+        target:
+          type: "Utilization"
+          averageUtilization: 80
+---
+# ui service
+apiVersion: v1
+kind: Service
+metadata:
+  name: wcf-ui
+  annotations:
+    cloud.google.com/neg: '{"ingress": true}'
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+      name: http
+  selector:
+    app: wcf-ui
+  type: ClusterIP

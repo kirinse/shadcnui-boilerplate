@@ -79,10 +79,18 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
-  div [data-radix-scroll-area-viewport] > div {
+
+  div [data-radix-scroll-area-viewport]>div {
     @apply !block;
+  }
+
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
   }
 }

@@ -1,8 +1,8 @@
 import { createContext, useContext, useMemo, useState } from "react"
 
 import { useRisk2 } from "@/hooks/query/use-number"
+import type { LottoType } from "@/schema/message"
 import type { IRisk } from "@/schema/number"
-import type { LottoType } from "@/schema/wechat"
 
 interface SummaryContextType {
   lotto: LottoType

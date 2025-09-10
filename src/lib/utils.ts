@@ -43,3 +43,7 @@ export function getRedirectToLoginUrl() {
   }
   return `/login?${loginParams.toString()}`
 }
+
+export function noDuplicated(str: string): boolean {
+  return new Set(str).size === str.length
+}

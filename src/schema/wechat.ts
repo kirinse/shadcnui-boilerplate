@@ -1,5 +1,7 @@
 import { z } from "zod"
 
+import { lottoTypeSchema } from "./message"
+
 export const deviceType = ["ipad", "mac"] as const
 export const deviceTypeSchema = z.enum(deviceType)
 export type DeviceType = z.infer<typeof deviceTypeSchema>
@@ -195,10 +197,6 @@ export const appSchema = z.object({
   updated_at: z.date(),
 })
 export type App = z.infer<typeof appSchema>
-
-export const lottoType = ["福", "体"] as const
-export const lottoTypeSchema = z.enum(lottoType)
-export type LottoType = z.infer<typeof lottoTypeSchema>
 
 export const dispatchFormSchema = z.object({
   // pid: z.string().uuid(),

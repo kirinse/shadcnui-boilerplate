@@ -8,7 +8,7 @@ export function Refresher(
 ) {
   return (
     <div className="inline-flex items-center">
-      <Label htmlFor="refresher" className="hidden font-normal md:mr-2 md:flex">
+      <Label htmlFor="refresher" className="hidden font-normal lg:mr-2 lg:flex">
         <span>自动刷新</span>
       </Label>
       <Select defaultValue="off" onValueChange={onValueChange}>

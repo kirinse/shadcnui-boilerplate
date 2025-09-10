@@ -1,5 +1,6 @@
 import type { ColumnDef } from "@tanstack/react-table"
 
+import { CURRENCY_FORMAT } from "@/constants"
 import type { INumberDetails } from "@/schema/number"
 
 export const detailsColumns: ColumnDef<INumberDetails>[] = [
@@ -21,11 +22,7 @@ export const detailsColumns: ColumnDef<INumberDetails>[] = [
   //     header: () => <div className="text-right">总价</div>,
   //     cell: ({ row }) => {
   //         const amount = Number.parseFloat(row.getValue("price"))
-  //         const formatted = new Intl.NumberFormat("zh-CN", {
-  //             style: "currency",
-  //             currency: "CNY",
-  //             maximumFractionDigits: 0,
-  //         }).format(amount)
+  //         const formatted = CURRENCY_FORMAT.format(amount)
 
   //         return <div className="text-right">{formatted}</div>
   //     },
@@ -35,11 +32,7 @@ export const detailsColumns: ColumnDef<INumberDetails>[] = [
     header: () => <div className="text-right">奖金</div>,
     cell: ({ row }) => {
       const amount = Number.parseFloat(row.getValue("prize"))
-      const formatted = new Intl.NumberFormat("zh-CN", {
-        style: "currency",
-        currency: "CNY",
-        maximumFractionDigits: 0,
-      }).format(amount)
+      const formatted = CURRENCY_FORMAT.format(amount)
 
       return <div className="text-right">{formatted}</div>
     },

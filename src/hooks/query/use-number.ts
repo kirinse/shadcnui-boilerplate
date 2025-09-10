@@ -8,7 +8,7 @@ import type { INumber, INumberDetails, IRisk, ISummary } from "@/schema/number"
 export function useNumbers(lotto = "福", day = new Date(), refetchInterval?: any, number?: string, userId?: number) {
   return useQuery({
     queryKey: ["numbers", lotto, day, number, userId],
-    queryFn: async () => apiFetch<{ total: number, numbers: INumber[] }>("/api/numbers", {
+    queryFn: async () => apiFetch<{ total: number, numbers?: INumber[] }>("/api/numbers", {
       params: {
         lotto,
         day: format(day, "yyyy-MM-dd"),

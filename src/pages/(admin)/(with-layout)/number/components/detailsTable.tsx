@@ -18,6 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { CURRENCY_FORMAT } from "@/constants"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -83,11 +84,7 @@ export function DataTable<TData, TValue>({
           <TableCell colSpan={columns.length - 1}>总计</TableCell>
           <TableCell className={clsx("text-right")}>
             <Badge variant="outline" className={clsx("text-nowrap text-sidebar-primary-foreground", color)}>
-              {new Intl.NumberFormat("zh-CN", {
-                style: "currency",
-                currency: "CNY",
-                maximumFractionDigits: 0,
-              }).format(table.getRowModel().rows.reduce((a, row) => a + Number.parseInt(row.getValue("prize")), 0))}
+              {CURRENCY_FORMAT.format(table.getRowModel().rows.reduce((a, row) => a + Number.parseInt(row.getValue("prize")), 0))}
             </Badge>
           </TableCell>
         </TableRow>
