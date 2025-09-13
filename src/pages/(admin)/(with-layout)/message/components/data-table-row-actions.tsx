@@ -30,8 +30,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
     [today, yesterday].includes(new Date(row.original.ts * 1000).toLocaleDateString("zh-CN")) &&
     authToken.is_admin, [authToken.is_admin, row, today, yesterday])
   const canEdit = useMemo(() => ["Warning", "Failed"].includes(row.original.status) &&
-    [today].includes(new Date(row.original.ts * 1000).toLocaleDateString("zh-CN")) &&
-    authToken.is_admin, [authToken.is_admin, row, today])
+    [today].includes(new Date(row.original.ts * 1000).toLocaleDateString("zh-CN")), [row, today])
 
   return (
     <div className="flex justify-center">
