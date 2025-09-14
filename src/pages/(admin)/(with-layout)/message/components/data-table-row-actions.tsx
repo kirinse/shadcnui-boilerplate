@@ -26,7 +26,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
   // console.log(today, yesterday)
   const [authToken, _] = useAtom(authTokenAtom)
 
-  const canDelete = useMemo(() => !["Deleted", "Revoked", "Failed"].includes(row.original.status) &&
+  const canDelete = useMemo(() => !["Warning", "Deleted", "Revoked", "Failed"].includes(row.original.status) &&
     [today, yesterday].includes(new Date(row.original.ts * 1000).toLocaleDateString("zh-CN")) &&
     authToken.is_admin, [authToken.is_admin, row, today, yesterday])
   const canEdit = useMemo(() => ["Warning", "Failed"].includes(row.original.status) &&
