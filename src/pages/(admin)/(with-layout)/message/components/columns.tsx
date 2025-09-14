@@ -72,7 +72,7 @@ export const columns: ColumnDef<Message>[] = [
     cell: ({ row }) => (
       <div className="flex items-start space-x-2">
         <div className="whitespace-pre-wrap break-all">{row.getValue("content")}</div>
-        {row.original.version > 1 && row.original.status !== "Deleted" && <GalleryVerticalEnd className="size-4 text-blue-500" strokeWidth={2} />}
+        {row.original.version > 1 && !["Deleted", "Revoked"].includes(row.original.status) && <GalleryVerticalEnd className="size-4 text-blue-500" strokeWidth={2} />}
       </div>
     ),
     enableHiding: false,
