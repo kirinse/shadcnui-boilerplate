@@ -1,9 +1,7 @@
 import type { Row } from "@tanstack/react-table"
-import { useAtom } from "jotai"
 import { SquarePen, Trash } from "lucide-react"
 import { useMemo } from "react"
 
-import { authTokenAtom } from "@/atoms/auth"
 import { Button } from "@/components/ui/button"
 import { useNow } from "@/hooks/use-now"
 import type { Message } from "@/schema/message"
@@ -23,12 +21,9 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
   const yesterday = useMemo(() => {
     return new Date(new Date().setDate(now.getDate() - 1)).toLocaleDateString("zh-CN")
   }, [now])
-  // console.log(today, yesterday)
-  const [authToken, _] = useAtom(authTokenAtom)
 
   const canDelete = useMemo(() => !["Deleted", "Revoked", "Failed"].includes(row.original.status) &&
-    [today, yesterday].includes(new Date(row.original.ts * 1000).toLocaleDateString("zh-CN")) &&
-    authToken.is_admin, [authToken.is_admin, row, today, yesterday])
+    [today, yesterday].includes(new Date(row.original.ts * 1000).toLocaleDateString("zh-CN")), [row, today, yesterday])
   const canEdit = useMemo(() => ["Warning", "Failed"].includes(row.original.status) &&
     [today].includes(new Date(row.original.ts * 1000).toLocaleDateString("zh-CN")), [row, today])
 
