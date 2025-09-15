@@ -96,7 +96,7 @@ export const order_columns: ColumnDef<Order>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader className="text-nowrap text-right text-sm font-medium" column={column} title={i18n.t("message:price")} />
     ),
-    cell: ({ row }) => (<div className="text-right font-semibold text-blue-500">{CURRENCY_FORMAT.format(row.getValue("price"))}</div>),
+    cell: ({ row }) => (<div className="text-right font-semibold text-cyan-500 dark:text-cyan-400">{CURRENCY_FORMAT.format(row.getValue("price"))}</div>),
     enableHiding: false,
     enableSorting: false,
   },

@@ -83,7 +83,7 @@ export const columns: ColumnDef<Message>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader className="text-right" column={column} title="金额" />
     ),
-    cell: ({ row }) => row.original.orders.length > 0 && <div className="text-right font-semibold text-blue-500">{CURRENCY_FORMAT.format(row.original.orders?.reduce((acc, { price }) => acc + price, 0))}</div>,
+    cell: ({ row }) => row.original.orders.length > 0 && <div className="text-right font-semibold text-cyan-500">{CURRENCY_FORMAT.format(row.original.orders?.reduce((acc, { price }) => acc + price, 0))}</div>,
     enableHiding: false,
   },
   {
