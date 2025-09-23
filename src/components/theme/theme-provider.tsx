@@ -34,12 +34,22 @@ export function ThemeProvider({
     const root = window.document.documentElement
     root.classList.remove("light", "dark")
     if (theme === "system") {
-      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
+      const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)")
+      const systemTheme = mediaQuery
         .matches ?
         "dark" :
         "light"
       root.classList.add(systemTheme)
-      return
+
+      const handleChange = (event: { matches: boolean }) => {
+        root.classList.add(event.matches ? "dark" : "light")
+      }
+      mediaQuery.addEventListener("change", handleChange)
+
+      // Clean up the listener when the component unmounts
+      return () => {
+        mediaQuery.removeEventListener("change", handleChange)
+      }
     }
     root.classList.add(theme)
   }, [theme])
