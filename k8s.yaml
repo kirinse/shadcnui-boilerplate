@@ -73,4 +73,6 @@ spec:
       name: http
   selector:
     app: wcf-ui
-  type: ClusterIP
+  type: NodePort
+---
+
