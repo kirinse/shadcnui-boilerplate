@@ -38,10 +38,9 @@ export function Component() {
           {t("company.name")}
         </div>
         <div className="relative z-20 mt-auto">
-          <blockquote className="space-y-2">
-            <p className="text-lg">{t("company.testimonial.quote")}</p>
-            <footer className="text-sm">{t("company.testimonial.name")}</footer>
-          </blockquote>
+          <div className="aspect-square size-32">
+            <img src="/Wechat.jpg" alt="Wechat QR Code" />
+          </div>
         </div>
       </div>
       <div className="lg:p-8">
@@ -49,6 +48,11 @@ export function Component() {
           <LanguageSwitch />
         </div>
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
+          <div className="mx-auto block lg:hidden">
+            <div className="aspect-square size-16">
+              <img src="/Wechat.jpg" alt="Wechat QR Code" />
+            </div>
+          </div>
           <div className="flex flex-col space-y-2 text-center">
             <h1 className="text-2xl font-semibold tracking-tight">
               {t("login.sign_in_with_email")}
@@ -191,7 +195,7 @@ function UserAuthForm({ className, ...props }: UserAuthFormProps) {
           </div>
         </form>
       </Form>
-      <div className="relative">
+      {/* <div className="relative">
         <div className="absolute inset-0 flex items-center">
           <span className="w-full border-t" />
         </div>
@@ -207,7 +211,7 @@ function UserAuthForm({ className, ...props }: UserAuthFormProps) {
         disabled={loginMutation.isPending}
       >
         {t("social_login.github")}
-      </Button>
+      </Button> */}
     </div>
   )
 }
